@@ -1,107 +1,74 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/evapares/db" VERSION="20151228" COMMENT="XMLDB file for Moodle mod/evapares"
+<XMLDB PATH="mod/evapares/db" VERSION="20151229" COMMENT="XMLDB file for Moodle mod/evapares"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="evapares" COMMENT="Default comment for evapares, please edit me">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Course evapares activity belongs to"/>
-        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="name field for moodle instances"/>
-        <FIELD NAME="intro" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="General introduction of the evapares activity"/>
-        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Format of the intro field (MOODLE, HTML, MARKDOWN...)"/>
-        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="grade" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="100" SEQUENCE="false" COMMENT="The maximum grade. Can be negative to indicate the use of a scale."/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-      </KEYS>
-      <INDEXES>
-        <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
-      </INDEXES>
-    </TABLE>
-    <TABLE NAME="mdl_evapares" COMMENT="each evapares activity instance will have a row here. the important thing is that the SSC will be 0 if the teacher dont want to have SSC on this evapares, or 1 if he want it.">
+    <TABLE NAME="evapares" COMMENT="each evapares activity instance will have a row here. the important thing is that the SSC will be 0 if the teacher dont want to have SSC on this evapares, or 1 if he want it.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="ev_name" TYPE="char" LENGTH="32" NOTNULL="true" DEFAULT="Evaluación de Pares" SEQUENCE="false" COMMENT="this column have tha name of every evaluation and its given by the teacher"/>
         <FIELD NAME="ssc" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="This is 0 if the teacher dont want an SSC testing, and 1 if he wants it"/>
+        <FIELD NAME="total_iterations" TYPE="int" LENGTH="2" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="total of iterations specified by the teacher"/>
         <FIELD NAME="course_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="fk pointiing to the course in wich the evapares was created"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="mdl_evapares_pares" COMMENT="this table conains the dta for the coevaluations">
+    <TABLE NAME="evapares_evaluations" COMMENT="this table conains the dta for the evaluations">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="n_iteration" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" COMMENT="the number of the iteration, it goes from 1 to n where n is specified by the teacher"/>
-        <FIELD NAME="start_date" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="the date in wich the evaluation starts"/>
-        <FIELD NAME="n_days" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" COMMENT="number of days that it gona be there for the alumn"/>
-        <FIELD NAME="answers" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="if answers: 1, if dont: 0"/>
-        <FIELD NAME="evapares_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="fk to link it to his instance of evapares."/>
-        <FIELD NAME="alu_evalua_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="the alumn that answers this evaluation (fk)"/>
-        <FIELD NAME="alu_evaluado_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="the id of the alumn that is been evaluated"/>
         <FIELD NAME="ssc_stop" TYPE="char" LENGTH="200" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="ssc_start" TYPE="char" LENGTH="200" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="ssc_continue" TYPE="char" LENGTH="200" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="set_of_answers" TYPE="char" LENGTH="31" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="it conains the answers of the alumn separated by &quot;-&quot;. An example of it, in a case in wich there are 4 questions qith 5 alternatives, it could be: &quot;2-5-1-1&quot;"/>
+        <FIELD NAME="alu_evalua_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="the alumn that answers this evaluation (fk)"/>
+        <FIELD NAME="alu_evaluado_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="the id of the alumn that is been evaluated"/>
+        <FIELD NAME="iterations_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="mdl_evapares_prs_has_qstns" COMMENT="n-n table for mdl_evapares_pares and mdl_evapares_questions">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="pares_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="fk"/>
-        <FIELD NAME="questions_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="fk"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-      </KEYS>
-    </TABLE>
-    <TABLE NAME="mdl_evapares_personal" COMMENT="this have the info for the personal evaluations">
+    <TABLE NAME="evapares_iterations" COMMENT="this have the info for eery iteration">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="n_iteration" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" COMMENT="the number of the iteration, the first one starts with 0"/>
         <FIELD NAME="start_date" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="unix format"/>
         <FIELD NAME="n_days" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" COMMENT="number ofdays that it will be avialable"/>
         <FIELD NAME="answers" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="boolean 0-1 0 dont answer yet 1 it has been answered"/>
-        <FIELD NAME="set_of_answers" TYPE="char" LENGTH="31" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="this is the group of answers for the personale evaluaion separated by &quot;-&quot;, if there are 4 questions with 5 alternatives, it could be &quot;1-5-3-3&quot;"/>
         <FIELD NAME="evapares_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="fk to the mdl_evapares table"/>
-        <FIELD NAME="alumn_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="fk to the alumn of the personal evluation"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="mdl_evapares_prsnl_has_qstn" COMMENT="same as mdl_evapares_prs_has_qstns but for personale evaluations">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="personal_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="fk to mdl_evapares_personal"/>
-        <FIELD NAME="questions_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="fk to mdl_evapares_questions"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-      </KEYS>
-    </TABLE>
-    <TABLE NAME="mdl_evapares_questions" COMMENT="this is the table that have the text of the questions made">
+    <TABLE NAME="evapares_questions" COMMENT="this is the table that have the text of the questions made">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="text" TYPE="char" LENGTH="200" NOTNULL="false" SEQUENCE="false" COMMENT="text of the question"/>
+        <FIELD NAME="evapares_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="mdl_evapares_answers" COMMENT="theanswersfor the questions">
+    <TABLE NAME="evapares_answers" COMMENT="theanswersfor the questions">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="number" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" COMMENT="to keep an order, is the number of the question"/>
         <FIELD NAME="text" TYPE="char" LENGTH="200" NOTNULL="false" SEQUENCE="false" COMMENT="text of the answer"/>
-        <FIELD NAME="question_id" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" COMMENT="fk to mdl_evapares_questions"/>
+        <FIELD NAME="question_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="fk to mdl_evapares_questions"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="evapares_evlalutons_has_answ" COMMENT="n-n that assigns answers to the evaluations">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="evaluations_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="answers_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

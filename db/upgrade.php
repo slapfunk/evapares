@@ -68,299 +68,240 @@ function xmldb_evapares_upgrade($oldversion) {
      *
      * First example, some fields were added to install.xml on 2007/04/01
      */
-    if ($oldversion < 2007040100) {
+//     if ($oldversion < 2007040100) {
 
-        // Define field course to be added to evapares.
+//         // Define field course to be added to evapares.
+//         $table = new xmldb_table('evapares');
+//         $field = new xmldb_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'id');
+
+//         // Add field course.
+//         if (!$dbman->field_exists($table, $field)) {
+//             $dbman->add_field($table, $field);
+//         }
+
+//         // Define field intro to be added to evapares.
+//         $table = new xmldb_table('evapares');
+//         $field = new xmldb_field('intro', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, 'name');
+
+//         // Add field intro.
+//         if (!$dbman->field_exists($table, $field)) {
+//             $dbman->add_field($table, $field);
+//         }
+
+//         // Define field introformat to be added to evapares.
+//         $table = new xmldb_table('evapares');
+//         $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0',
+//             'intro');
+
+//         // Add field introformat.
+//         if (!$dbman->field_exists($table, $field)) {
+//             $dbman->add_field($table, $field);
+//         }
+
+//         // Once we reach this point, we can store the new version and consider the module
+//         // ... upgraded to the version 2007040100 so the next time this block is skipped.
+//         upgrade_mod_savepoint(true, 2007040100, 'evapares');
+//     }
+
+//     // Second example, some hours later, the same day 2007/04/01
+//     // ... two more fields and one index were added to install.xml (note the micro increment
+//     // ... "01" in the last two digits of the version).
+//     if ($oldversion < 2007040101) {
+
+//         // Define field timecreated to be added to evapares.
+//         $table = new xmldb_table('evapares');
+//         $field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0',
+//             'introformat');
+
+//         // Add field timecreated.
+//         if (!$dbman->field_exists($table, $field)) {
+//             $dbman->add_field($table, $field);
+//         }
+
+//         // Define field timemodified to be added to evapares.
+//         $table = new xmldb_table('evapares');
+//         $field = new xmldb_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0',
+//             'timecreated');
+
+//         // Add field timemodified.
+//         if (!$dbman->field_exists($table, $field)) {
+//             $dbman->add_field($table, $field);
+//         }
+
+//         // Define index course (not unique) to be added to evapares.
+//         $table = new xmldb_table('evapares');
+//         $index = new xmldb_index('courseindex', XMLDB_INDEX_NOTUNIQUE, array('course'));
+
+//         // Add index to course field.
+//         if (!$dbman->index_exists($table, $index)) {
+//             $dbman->add_index($table, $index);
+//         }
+
+//         // Another save point reached.
+//         upgrade_mod_savepoint(true, 2007040101, 'evapares');
+//     }
+
+//     // Third example, the next day, 2007/04/02 (with the trailing 00),
+//     // some actions were performed to install.php related with the module.
+//     if ($oldversion < 2007040200) {
+
+//         // Insert code here to perform some actions (same as in install.php).
+
+//         upgrade_mod_savepoint(true, 2007040200, 'evapares');
+//     }
+
+//     /*
+//      * And that's all. Please, examine and understand the 3 example blocks above. Also
+//      * it's interesting to look how other modules are using this script. Remember that
+//      * the basic idea is to have "blocks" of code (each one being executed only once,
+//      * when the module version (version.php) is updated.
+//      *
+//      * Lines above (this included) MUST BE DELETED once you get the first version of
+//      * yout module working. Each time you need to modify something in the module (DB
+//      * related, you'll raise the version and add one upgrade block here.
+//      *
+//      * Finally, return of upgrade result (true, all went good) to Moodle.
+//      */
+    
+  if ($oldversion < 2015122900) {
+
+        // Define table evapares to be created.
         $table = new xmldb_table('evapares');
-        $field = new xmldb_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'id');
 
-        // Add field course.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
+        // Adding fields to table evapares.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('ev_name', XMLDB_TYPE_CHAR, '32', null, XMLDB_NOTNULL, null, 'Evaluación de Pares');
+        $table->add_field('ssc', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('total_iterations', XMLDB_TYPE_INTEGER, '2', null, null, null, '0');
+        $table->add_field('course_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table evapares.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        // Conditionally launch create table for evapares.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
         }
 
-        // Define field intro to be added to evapares.
-        $table = new xmldb_table('evapares');
-        $field = new xmldb_field('intro', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, 'name');
-
-        // Add field intro.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Define field introformat to be added to evapares.
-        $table = new xmldb_table('evapares');
-        $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0',
-            'intro');
-
-        // Add field introformat.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Once we reach this point, we can store the new version and consider the module
-        // ... upgraded to the version 2007040100 so the next time this block is skipped.
-        upgrade_mod_savepoint(true, 2007040100, 'evapares');
-    }
-
-    // Second example, some hours later, the same day 2007/04/01
-    // ... two more fields and one index were added to install.xml (note the micro increment
-    // ... "01" in the last two digits of the version).
-    if ($oldversion < 2007040101) {
-
-        // Define field timecreated to be added to evapares.
-        $table = new xmldb_table('evapares');
-        $field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0',
-            'introformat');
-
-        // Add field timecreated.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Define field timemodified to be added to evapares.
-        $table = new xmldb_table('evapares');
-        $field = new xmldb_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0',
-            'timecreated');
-
-        // Add field timemodified.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Define index course (not unique) to be added to evapares.
-        $table = new xmldb_table('evapares');
-        $index = new xmldb_index('courseindex', XMLDB_INDEX_NOTUNIQUE, array('course'));
-
-        // Add index to course field.
-        if (!$dbman->index_exists($table, $index)) {
-            $dbman->add_index($table, $index);
-        }
-
-        // Another save point reached.
-        upgrade_mod_savepoint(true, 2007040101, 'evapares');
-    }
-
-    // Third example, the next day, 2007/04/02 (with the trailing 00),
-    // some actions were performed to install.php related with the module.
-    if ($oldversion < 2007040200) {
-
-        // Insert code here to perform some actions (same as in install.php).
-
-        upgrade_mod_savepoint(true, 2007040200, 'evapares');
-    }
-
-    /*
-     * And that's all. Please, examine and understand the 3 example blocks above. Also
-     * it's interesting to look how other modules are using this script. Remember that
-     * the basic idea is to have "blocks" of code (each one being executed only once,
-     * when the module version (version.php) is updated.
-     *
-     * Lines above (this included) MUST BE DELETED once you get the first version of
-     * yout module working. Each time you need to modify something in the module (DB
-     * related, you'll raise the version and add one upgrade block here.
-     *
-     * Finally, return of upgrade result (true, all went good) to Moodle.
-     */
-    if ($oldversion < 2015122400) {
-    
-    	// Define table evapares to be created.
-    	$table = new xmldb_table('evapares');
-    
-    	// Adding fields to table evapares.
-    	$table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-    	$table->add_field('course', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
-    	$table->add_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
-    	$table->add_field('intro', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
-    	$table->add_field('introformat', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0');
-    	$table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
-    	$table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-    	$table->add_field('grade', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '100');
-    
-    	// Adding keys to table evapares.
-    	$table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-    
-    	// Adding indexes to table evapares.
-    	$table->add_index('course', XMLDB_INDEX_NOTUNIQUE, array('course'));
-    
-    	// Conditionally launch create table for evapares.
-    	if (!$dbman->table_exists($table)) {
-    		$dbman->create_table($table);
-    	}
-    
-    	// Evapares savepoint reached.
-    	upgrade_mod_savepoint(true, 2015122400, 'evapares');
-    }
-    if ($oldversion < 2015122800) {
-    
-    	// Define table mdl_evapares to be created.
-    	$table = new xmldb_table('mdl_evapares');
-    
-    	// Adding fields to table mdl_evapares.
-    	$table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-    	$table->add_field('ev_name', XMLDB_TYPE_CHAR, '32', null, XMLDB_NOTNULL, null, 'Evaluación de Pares');
-    	$table->add_field('ssc', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
-    	$table->add_field('course_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
-    
-    	// Adding keys to table mdl_evapares.
-    	$table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-    
-    	// Conditionally launch create table for mdl_evapares.
-    	if (!$dbman->table_exists($table)) {
-    		$dbman->create_table($table);
-    	}
-    
-    	// Evapares savepoint reached.
-    	upgrade_mod_savepoint(true, 2015122800, 'evapares');
+        // Evapares savepoint reached.
+        upgrade_mod_savepoint(true, 2015122900, 'evapares');
     }
     
-    if ($oldversion < 2015122801) {
+    if ($oldversion < 2015122901) {
     
-    	// Define table mdl_evapares_pares to be created.
-    	$table = new xmldb_table('mdl_evapares_pares');
+    	// Define table evapares_iterations to be created.
+    	$table = new xmldb_table('evapares_iterations');
     
-    	// Adding fields to table mdl_evapares_pares.
-    	$table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-    	$table->add_field('n_iteration', XMLDB_TYPE_INTEGER, '2', null, null, null, null);
-    	$table->add_field('start_date', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
-    	$table->add_field('n_days', XMLDB_TYPE_INTEGER, '2', null, null, null, null);
-    	$table->add_field('answers', XMLDB_TYPE_INTEGER, '1', null, null, null, null);
-    	$table->add_field('evapares_id', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
-    	$table->add_field('alu_evalua_id', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
-    	$table->add_field('alu_evaluado_id', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
-    	$table->add_field('ssc_stop', XMLDB_TYPE_CHAR, '200', null, null, null, null);
-    	$table->add_field('ssc_start', XMLDB_TYPE_CHAR, '200', null, null, null, null);
-    	$table->add_field('ssc_continue', XMLDB_TYPE_CHAR, '200', null, null, null, null);
-    	$table->add_field('set_of_answers', XMLDB_TYPE_CHAR, '31', null, XMLDB_NOTNULL, null, '0');
-    
-    	// Adding keys to table mdl_evapares_pares.
-    	$table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-    
-    	// Conditionally launch create table for mdl_evapares_pares.
-    	if (!$dbman->table_exists($table)) {
-    		$dbman->create_table($table);
-    	}
-    
-    	// Evapares savepoint reached.
-    	upgrade_mod_savepoint(true, 2015122801, 'evapares');
-    }
-    if ($oldversion < 2015122802) {
-    
-    	// Define table mdl_evapares_prs_has_qstns to be created.
-    	$table = new xmldb_table('mdl_evapares_prs_has_qstns');
-    
-    	// Adding fields to table mdl_evapares_prs_has_qstns.
-    	$table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-    	$table->add_field('pares_id', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
-    	$table->add_field('questions_id', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
-    
-    	// Adding keys to table mdl_evapares_prs_has_qstns.
-    	$table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-    
-    	// Conditionally launch create table for mdl_evapares_prs_has_qstns.
-    	if (!$dbman->table_exists($table)) {
-    		$dbman->create_table($table);
-    	}
-    
-    	// Evapares savepoint reached.
-    	upgrade_mod_savepoint(true, 2015122802, 'evapares');
-    }
-    if ($oldversion < 2015122803) {
-    
-    	// Define table mdl_evapares_personal to be created.
-    	$table = new xmldb_table('mdl_evapares_personal');
-    
-    	// Adding fields to table mdl_evapares_personal.
+    	// Adding fields to table evapares_iterations.
     	$table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
     	$table->add_field('n_iteration', XMLDB_TYPE_INTEGER, '2', null, null, null, null);
     	$table->add_field('start_date', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
     	$table->add_field('n_days', XMLDB_TYPE_INTEGER, '2', null, null, null, null);
     	$table->add_field('answers', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
-    	$table->add_field('set_of_answers', XMLDB_TYPE_CHAR, '31', null, XMLDB_NOTNULL, null, '0');
     	$table->add_field('evapares_id', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
-    	$table->add_field('alumn_id', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
     
-    	// Adding keys to table mdl_evapares_personal.
+    	// Adding keys to table evapares_iterations.
     	$table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
     
-    	// Conditionally launch create table for mdl_evapares_personal.
+    	// Conditionally launch create table for evapares_iterations.
     	if (!$dbman->table_exists($table)) {
     		$dbman->create_table($table);
     	}
     
     	// Evapares savepoint reached.
-    	upgrade_mod_savepoint(true, 2015122803, 'evapares');
+    	upgrade_mod_savepoint(true, 2015122901, 'evapares');
     }
-    if ($oldversion < 2015122804) {
     
-    	// Define table mdl_evapares_prsnl_has_qstn to be created.
-    	$table = new xmldb_table('mdl_evapares_prsnl_has_qstn');
+    if ($oldversion < 2015122902) {
     
-    	// Adding fields to table mdl_evapares_prsnl_has_qstn.
+    	// Define table evapares_evaluations to be created.
+    	$table = new xmldb_table('evapares_evaluations');
+    
+    	// Adding fields to table evapares_evaluations.
     	$table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-    	$table->add_field('personal_id', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
-    	$table->add_field('questions_id', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+    	$table->add_field('ssc_stop', XMLDB_TYPE_CHAR, '200', null, null, null, null);
+    	$table->add_field('ssc_start', XMLDB_TYPE_CHAR, '200', null, null, null, null);
+    	$table->add_field('ssc_continue', XMLDB_TYPE_CHAR, '200', null, null, null, null);
+    	$table->add_field('alu_evalua_id', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+    	$table->add_field('alu_evaluado_id', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+    	$table->add_field('iterations_id', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
     
-    	// Adding keys to table mdl_evapares_prsnl_has_qstn.
+    	// Adding keys to table evapares_evaluations.
     	$table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
     
-    	// Conditionally launch create table for mdl_evapares_prsnl_has_qstn.
+    	// Conditionally launch create table for evapares_evaluations.
     	if (!$dbman->table_exists($table)) {
     		$dbman->create_table($table);
     	}
     
     	// Evapares savepoint reached.
-    	upgrade_mod_savepoint(true, 2015122804, 'evapares');
+    	upgrade_mod_savepoint(true, 2015122902, 'evapares');
     }
-    if ($oldversion < 2015122805) {
+    if ($oldversion < 2015122903) {
     
-    	// Define table mdl_evapares_questions to be created.
-    	$table = new xmldb_table('mdl_evapares_questions');
+    	// Define table evapares_questions to be created.
+    	$table = new xmldb_table('evapares_questions');
     
-    	// Adding fields to table mdl_evapares_questions.
+    	// Adding fields to table evapares_questions.
     	$table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
     	$table->add_field('text', XMLDB_TYPE_CHAR, '200', null, null, null, null);
+    	$table->add_field('evapares_id', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
     
-    	// Adding keys to table mdl_evapares_questions.
+    	// Adding keys to table evapares_questions.
     	$table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
     
-    	// Conditionally launch create table for mdl_evapares_questions.
+    	// Conditionally launch create table for evapares_questions.
     	if (!$dbman->table_exists($table)) {
     		$dbman->create_table($table);
     	}
     
     	// Evapares savepoint reached.
-    	upgrade_mod_savepoint(true, 2015122805, 'evapares');
+    	upgrade_mod_savepoint(true, 2015122903, 'evapares');
     }
-    if ($oldversion < 2015122806) {
+    if ($oldversion < 2015122904) {
     
-    	// Define table evapares to be created.
-    	$table = new xmldb_table('evapares');
+    	// Define table evapares_answers to be created.
+    	$table = new xmldb_table('evapares_answers');
     
-    	// Adding fields to table evapares.
+    	// Adding fields to table evapares_answers.
     	$table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-    	$table->add_field('course', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
-    	$table->add_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
-    	$table->add_field('intro', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
-    	$table->add_field('introformat', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0');
-    	$table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
-    	$table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-    	$table->add_field('grade', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '100');
+    	$table->add_field('number', XMLDB_TYPE_INTEGER, '2', null, null, null, null);
+    	$table->add_field('text', XMLDB_TYPE_CHAR, '200', null, null, null, null);
+    	$table->add_field('question_id', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
     
-    	// Adding keys to table evapares.
+    	// Adding keys to table evapares_answers.
     	$table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
     
-    	// Adding indexes to table evapares.
-    	$table->add_index('course', XMLDB_INDEX_NOTUNIQUE, array('course'));
-    
-    	// Conditionally launch create table for evapares.
+    	// Conditionally launch create table for evapares_answers.
     	if (!$dbman->table_exists($table)) {
     		$dbman->create_table($table);
     	}
     
     	// Evapares savepoint reached.
-    	upgrade_mod_savepoint(true, 2015122806, 'evapares');
+    	upgrade_mod_savepoint(true, 2015122904, 'evapares');
     }
+    if ($oldversion < 2015122905) {
+    
+    	// Define table evapares_evlalutons_has_answ to be created.
+    	$table = new xmldb_table('evapares_evlalutons_has_answ');
+    
+    	// Adding fields to table evapares_evlalutons_has_answ.
+    	$table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+    	$table->add_field('evaluations_id', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+    	$table->add_field('answers_id', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+    
+    	// Adding keys to table evapares_evlalutons_has_answ.
+    	$table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+    
+    	// Conditionally launch create table for evapares_evlalutons_has_answ.
+    	if (!$dbman->table_exists($table)) {
+    		$dbman->create_table($table);
+    	}
+    
+    	// Evapares savepoint reached.
+    	upgrade_mod_savepoint(true, 2015122905, 'evapares');
+    }
+    
     
     
     return true;
