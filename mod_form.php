@@ -42,45 +42,48 @@ class mod_evapares_mod_form extends moodleform_mod {
      * Defines forms elements
      */
     public function definition() {
-        global $CFG;
-
+        global $CFG, $PAGE, $COURSE;
+		$PAGE->requires->jquery();
         $mform = $this->_form;
 
         // Adding the "general" fieldset, where all the common settings are showed.
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
         // Adding the standard "name" field.
-        $mform->addElement('text', 'name', get_string('evaparesname', 'evapares'), array('size' => '64'));
-        if (!empty($CFG->formatstringstriptags)) {
-            $mform->setType('name', PARAM_TEXT);
-        } else {
-            $mform->setType('name', PARAM_CLEANHTML);
-        }
-        $mform->addRule('name', null, 'required', null, 'client');
-        $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
-        $mform->addHelpButton('name', 'evaparesname', 'evapares');
+        $mform->addElement('text', 'ev_name', 'Nombre', array('size' => '64'));
+        
+            $mform->setType('ev_name', PARAM_TEXT);
+        
+        $mform->addRule('ev_name', null, 'required', null, 'client');
+        $mform->addRule('ev_name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
+        $mform->addHelpButton('ev_name', 'evaparesname', 'evapares');//lang
 
         // Adding the standard "intro" and "introformat" fields.
-        if ($CFG->branch >= 29) {
-            $this->standard_intro_elements();
-        } else {
-            $this->add_intro_editor();
-        }
+        
+//      if($CFG->version > 2014111008) {
+//             $this->standard_intro_elements('hola');
+//         } else {
+//             $this->add_intro_editor();
+//         }
+      
+   $opciones = array(0,1,2,3,4,5,6,7,8,9,10);
 
-        // Adding the rest of evapares settings, spreading all them into this fieldset
-        // ... or adding more fieldsets ('header' elements) if needed for better logic.
-        $mform->addElement('static', 'label1', 'evaparessetting1', 'Your evapares fields go here. Replace me!');
+        $mform->addElement('checkbox', 'ssc','Agregar SSC');
+        
+        $mform->addElement('select', 'total_iterations','Cantidad de Entregas Parciales (Sin incluir entrega inicial y final)', $opciones);
+       
+        $mform->addElement('hidden', 'course_id',$COURSE->id);
+        $mform->setType('course_id', PARAM_INT);
+        
 
-        $mform->addElement('header', 'evaparesfieldset', get_string('evaparesfieldset', 'evapares'));
-        $mform->addElement('static', 'label2', 'evaparessetting2', 'Your evapares fields go here. Replace me!');
-
-        // Add standard grading elements.
-        $this->standard_grading_coursemodule_elements();
+                
 
         // Add standard elements, common to all modules.
         $this->standard_coursemodule_elements();
+
 
         // Add standard buttons, common to all modules.
         $this->add_action_buttons();
     }
 }
+

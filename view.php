@@ -25,59 +25,44 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// Replace evapares with the name of your module and remove this line.
-
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
 
-$id = optional_param('id', 0, PARAM_INT); // Course_module ID, or
-$n  = optional_param('n', 0, PARAM_INT);  // ... evapares instance ID - it should be named as the first character of the module.
+//require_once($CFG->dirroot.'/course/moodleform_mod.php');
+//require_once($CFG->dirroot.'/mod/certificate/lib.php');
 
-if ($id) {
-    $cm         = get_coursemodule_from_id('evapares', $id, 0, false, MUST_EXIST);
-    $course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-    $evapares  = $DB->get_record('evapares', array('id' => $cm->instance), '*', MUST_EXIST);
-} else if ($n) {
-    $evapares  = $DB->get_record('evapares', array('id' => $n), '*', MUST_EXIST);
-    $course     = $DB->get_record('course', array('id' => $evapares->course), '*', MUST_EXIST);
-    $cm         = get_coursemodule_from_instance('evapares', $evapares->id, $course->id, false, MUST_EXIST);
-} else {
-    error('You must specify a course_module ID or an instance ID');
-}
+global $CFG, $DB, $OUTPUT; 
 
-require_login($course, true, $cm);
+$cmid = required_param('id', PARAM_INT); 
 
-$event = \mod_evapares\event\course_module_viewed::create(array(
-    'objectid' => $PAGE->cm->instance,
-    'context' => $PAGE->context,
-));
-$event->add_record_snapshot('course', $PAGE->course);
-$event->add_record_snapshot($PAGE->cm->modname, $evapares);
-$event->trigger();
+$cm         = get_coursemodule_from_id('evapares', $cmid);
+$course     = $DB->get_record('course', array('id' => $cm->course));
+$evapares  = $DB->get_record('evapares', array('id' => $cm->instance));
+//comprobar con if
+
+$context = context_module::instance($cm->id);
+
+require_login();
 
 // Print the page header.
-
+if(!has_capability('mod/evapares:courseevaluations', $context))
+{	
+	print_error("no tiene la capacidad de estar en  esta página");
+}
 $PAGE->set_url('/mod/evapares/view.php', array('id' => $cm->id));
+$PAGE->set_context($context);
+$PAGE->set_course($course);
+$PAGE->set_pagelayout("incourse");
+$PAGE->set_cm($cm);
 $PAGE->set_title(format_string($evapares->name));
 $PAGE->set_heading(format_string($course->fullname));
 
-/*
- * Other things you may want to set - remove if not needed.
- * $PAGE->set_cacheable(false);
- * $PAGE->set_focuscontrol('some-html-id');
- * $PAGE->add_body_class('evapares-'.$somevar);
- */
+//$mform=new form();
 
-// Output starts here.
 echo $OUTPUT->header();
 
-// Conditions to show the intro can change to look for own settings or whatever.
-if ($evapares->intro) {
-    echo $OUTPUT->box(format_module_intro('evapares', $evapares, $cm->id), 'generalbox mod_introbox', 'evaparesintro');
-}
 
-// Replace the following lines with you own code.
-echo $OUTPUT->heading('Yay! It works!');
 
-// Finish the page.
+
+
 echo $OUTPUT->footer();

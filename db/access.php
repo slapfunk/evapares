@@ -59,17 +59,29 @@ $capabilities = array(
         'clonepermissionsfrom' => 'moodle/course:manageactivities'
     ),
 
-    'mod/evapares:view' => array(
-        'captype' => 'read',
+    'mod/evapares:myevaluations' => array(//updated on 2015123000
+    	'riskbitmask' => RISK_XSS,
+        'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
-            'guest' => CAP_ALLOW,
+            'guest' => CAP_PROHIBIT,
             'student' => CAP_ALLOW,
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
+            'teacher' => CAP_PROHIBIT,
+            'editingteacher' => CAP_PROHIBIT,
+            'manager' => CAP_PROHIBIT
         )
     ),
+	'mod/evapares:courseevaluations' => array(
+			'captype' => 'read',
+			'contextlevel' => CONTEXT_MODULE,
+			'legacy' => array(
+					'guest' => CAP_PROHIBIT,
+					'student' => CAP_PROHIBIT,
+					'teacher' => CAP_ALLOW,
+					'editingteacher' => CAP_ALLOW,
+					'manager' => CAP_ALLOW
+			)
+	),
 
     'mod/evapares:submit' => array(
         'riskbitmask' => RISK_SPAM,

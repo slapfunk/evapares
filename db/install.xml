@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/evapares/db" VERSION="20151229" COMMENT="XMLDB file for Moodle mod/evapares"
+<XMLDB PATH="mod/evapares/db" VERSION="20160106" COMMENT="XMLDB file for Moodle mod/evapares"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -7,10 +7,9 @@
     <TABLE NAME="evapares" COMMENT="each evapares activity instance will have a row here. the important thing is that the SSC will be 0 if the teacher dont want to have SSC on this evapares, or 1 if he want it.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="ev_name" TYPE="char" LENGTH="32" NOTNULL="true" DEFAULT="Evaluación de Pares" SEQUENCE="false" COMMENT="this column have tha name of every evaluation and its given by the teacher"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="32" NOTNULL="true" DEFAULT="Evaluación de Pares" SEQUENCE="false" COMMENT="this column have tha name of every evaluation and its given by the teacher"/>
         <FIELD NAME="ssc" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="This is 0 if the teacher dont want an SSC testing, and 1 if he wants it"/>
         <FIELD NAME="total_iterations" TYPE="int" LENGTH="2" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="total of iterations specified by the teacher"/>
-        <FIELD NAME="course_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="fk pointiing to the course in wich the evapares was created"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -19,9 +18,11 @@
     <TABLE NAME="evapares_evaluations" COMMENT="this table conains the dta for the evaluations">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="evaluation_name" TYPE="char" LENGTH="30" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="ssc_stop" TYPE="char" LENGTH="200" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="ssc_start" TYPE="char" LENGTH="200" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="ssc_continue" TYPE="char" LENGTH="200" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="answers" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="alu_evalua_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="the alumn that answers this evaluation (fk)"/>
         <FIELD NAME="alu_evaluado_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="the id of the alumn that is been evaluated"/>
         <FIELD NAME="iterations_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
@@ -36,7 +37,6 @@
         <FIELD NAME="n_iteration" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" COMMENT="the number of the iteration, the first one starts with 0"/>
         <FIELD NAME="start_date" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="unix format"/>
         <FIELD NAME="n_days" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" COMMENT="number ofdays that it will be avialable"/>
-        <FIELD NAME="answers" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="boolean 0-1 0 dont answer yet 1 it has been answered"/>
         <FIELD NAME="evapares_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="fk to the mdl_evapares table"/>
       </FIELDS>
       <KEYS>
@@ -47,6 +47,7 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="text" TYPE="char" LENGTH="200" NOTNULL="false" SEQUENCE="false" COMMENT="text of the question"/>
+        <FIELD NAME="n_of_question" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" COMMENT="the numer of the question"/>
         <FIELD NAME="evapares_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>

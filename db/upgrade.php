@@ -165,15 +165,14 @@ function xmldb_evapares_upgrade($oldversion) {
     
   if ($oldversion < 2015122900) {
 
-        // Define table evapares to be created.
+           // Define table evapares to be created.
         $table = new xmldb_table('evapares');
 
         // Adding fields to table evapares.
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('ev_name', XMLDB_TYPE_CHAR, '32', null, XMLDB_NOTNULL, null, 'Evaluación de Pares');
+        $table->add_field('name', XMLDB_TYPE_CHAR, '32', null, XMLDB_NOTNULL, null, 'Evaluación de Pares');
         $table->add_field('ssc', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
         $table->add_field('total_iterations', XMLDB_TYPE_INTEGER, '2', null, null, null, '0');
-        $table->add_field('course_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
 
         // Adding keys to table evapares.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -187,77 +186,82 @@ function xmldb_evapares_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2015122900, 'evapares');
     }
     
-    if ($oldversion < 2015122901) {
-    
-    	// Define table evapares_iterations to be created.
-    	$table = new xmldb_table('evapares_iterations');
-    
-    	// Adding fields to table evapares_iterations.
-    	$table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-    	$table->add_field('n_iteration', XMLDB_TYPE_INTEGER, '2', null, null, null, null);
-    	$table->add_field('start_date', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
-    	$table->add_field('n_days', XMLDB_TYPE_INTEGER, '2', null, null, null, null);
-    	$table->add_field('answers', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
-    	$table->add_field('evapares_id', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
-    
-    	// Adding keys to table evapares_iterations.
-    	$table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-    
-    	// Conditionally launch create table for evapares_iterations.
-    	if (!$dbman->table_exists($table)) {
-    		$dbman->create_table($table);
-    	}
-    
-    	// Evapares savepoint reached.
-    	upgrade_mod_savepoint(true, 2015122901, 'evapares');
+   if ($oldversion < 2015122901) {
+
+        // Define table evapares_iterations to be created.
+        $table = new xmldb_table('evapares_iterations');
+
+        // Adding fields to table evapares_iterations.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('n_iteration', XMLDB_TYPE_INTEGER, '2', null, null, null, null);
+        $table->add_field('start_date', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('n_days', XMLDB_TYPE_INTEGER, '2', null, null, null, null);
+        $table->add_field('evapares_id', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+
+        // Adding keys to table evapares_iterations.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        // Conditionally launch create table for evapares_iterations.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Evapares savepoint reached.
+        upgrade_mod_savepoint(true, 2015122901, 'evapares');
     }
     
-    if ($oldversion < 2015122902) {
     
-    	// Define table evapares_evaluations to be created.
-    	$table = new xmldb_table('evapares_evaluations');
-    
-    	// Adding fields to table evapares_evaluations.
-    	$table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-    	$table->add_field('ssc_stop', XMLDB_TYPE_CHAR, '200', null, null, null, null);
-    	$table->add_field('ssc_start', XMLDB_TYPE_CHAR, '200', null, null, null, null);
-    	$table->add_field('ssc_continue', XMLDB_TYPE_CHAR, '200', null, null, null, null);
-    	$table->add_field('alu_evalua_id', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
-    	$table->add_field('alu_evaluado_id', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
-    	$table->add_field('iterations_id', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
-    
-    	// Adding keys to table evapares_evaluations.
-    	$table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-    
-    	// Conditionally launch create table for evapares_evaluations.
-    	if (!$dbman->table_exists($table)) {
-    		$dbman->create_table($table);
-    	}
-    
-    	// Evapares savepoint reached.
-    	upgrade_mod_savepoint(true, 2015122902, 'evapares');
+  if ($oldversion < 2015122902) {
+
+          // Define table evapares_evaluations to be created.
+        $table = new xmldb_table('evapares_evaluations');
+
+        // Adding fields to table evapares_evaluations.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('evaluation_name', XMLDB_TYPE_CHAR, '30', null, null, null, null);
+        $table->add_field('ssc_stop', XMLDB_TYPE_CHAR, '200', null, null, null, null);
+        $table->add_field('ssc_start', XMLDB_TYPE_CHAR, '200', null, null, null, null);
+        $table->add_field('ssc_continue', XMLDB_TYPE_CHAR, '200', null, null, null, null);
+        $table->add_field('answers', XMLDB_TYPE_INTEGER, '1', null, null, null, '0');
+        $table->add_field('alu_evalua_id', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('alu_evaluado_id', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('iterations_id', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+
+        // Adding keys to table evapares_evaluations.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        // Conditionally launch create table for evapares_evaluations.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Evapares savepoint reached.
+        upgrade_mod_savepoint(true, 2015122902, 'evapares');
     }
-    if ($oldversion < 2015122903) {
     
-    	// Define table evapares_questions to be created.
-    	$table = new xmldb_table('evapares_questions');
-    
-    	// Adding fields to table evapares_questions.
-    	$table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-    	$table->add_field('text', XMLDB_TYPE_CHAR, '200', null, null, null, null);
-    	$table->add_field('evapares_id', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
-    
-    	// Adding keys to table evapares_questions.
-    	$table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-    
-    	// Conditionally launch create table for evapares_questions.
-    	if (!$dbman->table_exists($table)) {
-    		$dbman->create_table($table);
-    	}
-    
-    	// Evapares savepoint reached.
-    	upgrade_mod_savepoint(true, 2015122903, 'evapares');
+  if ($oldversion < 2015122903) {
+
+        // Define table evapares_questions to be created.
+        $table = new xmldb_table('evapares_questions');
+
+        // Adding fields to table evapares_questions.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('text', XMLDB_TYPE_CHAR, '200', null, null, null, null);
+        $table->add_field('n_of_question', XMLDB_TYPE_INTEGER, '2', null, null, null, null);
+        $table->add_field('evapares_id', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+
+        // Adding keys to table evapares_questions.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        // Conditionally launch create table for evapares_questions.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Evapares savepoint reached.
+        upgrade_mod_savepoint(true, 2015122903, 'evapares');
     }
+    
     if ($oldversion < 2015122904) {
     
     	// Define table evapares_answers to be created.
