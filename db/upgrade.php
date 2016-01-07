@@ -165,7 +165,7 @@ function xmldb_evapares_upgrade($oldversion) {
     
   if ($oldversion < 2015122900) {
 
-           // Define table evapares to be created.
+              // Define table evapares to be created.
         $table = new xmldb_table('evapares');
 
         // Adding fields to table evapares.
@@ -173,6 +173,8 @@ function xmldb_evapares_upgrade($oldversion) {
         $table->add_field('name', XMLDB_TYPE_CHAR, '32', null, XMLDB_NOTNULL, null, 'Evaluación de Pares');
         $table->add_field('ssc', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
         $table->add_field('total_iterations', XMLDB_TYPE_INTEGER, '2', null, null, null, '0');
+        $table->add_field('n_preguntas', XMLDB_TYPE_INTEGER, '2', null, null, null, null);
+        $table->add_field('n_respuestas', XMLDB_TYPE_INTEGER, '2', null, null, null, null);
 
         // Adding keys to table evapares.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
