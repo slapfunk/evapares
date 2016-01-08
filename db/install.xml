@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/evapares/db" VERSION="20160107" COMMENT="XMLDB file for Moodle mod/evapares"
+<XMLDB PATH="mod/evapares/db" VERSION="20160108" COMMENT="XMLDB file for Moodle mod/evapares"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -10,8 +10,7 @@
         <FIELD NAME="name" TYPE="char" LENGTH="32" NOTNULL="true" DEFAULT="Evaluación de Pares" SEQUENCE="false" COMMENT="this column have tha name of every evaluation and its given by the teacher"/>
         <FIELD NAME="ssc" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="This is 0 if the teacher dont want an SSC testing, and 1 if he wants it"/>
         <FIELD NAME="total_iterations" TYPE="int" LENGTH="2" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="total of iterations specified by the teacher"/>
-        <FIELD NAME="n_preguntas" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" COMMENT="Numero de preguntas que tendran las evaluaciones y coevaluaciones"/>
-        <FIELD NAME="n_respuestas" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" COMMENT="numero de respuestas que tendra cada pregunta de las evaluaciones y coevaluaciones"/>
+        <FIELD NAME="n_days" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -31,6 +30,7 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="evalitera" TYPE="foreign" FIELDS="iterations_id" REFTABLE="evapares_iterations" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="evapares_iterations" COMMENT="this have the info for eery iteration">
@@ -38,11 +38,11 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="n_iteration" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" COMMENT="the number of the iteration, the first one starts with 0"/>
         <FIELD NAME="start_date" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="unix format"/>
-        <FIELD NAME="n_days" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" COMMENT="number ofdays that it will be avialable"/>
         <FIELD NAME="evapares_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="fk to the mdl_evapares table"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="iterevas" TYPE="foreign" FIELDS="evapares_id" REFTABLE="evapares" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="evapares_questions" COMMENT="this is the table that have the text of the questions made">
@@ -54,6 +54,7 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="quevap" TYPE="foreign" FIELDS="evapares_id" REFTABLE="evapares" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="evapares_answers" COMMENT="theanswersfor the questions">
@@ -65,6 +66,7 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="answestion" TYPE="foreign" FIELDS="question_id" REFTABLE="evapares_questions" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="evapares_evlalutons_has_answ" COMMENT="n-n that assigns answers to the evaluations">
@@ -75,6 +77,8 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="nneval" TYPE="foreign" FIELDS="evaluations_id" REFTABLE="evapares_evaluations" REFFIELDS="id"/>
+        <KEY NAME="nnans" TYPE="foreign" FIELDS="answers_id" REFTABLE="evapares_answers" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
   </TABLES>

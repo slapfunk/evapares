@@ -83,7 +83,7 @@ function evapares_add_instance(stdClass $evapares, mod_evapares_mod_form $mform 
 
     $evapares->id = $DB->insert_record('evapares', $evapares);
 
-    evapares_grade_item_update($evapares);
+//     evapares_grade_item_update($evapares);
 
     return $evapares->id;
 }
@@ -109,7 +109,7 @@ function evapares_update_instance(stdClass $evapares, mod_evapares_mod_form $mfo
 
     $result = $DB->update_record('evapares', $evapares);
 
-    evapares_grade_item_update($evapares);
+//     evapares_grade_item_update($evapares);
 
     return $result;
 }
@@ -135,7 +135,7 @@ function evapares_delete_instance($id) {
 
     $DB->delete_records('evapares', array('id' => $evapares->id));
 
-    evapares_grade_item_delete($evapares);
+//     evapares_grade_item_delete($evapares);
 
     return true;
 }
@@ -296,32 +296,32 @@ function evapares_scale_used_anywhere($scaleid) {
  * @param bool $reset reset grades in the gradebook
  * @return void
  */
-function evapares_grade_item_update(stdClass $evapares, $reset=false) {
-    global $CFG;
-    require_once($CFG->libdir.'/gradelib.php');
+// function evapares_grade_item_update(stdClass $evapares, $reset=false) {
+//     global $CFG;
+//     require_once($CFG->libdir.'/gradelib.php');
 
-    $item = array();
-    $item['itemname'] = clean_param($evapares->name, PARAM_NOTAGS);
-    $item['gradetype'] = GRADE_TYPE_VALUE;
+//     $item = array();
+//     $item['itemname'] = clean_param($evapares->name, PARAM_NOTAGS);
+//     $item['gradetype'] = GRADE_TYPE_VALUE;
 
-    if ($evapares->grade > 0) {
-        $item['gradetype'] = GRADE_TYPE_VALUE;
-        $item['grademax']  = $evapares->grade;
-        $item['grademin']  = 0;
-    } else if ($evapares->grade < 0) {
-        $item['gradetype'] = GRADE_TYPE_SCALE;
-        $item['scaleid']   = -$evapares->grade;
-    } else {
-        $item['gradetype'] = GRADE_TYPE_NONE;
-    }
+//     if ($evapares->grade > 0) {
+//         $item['gradetype'] = GRADE_TYPE_VALUE;
+//         $item['grademax']  = $evapares->grade;
+//         $item['grademin']  = 0;
+//     } else if ($evapares->grade < 0) {
+//         $item['gradetype'] = GRADE_TYPE_SCALE;
+//         $item['scaleid']   = -$evapares->grade;
+//     } else {
+//         $item['gradetype'] = GRADE_TYPE_NONE;
+//     }
 
-    if ($reset) {
-        $item['reset'] = true;
-    }
+//     if ($reset) {
+//         $item['reset'] = true;
+//     }
 
-    grade_update('mod/evapares', $evapares->course, 'mod', 'evapares',
-            $evapares->id, 0, null, $item);
-}
+//     grade_update('mod/evapares', $evapares->course, 'mod', 'evapares',
+//             $evapares->id, 0, null, $item);
+// }
 
 /**
  * Delete grade item for given evapares instance
@@ -329,13 +329,13 @@ function evapares_grade_item_update(stdClass $evapares, $reset=false) {
  * @param stdClass $evapares instance object
  * @return grade_item
  */
-function evapares_grade_item_delete($evapares) {
-    global $CFG;
-    require_once($CFG->libdir.'/gradelib.php');
+// function evapares_grade_item_delete($evapares) {
+//     global $CFG;
+//     require_once($CFG->libdir.'/gradelib.php');
 
-    return grade_update('mod/evapares', $evapares->course, 'mod', 'evapares',
-            $evapares->id, 0, null, array('deleted' => 1));
-}
+//     return grade_update('mod/evapares', $evapares->course, 'mod', 'evapares',
+//             $evapares->id, 0, null, array('deleted' => 1));
+// }
 
 /**
  * Update evapares grades in the gradebook
@@ -345,15 +345,15 @@ function evapares_grade_item_delete($evapares) {
  * @param stdClass $evapares instance object with extra cmidnumber and modname property
  * @param int $userid update grade of specific user only, 0 means all participants
  */
-function evapares_update_grades(stdClass $evapares, $userid = 0) {
-    global $CFG, $DB;
-    require_once($CFG->libdir.'/gradelib.php');
+// function evapares_update_grades(stdClass $evapares, $userid = 0) {
+//     global $CFG, $DB;
+//     require_once($CFG->libdir.'/gradelib.php');
 
-    // Populate array of grade objects indexed by userid.
-    $grades = array();
+//     // Populate array of grade objects indexed by userid.
+//     $grades = array();
 
-    grade_update('mod/evapares', $evapares->course, 'mod', 'evapares', $evapares->id, 0, $grades);
-}
+//     grade_update('mod/evapares', $evapares->course, 'mod', 'evapares', $evapares->id, 0, $grades);
+// }
 
 /* File API */
 

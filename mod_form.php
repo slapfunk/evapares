@@ -42,21 +42,20 @@ class mod_evapares_mod_form extends moodleform_mod {
      * Defines forms elements
      */
     public function definition() {
-        global $CFG, $PAGE, $COURSE;
-		$PAGE->requires->jquery();
+        global $CFG, $COURSE;
         $mform = $this->_form;
 
         // Adding the "general" fieldset, where all the common settings are showed.
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
         // Adding the standard "name" field.
-        $mform->addElement('text', 'ev_name', 'Nombre', array('size' => '64'));
+        $mform->addElement('text', 'name', 'Nombre', array('size' => '64'));
         
-            $mform->setType('ev_name', PARAM_TEXT);
+            $mform->setType('name', PARAM_TEXT);
         
-        $mform->addRule('ev_name', null, 'required', null, 'client');
-        $mform->addRule('ev_name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
-        $mform->addHelpButton('ev_name', 'evaparesname', 'evapares');//lang
+        $mform->addRule('name', null, 'required', null, 'client');
+        $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
+        $mform->addHelpButton('name', 'evaparesname', 'evapares');//lang
 
         // Adding the standard "intro" and "introformat" fields.
         

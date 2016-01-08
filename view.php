@@ -27,9 +27,8 @@
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
-
-//require_once($CFG->dirroot.'/course/moodleform_mod.php');
-//require_once($CFG->dirroot.'/mod/certificate/lib.php');
+require_once($CFG->dirroot.'/course/moodleform_mod.php');
+require_once('/forms/forms_v.php');
 
 global $CFG, $DB, $OUTPUT; 
 
@@ -57,12 +56,14 @@ $PAGE->set_cm($cm);
 $PAGE->set_title(format_string($evapares->name));
 $PAGE->set_heading(format_string($course->fullname));
 
-//$mform=new form();
 
 echo $OUTPUT->header();
 
+$mform=new evapares_num_eval_form(null, array("evapares"=>$evapares));
+$mform->display();
 
-
+$mform=new evapares_detalle_preguntas;
+$mform->display();
 
 
 echo $OUTPUT->footer();
