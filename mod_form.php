@@ -66,10 +66,19 @@ class mod_evapares_mod_form extends moodleform_mod {
 //         }
       
    $opciones = array(0,1,2,3,4,5,6,7,8,9,10);
+   $opreg = array(0,1,2,3,4,5);
+   $oresp = array(0,1,2,3,4,5);
+   $dias = array(0,1,2,3);
 
         $mform->addElement('checkbox', 'ssc','Agregar SSC');
         
         $mform->addElement('select', 'total_iterations','Cantidad de Entregas Parciales (Sin incluir entrega inicial y final)', $opciones);
+        
+        $mform->addElement('select', 'n_preguntas','Cantidad de Preguntas que se Responderan en las Evaluaciones', $opreg);
+        
+        $mform->addElement('select', 'n_respuestas','Cantidad de Respuestas a Seleccionar en Cada Pregunta', $oresp);
+        
+        $mform->addElement('select', 'n_days','Cantidad de Tiempo Para realizar a evaluacion (En Dias)', $dias);
        
         $mform->addElement('hidden', 'course_id',$COURSE->id);
         $mform->setType('course_id', PARAM_INT);
