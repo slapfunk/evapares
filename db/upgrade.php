@@ -174,6 +174,8 @@ function xmldb_evapares_upgrade($oldversion) {
         $table->add_field('ssc', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
         $table->add_field('total_iterations', XMLDB_TYPE_INTEGER, '2', null, null, null, '0');
         $table->add_field('n_days', XMLDB_TYPE_INTEGER, '2', null, null, null, null);
+        $table->add_field('n_preguntas', XMLDB_TYPE_INTEGER, '2', null, null, null, null);
+        $table->add_field('n_respuestas', XMLDB_TYPE_INTEGER, '2', null, null, null, null);
 
         // Adding keys to table evapares.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -195,6 +197,7 @@ function xmldb_evapares_upgrade($oldversion) {
 
         // Adding fields to table evapares_iterations.
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('evaluation_name', XMLDB_TYPE_CHAR, '30', null, null, null, null);
         $table->add_field('n_iteration', XMLDB_TYPE_INTEGER, '2', null, null, null, null);
         $table->add_field('start_date', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
         $table->add_field('evapares_id', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
@@ -220,7 +223,6 @@ function xmldb_evapares_upgrade($oldversion) {
 
         // Adding fields to table evapares_evaluations.
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('evaluation_name', XMLDB_TYPE_CHAR, '30', null, null, null, null);
         $table->add_field('ssc_stop', XMLDB_TYPE_CHAR, '200', null, null, null, null);
         $table->add_field('ssc_start', XMLDB_TYPE_CHAR, '200', null, null, null, null);
         $table->add_field('ssc_continue', XMLDB_TYPE_CHAR, '200', null, null, null, null);

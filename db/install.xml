@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/evapares/db" VERSION="20160108" COMMENT="XMLDB file for Moodle mod/evapares"
+<XMLDB PATH="mod/evapares/db" VERSION="20160111" COMMENT="XMLDB file for Moodle mod/evapares"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -11,6 +11,8 @@
         <FIELD NAME="ssc" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="This is 0 if the teacher dont want an SSC testing, and 1 if he wants it"/>
         <FIELD NAME="total_iterations" TYPE="int" LENGTH="2" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="total of iterations specified by the teacher"/>
         <FIELD NAME="n_days" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="n_preguntas" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="n_respuestas" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -19,7 +21,6 @@
     <TABLE NAME="evapares_evaluations" COMMENT="this table conains the dta for the evaluations">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="evaluation_name" TYPE="char" LENGTH="30" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="ssc_stop" TYPE="char" LENGTH="200" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="ssc_start" TYPE="char" LENGTH="200" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="ssc_continue" TYPE="char" LENGTH="200" NOTNULL="false" SEQUENCE="false"/>
@@ -39,6 +40,7 @@
         <FIELD NAME="n_iteration" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" COMMENT="the number of the iteration, the first one starts with 0"/>
         <FIELD NAME="start_date" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="unix format"/>
         <FIELD NAME="evapares_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="fk to the mdl_evapares table"/>
+        <FIELD NAME="evaluation_name" TYPE="char" LENGTH="30" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

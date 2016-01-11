@@ -77,6 +77,9 @@ class evapares_detalle_preguntas extends moodleform {
 		$mform = $this->_form;
 
 		$mform->addElement('header', 'Detalle_Preguntas', 'Detalle de Preguntas y Respuestas');
+		//aki
+		
+		//
 
 		for($j = 1; $j <= 3; $j++){
 				
@@ -91,4 +94,36 @@ class evapares_detalle_preguntas extends moodleform {
 		}
 		}
 
+	}
+	class evapares_evaluaciones_usuario extends moodleform {
+	
+		function definition() {
+	
+			 		global $DB;
+			 		$instance = $this->_customdata;//ver bse
+			 			
+			 		$nei = $instance['evapares']->total_iterations;//$nei sera el numero de entregas intermedias
+			$mform = $this->_form;
+	
+			$mform->addElement('header', 'entrega_inicial', 'Evaluación Inicial');
+		
+			$mform->addElement('html', '<h5><center>Evaluacion Personal</center></h5>');
+			$mform->addElement('html', '<hr>');//aqui va un texto traducible
+			//ev personal
+			for($j = 1; $j <= $nei; $j++){
+				
+				//$ev_j es el valor del nombre de la entrega intermedia j
+				$mform->addElement('header', 'entrega_intermedia_'.$j, $ev_j);
+	
+				$mform->addElement('textarea', 'P'.$j,'Pregunta '.$j, 'wrap="virtual" rows="5" cols="60"');
+				$mform->setType('P'.$j, PARAM_TEXT);
+	
+					
+				for($h = 1; $h <= 3; $h++){
+					$mform->addElement('text', $j.'.'.$h,'Opcion '.$j.'.'.$h);
+					$mform->setType($j.'.'.$h, PARAM_TEXT);
+				}
+			}
+		}
+	
 	}

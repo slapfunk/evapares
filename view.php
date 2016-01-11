@@ -44,26 +44,35 @@ $context = context_module::instance($cm->id);
 require_login();
 
 // Print the page header.
-if(!has_capability('mod/evapares:courseevaluations', $context))
+if(!has_capability('mod/evapares:courseevaluations', $context)&&!has_capability('mod/evapares:myevaluations', $context))
 {	
 	print_error("no tiene la capacidad de estar en  esta página");
 }
-$PAGE->set_url('/mod/evapares/view.php', array('id' => $cm->id));
-$PAGE->set_context($context);
-$PAGE->set_course($course);
-$PAGE->set_pagelayout("incourse");
-$PAGE->set_cm($cm);
-$PAGE->set_title(format_string($evapares->name));
-$PAGE->set_heading(format_string($course->fullname));
-
-
-echo $OUTPUT->header();
-
-$mform=new evapares_num_eval_form(null, array("evapares"=>$evapares));
-$mform->display();
-
-$mform=new evapares_detalle_preguntas;
-$mform->display();
-
-
-echo $OUTPUT->footer();
+else{
+	$PAGE->set_url('/mod/evapares/view.php', array('id' => $cm->id));
+	$PAGE->set_context($context);
+	$PAGE->set_course($course);
+	$PAGE->set_pagelayout("incourse");
+	$PAGE->set_cm($cm);
+	$PAGE->set_title(format_string($evapares->name));
+	$PAGE->set_heading(format_string($course->fullname));
+	
+	
+	echo $OUTPUT->header();
+	if(has_capability('mod/evapares:courseevaluations', $context)){
+		$mform=new evapares_num_eval_form(null, array("evapares"=>$evapares));
+		$mform->display();
+		
+		$mform=new evapares_detalle_preguntas;
+		$mform->display();
+	}
+	else if(has_capability('mod/evapares:myevaluations', $context)){
+		
+	}
+	
+	
+	
+	
+	echo $OUTPUT->footer();
+	
+}
