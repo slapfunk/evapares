@@ -32,7 +32,7 @@ require_once('/forms/forms_v.php');
 
 global $CFG, $DB, $OUTPUT; 
 
-$action = optional_param("action", "add", PARAM_TEXT);
+$action = optional_param("action", "view", PARAM_TEXT);
 $cmid = required_param('id', PARAM_INT); 
 
 if(! $cm = get_coursemodule_from_id('evapares', $cmid))
@@ -48,11 +48,11 @@ $context = context_module::instance($cm->id);
 require_login();
 
 // Print the page header.
-if(!has_capability('mod/evapares:courseevaluations', $context)&&!has_capability('mod/evapares:myevaluations', $context))
+if(!has_capability('mod/evapares:courseevaluations', $context) && !has_capability('mod/evapares:myevaluations', $context))
 {	
-	print_error("no tiene la capacidad de estar en  esta p�gina");
+	print_error("no tiene la capacidad de estar en  esta pagina");
 }
-else{
+
 	$PAGE->set_url('/mod/evapares/view.php', array('id' => $cm->id));
 	$PAGE->set_context($context);
 	$PAGE->set_course($course);
@@ -61,10 +61,10 @@ else{
 	$PAGE->set_title(format_string($evapares->name));
 	$PAGE->set_heading(format_string($course->fullname));
 	
+	if(!$DB->get_records("evapares_iterations", array('evapares_id'=>$cmid)))
+	{$action = "add";}
 	
-	
-	if(has_capability('mod/evapares:courseevaluations', $context)){
-		if( $action == "add" ){
+	if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add"){
 	$addform = new evapares_num_eval_form(null,array('num'=>$evapares->total_iterations,"cmid"=>$cmid));
 
 	$allquestions = array();
@@ -91,32 +91,29 @@ else{
 		
 		 $DB->insert_records("evapares_iterations", $allquestions);
 			$action = "view";
-		
-	}
 
+	}
 }
 
-if( $action == "add"){
+if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add"){
 	echo $OUTPUT->header();
 
 	$addform->display();
 
 }
-if($action == "view"){
+elseif(has_capability('mod/evapares:courseevaluations', $context) && $action == "view"){
 	echo $OUTPUT->header();
-	echo"holi";
+	echo"holi, usted es profe";
+}
+
+elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "view"){
+	echo $OUTPUT->header();
+	echo"holi, usted es alumno";
 }
 echo $OUTPUT->footer();
-	}
-	else if(has_capability('mod/evapares:myevaluations', $context)){
-		
-		$toprow = array();
-		$toprow[] = new tabobject(get_string('sites', 'local_reservasalas'), new moodle_url('/local/reservasalas/sedes.php'), get_string('places', 'local_reservasalas'));
-		$toprow[] = new tabobject(get_string('buildings', 'local_reservasalas'), new moodle_url('/local/reservasalas/edificios.php'), get_string('buildings', 'local_reservasalas'));
-		
-		
-		
-		
-	}
 	
-}
+// 	else if(has_capability('mod/evapares:myevaluations', $context)){		
+		
+// 	}
+	
+

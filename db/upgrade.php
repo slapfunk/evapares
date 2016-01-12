@@ -315,7 +315,20 @@ function xmldb_evapares_upgrade($oldversion) {
     	upgrade_mod_savepoint(true, 2015122905, 'evapares');
     }
     
+    if ($oldversion < 2016011101) {
     
+    	// Define field evaluation_name to be added to evapares_iterations.
+    	$table = new xmldb_table('evapares_iterations');
+    	$field = new xmldb_field('evaluation_name', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null, 'evapares_id');
+    
+    	// Conditionally launch add field evaluation_name.
+    	if (!$dbman->field_exists($table, $field)) {
+    		$dbman->add_field($table, $field);
+    	}
+    
+    	// Evapares savepoint reached.
+    	upgrade_mod_savepoint(true, 2016011101, 'evapares');
+    }
     
     return true;
 }
