@@ -1,18 +1,4 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
-//
-// Moodle is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// Moodle is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * The main evapares configuration form
@@ -65,20 +51,32 @@ class mod_evapares_mod_form extends moodleform_mod {
 //             $this->add_intro_editor();
 //         }
       
-   $opciones = array(0,1,2,3,4,5,6,7,8,9,10);
-   $opreg = array(0,1,2,3,4,5);
-   $oresp = array(0,1,2,3,4,5);
-   $dias = array(0,1,2,3);
+  // We now define the amount of Evaluations, Questions, Answers and time availability options respectively
+        $AmountEval= 10 ; 
+        $AmountQuest = 5 ;
+        $AmountAns = 7 ;
+        $AmountTime = 5 ; 
+        //Here we fill different arrays with all the different options
+	   $evaluations = array();
+	   for ($i=0; $i <$AmountEval ; $i++){ array_push($evaluations,$i+1) ;}
+	   $questions = array();
+	   for ($i=0; $i <$AmountQuest ; $i++){ array_push($questions,$i+1) ;}
+	   $answers = array();
+	   for ($i=0; $i <$AmountAns ; $i++){ array_push($answers,$i+1) ;}
+	   $time = array();
+	   for ($i=0; $i <$AmountTime ; $i++){ array_push($time,$i+1) ;}
+	   
+	   //Add all the fields to be completed
 
-        $mform->addElement('checkbox', 'ssc','Agregar SSC');
+        $mform->addElement('checkbox', 'ssc',get_string('addSSC','mod_evapares'));
         
-        $mform->addElement('select', 'total_iterations','Cantidad de Entregas Parciales (Sin incluir entrega inicial y final)', $opciones);
+        $mform->addElement('select', 'total_iterations',get_string('amountOfEvaluations','mod_evapares'), $evaluations);
         
-        $mform->addElement('select', 'n_preguntas','Cantidad de Preguntas que se Responderan en las Evaluaciones', $opreg);
+        $mform->addElement('select', 'n_preguntas',get_string('amountOfQuestions','mod_evapares'), $questions);
         
-        $mform->addElement('select', 'n_respuestas','Cantidad de Respuestas a Seleccionar en Cada Pregunta', $oresp);
+        $mform->addElement('select', 'n_respuestas',get_string('amountOfAnswers','mod_evapares'), $answers);
         
-        $mform->addElement('select', 'n_days','Cantidad de Tiempo Para realizar a evaluacion (En Dias)', $dias);
+        $mform->addElement('select', 'n_days',get_string('disponibilityTime','mod_evapares'), $time);
        
         $mform->addElement('hidden', 'course_id',$COURSE->id);
         $mform->setType('course_id', PARAM_INT);
