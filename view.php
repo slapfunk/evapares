@@ -32,13 +32,17 @@ require_once('/forms/forms_v.php');
 
 global $CFG, $DB, $OUTPUT; 
 
+$action = optional_param("action", "add", PARAM_TEXT);
 $cmid = required_param('id', PARAM_INT); 
 
-$cm         = get_coursemodule_from_id('evapares', $cmid);
-$course     = $DB->get_record('course', array('id' => $cm->course));
-$evapares  = $DB->get_record('evapares', array('id' => $cm->instance));
-//comprobar con if
+if(! $cm = get_coursemodule_from_id('evapares', $cmid))
+{print_error('cm'." id: $cmid");}
 
+if(! $evapares = $DB->get_record('evapares', array('id' => $cm->instance)))
+{print_error('evapares'." id: $cmid");}
+
+if(! $course = $DB->get_record('course', array('id' => $cm->course)))
+{print_error('course'." id: $cmid");}
 $context = context_module::instance($cm->id);
 
 require_login();
@@ -46,7 +50,7 @@ require_login();
 // Print the page header.
 if(!has_capability('mod/evapares:courseevaluations', $context)&&!has_capability('mod/evapares:myevaluations', $context))
 {	
-	print_error("no tiene la capacidad de estar en  esta página");
+	print_error("no tiene la capacidad de estar en  esta pï¿½gina");
 }
 else{
 	$PAGE->set_url('/mod/evapares/view.php', array('id' => $cm->id));
@@ -58,21 +62,61 @@ else{
 	$PAGE->set_heading(format_string($course->fullname));
 	
 	
-	echo $OUTPUT->header();
+	
 	if(has_capability('mod/evapares:courseevaluations', $context)){
-		$mform=new evapares_num_eval_form(null, array("evapares"=>$evapares));
-		$mform->display();
+		if( $action == "add" ){
+	$addform = new evapares_num_eval_form(null,array('num'=>$evapares->total_iterations,"cmid"=>$cmid));
+
+	$allquestions = array();
+	
+	if( $addform->is_cancelled() ){
+		$backtocourse = new moodle_url("couse/view.php",array('id'=>$course->id));
+		redirect($backtocourse);
 		
-		$mform=new evapares_detalle_preguntas;
-		$mform->display();
+	}else if($datas = $addform->get_data()){
+		
+		for($i = 0; $i <= $evapares->total_iterations + 1; $i++ ){
+			$idfe = "FE$i";
+			$idne = "NE$i";
+			
+			$record = new stdClass();
+			
+			$record->n_iteration = $i;
+			$record->start_date = $datas->$idfe;
+			$record->evapares_id = (int)$cm->id;
+			$record->evaluation_name = $datas->$idne;
+			
+			$allquestions[]=$record;
+		}
+		
+		 $DB->insert_records("evapares_iterations", $allquestions);
+			$action = "view";
+		
+	}
+
+}
+
+if( $action == "add"){
+	echo $OUTPUT->header();
+
+	$addform->display();
+
+}
+if($action == "view"){
+	echo $OUTPUT->header();
+	echo"holi";
+}
+echo $OUTPUT->footer();
 	}
 	else if(has_capability('mod/evapares:myevaluations', $context)){
 		
+		$toprow = array();
+		$toprow[] = new tabobject(get_string('sites', 'local_reservasalas'), new moodle_url('/local/reservasalas/sedes.php'), get_string('places', 'local_reservasalas'));
+		$toprow[] = new tabobject(get_string('buildings', 'local_reservasalas'), new moodle_url('/local/reservasalas/edificios.php'), get_string('buildings', 'local_reservasalas'));
+		
+		
+		
+		
 	}
-	
-	
-	
-	
-	echo $OUTPUT->footer();
 	
 }
