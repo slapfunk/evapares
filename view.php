@@ -70,7 +70,7 @@ if(!has_capability('mod/evapares:courseevaluations', $context) && !has_capabilit
 	$allquestions = array();
 	
 	if( $addform->is_cancelled() ){
-		$backtocourse = new moodle_url("couse/view.php",array('id'=>$course->id));
+		$backtocourse = new moodle_url("course/view.php",array('id'=>$course->id));
 		redirect($backtocourse);
 		
 	}else if($datas = $addform->get_data()){
