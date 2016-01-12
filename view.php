@@ -109,7 +109,10 @@ elseif(has_capability('mod/evapares:courseevaluations', $context) && $action == 
 
 elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "view"){
 	
-	echo"holi, usted es alumno";
+	$tabz = array();
+	$tabz[] = new tabobject('tabz',$CFG->wwwroot.'/mod/evapares/evaluations_tab.php', 'estocambiaenlang');
+	$tabz[] = new tabobject('tabz',$CFG->wwwroot.'/mod/evapares/results_tab.php','estocambiaenlang');
+	print_tabs($tabz);
 }
 echo $OUTPUT->footer();
 	
