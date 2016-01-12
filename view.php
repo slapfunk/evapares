@@ -52,7 +52,7 @@ if(!has_capability('mod/evapares:courseevaluations', $context) && !has_capabilit
 {	
 	print_error("no tiene la capacidad de estar en  esta pagina");
 }
-
+else{
 	$PAGE->set_url('/mod/evapares/view.php', array('id' => $cm->id));
 	$PAGE->set_context($context);
 	$PAGE->set_course($course);
@@ -73,7 +73,8 @@ if(!has_capability('mod/evapares:courseevaluations', $context) && !has_capabilit
 		$backtocourse = new moodle_url("course/view.php",array('id'=>$course->id));
 		redirect($backtocourse);
 		
-	}else if($datas = $addform->get_data()){
+	}
+	else if($datas = $addform->get_data()){
 		
 		for($i = 0; $i <= $evapares->total_iterations + 1; $i++ ){
 			$idfe = "FE$i";
@@ -94,26 +95,26 @@ if(!has_capability('mod/evapares:courseevaluations', $context) && !has_capabilit
 
 	}
 }
-
+echo $OUTPUT->header();
 if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add"){
-	echo $OUTPUT->header();
+	
 
 	$addform->display();
 
 }
 elseif(has_capability('mod/evapares:courseevaluations', $context) && $action == "view"){
-	echo $OUTPUT->header();
+	
 	echo"holi, usted es profe";
 }
 
 elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "view"){
-	echo $OUTPUT->header();
+	
 	echo"holi, usted es alumno";
 }
 echo $OUTPUT->footer();
 	
-// 	else if(has_capability('mod/evapares:myevaluations', $context)){		
+	
 		
-// 	}
+ 	}
 	
 
