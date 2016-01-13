@@ -38,6 +38,8 @@ class evapares_num_eval_form extends moodleform {
 		$cmid =$instance['cmid'];
 		$preg =$instance['preg'];
 		$resp =$instance['resp'];
+		
+		var_dump($num);
 
 		$mform->addElement('header', 'Detalle_Entregas', 'Detalle de Entregas');
 
@@ -48,19 +50,19 @@ class evapares_num_eval_form extends moodleform {
 		$mform->addElement('hidden', 'NE'.$i, 'Evaluacion Inicial');
 		$mform->setType('NE'.$i, PARAM_TEXT);
 		$mform->addElement('date_time_selector', 'FE'.$i,'Evaluacion Personal Inicial', array('optional'=>true));
-		$mform->setDefault('available', 1);
+		$mform->setDefault('available', 0);
 			} elseif($i > 0 && $i < $num + 1){
 			
 		$mform->addElement('text', 'NE'.$i,'Nombre Entrega '.$i);
 		$mform->setType('NE'.$i, PARAM_TEXT);
 		$mform->addElement('date_time_selector', 'FE'.$i,'Fecha Entrega '.$i, array('optional'=>true));
-		$mform->setDefault('available', 1);
+		$mform->setDefault('available', 0);
 			} elseif($i == $num +1){
 				
 		$mform->addElement('hidden', 'NE'.$i, 'Evaluacion Final');
 		$mform->setType('NE'.$i, PARAM_TEXT);
 		$mform->addElement('date_time_selector', 'FE'.$i,'Evaluacion Final', array('optional'=>true));
-		$mform->setDefault('available', 1);
+		$mform->setDefault('available', 0);
 			}
 		}
 		
