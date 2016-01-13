@@ -58,17 +58,17 @@ class mod_evapares_mod_form extends moodleform_mod {
         $AmountTime = 5 ; 
         //Here we fill different arrays with all the different options
 	   $evaluations = array();
-	   for ($i=0; $i <$AmountEval ; $i++){ array_push($evaluations,$i+1) ;}
+	   for ($i=0; $i <= $AmountEval ; $i++){ array_push($evaluations,$i) ;}
 	   $questions = array();
-	   for ($i=0; $i <$AmountQuest ; $i++){ array_push($questions,$i+1) ;}
+	   for ($i=0; $i <= $AmountQuest ; $i++){ array_push($questions,$i) ;}
 	   $answers = array();
-	   for ($i=0; $i <$AmountAns ; $i++){ array_push($answers,$i+1) ;}
+	   for ($i=0; $i <= $AmountAns ; $i++){ array_push($answers,$i) ;}
 	   $time = array();
-	   for ($i=0; $i <$AmountTime ; $i++){ array_push($time,$i+1) ;}
+	   for ($i=0; $i <= $AmountTime ; $i++){ array_push($time,$i) ;}
 	   
 	   //Add all the fields to be completed
 
-        $mform->addElement('checkbox', 'ssc',get_string('addSSC','mod_evapares'));
+        $mform->addElement('checkbox', 'ssc',get_string('addSSC', 'mod_evapares'));
         
         $mform->addElement('select', 'total_iterations',get_string('amountOfEvaluations','mod_evapares'), $evaluations);
         

@@ -61,12 +61,22 @@ else{
 	$PAGE->set_title(format_string($evapares->name));
 	$PAGE->set_heading(format_string($course->fullname));
 	
-	if(!$DB->get_records("evapares_iterations", array('evapares_id'=>$cmid)))
-	{$action = "add";}
+	echo $OUTPUT->header();
+	
+	if(!$evapares_iterations = $DB->get_records("evapares_iterations", array('evapares_id'=>$cmid))){
+		$action = "add";
+	}
+	
+	$vars = array('num'=>$evapares->total_iterations,
+			"cmid"=>$cmid, 
+			'preg'=>$evapares->n_preguntas, 
+			'resp'=>$evapares->n_respuestas
+	);
 	
 	if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add"){
-	$addform = new evapares_num_eval_form(null,array('num'=>$evapares->total_iterations,"cmid"=>$cmid));
+	$addform = new evapares_num_eval_form(null, $vars);
 
+	$alliterations = array();
 	$allquestions = array();
 	
 	if( $addform->is_cancelled() ){
@@ -75,6 +85,7 @@ else{
 		
 	}
 	else if($datas = $addform->get_data()){
+		
 		
 		for($i = 0; $i <= $evapares->total_iterations + 1; $i++ ){
 			$idfe = "FE$i";
@@ -87,15 +98,47 @@ else{
 			$record->evapares_id = (int)$cm->id;
 			$record->evaluation_name = $datas->$idne;
 			
-			$allquestions[]=$record;
+			$alliterations[]=$record;
+		}
+		$DB->insert_records("evapares_iterations", $alliterations);
+		
+		for($i = 1; $i <= $evapares->n_preguntas; $i++ ){
+			$idp = "P$i";
+							
+			$recp = new stdClass();	
+			
+			$recp->n_of_question = $i;
+			$recp->evapares_id = (int)$cm->id;
+			$recp->text = $datas->$idp;
+			
+			$DB->insert_record("evapares_questions", $recp);
+			
+			$sql = "SELECT id 
+					FROM {evapares_questions}
+					WHERE evapares_id = ?
+					LIMIT 1";
+			$questionid = $DB->get_records_sql($sql, array($cmid));
+			
+			for($j = 1; $j <= $evapares->n_respuestas; $j++ ){
+				$idr = "$i.$j";
+				$hola = $_GET[$idr];	
+				var_dump($hola);
+				$recr = new stdClass();
+			
+				$recr->number = $i.'.'.$j;
+				$recr->question_id = $questionid[0];
+				$recr->text = $datas->$idr;
+			
+				$allanswers[]=$recr;
+				
+			}
+			$DB->insert_records("evapares_answers", $allanswers);
 		}
 		
-		 $DB->insert_records("evapares_iterations", $allquestions);
 			$action = "view";
 
 	}
 }
-echo $OUTPUT->header();
 if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add"){
 	
 
@@ -109,10 +152,7 @@ elseif(has_capability('mod/evapares:courseevaluations', $context) && $action == 
 
 elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "view"){
 	
-	$tabz = array();
-	$tabz[] = new tabobject('tabz',$CFG->wwwroot.'/mod/evapares/evaluations_tab.php', 'estocambiaenlang');
-	$tabz[] = new tabobject('tabz',$CFG->wwwroot.'/mod/evapares/results_tab.php','estocambiaenlang');
-	print_tabs($tabz);
+
 }
 echo $OUTPUT->footer();
 	
