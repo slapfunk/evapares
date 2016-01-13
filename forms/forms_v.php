@@ -39,7 +39,7 @@ class evapares_num_eval_form extends moodleform {
 		$preg =$instance['preg'];
 		$resp =$instance['resp'];
 
-		$mform->addElement('header', 'Detalle_Entregas', get_string('DeliverableDetails',mod_evapares));
+		$mform->addElement('header', 'Detalle_Entregas', get_string('DeliverableDetails','mod_evapares'));
 
 		for($i = 0; $i <= $num + 1; $i++){
 		
@@ -48,15 +48,15 @@ class evapares_num_eval_form extends moodleform {
 		$mform->addElement('hidden', 'NE'.$i, 'Evaluacion Inicial');
 		$mform->setType('NE'.$i, PARAM_TEXT);
 
-		$mform->addElement('date_time_selector', 'FE'.$i,get_string('personalEvalInitial',mod_evapares), array('optional'=>true));
+		$mform->addElement('date_time_selector', 'FE'.$i,get_string('personalEvalInitial','mod_evapares'), array('optional'=>true));
 		$mform->setDefault('available', 0);
 
 			} elseif($i > 0 && $i < $num + 1){
 			
-		$mform->addElement('text', 'NE'.$i,get_string('DeliverableName', mod_evapares).$i);
+		$mform->addElement('text', 'NE'.$i,get_string('DeliverableName', 'mod_evapares').$i);
 		$mform->setType('NE'.$i, PARAM_TEXT);
 
-		$mform->addElement('date_time_selector', 'FE'.$i,get_string('dueDate',mod_evapares).$i, array('optional'=>true));
+		$mform->addElement('date_time_selector', 'FE'.$i,get_string('dueDate','mod_evapares').$i, array('optional'=>true));
 		$mform->setDefault('available', 0);
 
 			} elseif($i == $num +1){
@@ -64,22 +64,22 @@ class evapares_num_eval_form extends moodleform {
 		$mform->addElement('hidden', 'NE'.$i, 'Evaluacion Final');
 		$mform->setType('NE'.$i, PARAM_TEXT);
 
-		$mform->addElement('date_time_selector', 'FE'.$i,get_string('finalDate', mod_evapares), array('optional'=>true));
+		$mform->addElement('date_time_selector', 'FE'.$i,get_string('finalDate', 'mod_evapares'), array('optional'=>true));
 		$mform->setDefault('available', 0);
 		
 			}
 		}
 		
-		$mform->addElement('header', 'Detalle_Preguntas', get_string('DeliverableDetails',mod_evapares));
+		$mform->addElement('header', 'Detalle_Preguntas', get_string('DeliverableDetails','mod_evapares'));
 		
 		for($j = 1; $j <= $preg; $j++){
 		
-			$mform->addElement('textarea', 'P'.$j,get_string('question',mod_evapares).$j, 'wrap="virtual" rows="5" cols="60"');
+			$mform->addElement('textarea', 'P'.$j,get_string('question','mod_evapares').$j, 'wrap="virtual" rows="5" cols="60"');
 			$mform->setType('P'.$j, PARAM_TEXT);
 		
 				
 			for($h = 1; $h <= $resp; $h++){
-				$mform->addElement('text', $j.'.'.$h,get_string('option',mod_evapares).$j.'.'.$h);
+				$mform->addElement('text', $j.'.'.$h,get_string('option','mod_evapares').$j.'.'.$h);
 				$mform->setType($j.'.'.$h, PARAM_TEXT);
 			}
 		}
