@@ -151,7 +151,19 @@ elseif(has_capability('mod/evapares:courseevaluations', $context) && $action == 
 }
 
 elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "view"){
-	
+	if(!isset($currenttab)){
+		$currenttab=1;
+	}
+	$tbz = array();
+	$tabz=array();
+	$inactive = array();
+	$activated = array();
+	$inactive = array('edit');
+	$activated = array('edit');
+	$tbz[] = new tabobject('tb1',$CFG->wwwroot.'/mod/evapares/evaluations_tab.php', 'estocambiaenlang');
+	$tbz[] = new tabobject('tb2',$CFG->wwwroot.'/mod/evapares/results_tab.php','estocambiaenlang');
+	$tabz[]=$tbz;
+	print_tabs($tabz,$currenttab,$inactive, $activated);
 
 }
 echo $OUTPUT->footer();
