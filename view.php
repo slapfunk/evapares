@@ -78,6 +78,7 @@ else{
 
 	$alliterations = array();
 	$allquestions = array();
+	$allanswers = array();
 	
 	if( $addform->is_cancelled() ){
 		$backtocourse = new moodle_url("course/view.php",array('id'=>$course->id));
@@ -85,7 +86,7 @@ else{
 		
 	}
 	else if($datas = $addform->get_data()){
-		
+		var_dump($datas);
 		
 		for($i = 0; $i <= $evapares->total_iterations + 1; $i++ ){
 			$idfe = "FE$i";
@@ -117,24 +118,26 @@ else{
 					FROM {evapares_questions}
 					WHERE evapares_id = ?
 					LIMIT 1";
-			$questionid = $DB->get_records_sql($sql, array($cmid));
 			
+			$questionid = $DB->get_records_sql($sql, array($cmid));
+			print_r($questionid);
+			echo "<br> soy un id ".$questionid[0]->id."</br>";
 			for($j = 1; $j <= $evapares->n_respuestas; $j++ ){
-				$idr = "$i.$j";
-				$hola = $_GET[$idr];	
-				var_dump($hola);
+				$idr = "R$i$j";
+
 				$recr = new stdClass();
 			
 				$recr->number = $i.'.'.$j;
-				$recr->question_id = $questionid[0];
+				$recr->question_id = $questionid->id;
 				$recr->text = $datas->$idr;
 			
 				$allanswers[]=$recr;
 				
 			}
+			var_dump($allanswers);
 			$DB->insert_records("evapares_answers", $allanswers);
 		}
-		
+
 			$action = "view";
 
 	}

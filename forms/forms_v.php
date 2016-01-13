@@ -74,13 +74,15 @@ class evapares_num_eval_form extends moodleform {
 		
 		for($j = 1; $j <= $preg; $j++){
 		
-			$mform->addElement('textarea', 'P'.$j,get_string('question','mod_evapares').$j, 'wrap="virtual" rows="5" cols="60"');
-			$mform->setType('P'.$j, PARAM_TEXT);
+			$mform->addElement('textarea', "P$j",get_string('question','mod_evapares').$j, 'wrap="virtual" rows="5" cols="60"');
+			$mform->setType("P$j", PARAM_TEXT);
 		
 				
 			for($h = 1; $h <= $resp; $h++){
-				$mform->addElement('text', $j.'.'.$h,get_string('option','mod_evapares').$j.'.'.$h);
-				$mform->setType($j.'.'.$h, PARAM_TEXT);
+				$idm = "R$j$h";
+				
+				$mform->addElement('text',$idm, get_string('option','mod_evapares').$j.'.'.$h);
+				$mform->setType($idm, PARAM_TEXT);
 			}
 		}
 		
