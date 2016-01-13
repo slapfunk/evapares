@@ -36,6 +36,10 @@ class evapares_num_eval_form extends moodleform {
 
 		$num = $instance['num'];
 		$cmid =$instance['cmid'];
+		$preg =$instance['preg'];
+		$resp =$instance['resp'];
+		
+		var_dump($num);
 
 		$mform->addElement('header', 'Detalle_Entregas', 'Detalle de Entregas');
 
@@ -64,13 +68,13 @@ class evapares_num_eval_form extends moodleform {
 		
 		$mform->addElement('header', 'Detalle_Preguntas', 'Detalle de Preguntas y Respuestas');
 		
-		for($j = 1; $j <= 3; $j++){
+		for($j = 1; $j <= $preg; $j++){
 		
 			$mform->addElement('textarea', 'P'.$j,'Pregunta '.$j, 'wrap="virtual" rows="5" cols="60"');
 			$mform->setType('P'.$j, PARAM_TEXT);
 		
 				
-			for($h = 1; $h <= 3; $h++){
+			for($h = 1; $h <= $resp; $h++){
 				$mform->addElement('text', $j.'.'.$h,'Opcion '.$j.'.'.$h);
 				$mform->setType($j.'.'.$h, PARAM_TEXT);
 			}
