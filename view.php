@@ -33,7 +33,7 @@ require_once('/forms/forms_v.php');
 global $CFG, $DB, $OUTPUT; 
 
 $action = optional_param("action", "view", PARAM_TEXT);
-$cmid = required_param('id', PARAM_INT); 
+$cmid = required_param('id', PARAM_INT);
 
 if(! $cm = get_coursemodule_from_id('evapares', $cmid))
 {print_error('cm'." id: $cmid");}
@@ -63,10 +63,19 @@ else{
 	
 	echo $OUTPUT->header();
 	
+	if(!$grupos = $DB->get_records("groups", array('courseid'=>$course->id))){
+		
+		echo 'Debe crear los grupos para continuar con la actividad <br>
+		(Administracion del curso > Usuarios > Grupos)';
+		
+		echo $OUTPUT->footer();
+		die();
+	}
+	
 	if(!$evapares_iterations = $DB->get_records("evapares_iterations", array('evapares_id'=>$cmid))){
 		$action = "add";
 	}
-	
+		
 	$vars = array('num'=>$evapares->total_iterations,
 			"cmid"=>$cmid, 
 			'preg'=>$evapares->n_preguntas, 
@@ -162,7 +171,7 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 	$inactive = array('edit');
 	$activated = array('edit');
 	$tbz[] = new tabobject('tb1',$CFG->wwwroot.'/mod/evapares/evaluations_tab.php', 'estocambiaenlang');
-	$tbz[] = new tabobject('tb2',$CFG->wwwroot.'/mod/evapares/results_tab.php','estocambiaenlang');
+	$tbz[] = new tabobject('tb2',$CFG->wwwroot.'/mod/evapares/results_tab.php','Restocambiaenlang');
 	$tabz[]=$tbz;
 	print_tabs($tabz,$currenttab,$inactive, $activated);
 
