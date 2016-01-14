@@ -58,13 +58,13 @@ class mod_evapares_mod_form extends moodleform_mod {
         $AmountTime = 5 ; 
         //Here we fill different arrays with all the different options
 	   $evaluations = array();
-	   for ($i=0; $i <= $AmountEval ; $i++){ array_push($evaluations,$i) ;}
+	   for ($i=0; $i <= $AmountEval ; $i++){ $evaluations[$i] = $i;}
 	   $questions = array();
-	   for ($i=0; $i <= $AmountQuest ; $i++){ array_push($questions,$i) ;}
+	   for ($i=1; $i <= $AmountQuest ; $i++){ $questions[$i] = $i;}
 	   $answers = array();
-	   for ($i=0; $i <= $AmountAns ; $i++){ array_push($answers,$i) ;}
+	   for ($i=1; $i <= $AmountAns ; $i++){ $answers[$i] = $i;}
 	   $time = array();
-	   for ($i=0; $i <= $AmountTime ; $i++){ array_push($time,$i) ;}
+	   for ($i=1; $i <= $AmountTime ; $i++){ $time[$i] = $i;}
 	   
 	   //Add all the fields to be completed
 
