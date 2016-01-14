@@ -119,25 +119,38 @@ else{
 					WHERE evapares_id = ?
 					LIMIT 1";
 			
-			$questionid = $DB->get_records_sql($sql, array($cmid));
-			print_r($questionid);
-			echo "<br> soy un id ".$questionid[0]->id."</br>";
+			//$questionid = $DB->get_records_sql($sql, array($cmid));
+			
+			$questionid = $DB->get_records("evapares_questions", array('evapares_id'=>$cmid));
+			
+ 			
+ 			foreach($questionid as $key => $value){
+ 			$llaves[$i] = $key;
+ 	}
+			echo $questionid[$llaves[$i]]->id;
+			var_dump($questionid[$llaves[$i]]->id);
+
+			
 			for($j = 1; $j <= $evapares->n_respuestas; $j++ ){
 				$idr = "R$i$j";
 
 				$recr = new stdClass();
 			
 				$recr->number = $i.'.'.$j;
-				$recr->question_id = $questionid->id;
+				$recr->question_id = $questionid[$llaves[$i]]->id;
 				$recr->text = $datas->$idr;
 			
 				$allanswers[]=$recr;
 				
 			}
-			var_dump($allanswers);
+
 			$DB->insert_records("evapares_answers", $allanswers);
+			unset($allanswers);
+			
+
 		}
 
+		
 			$action = "view";
 
 	}
