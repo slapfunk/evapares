@@ -26,7 +26,8 @@ if(!has_capability('mod/evapares:courseevaluations', $context) && !has_capabilit
 	print_error("no tiene la capacidad de estar en  esta pagina");
 }
 else{
-	$addform = new evapares_evalu_usua(null,array('num'=>$evapares->total_iterations,"cmid"=>$cmid));//editars
+	$vars=array('num'=>$evapares->total_iterations,"cmid"=>$cmid,"iduser"=>$iduser);//iduser hay que saber de donde
+	$addform = new evapares_evalu_usua(null,$vars);//editars
 	echo $OUTPUT->header();
 	$addform->display();
 	echo $OUTPUT->footer();
