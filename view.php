@@ -83,6 +83,9 @@ else{
 	);
 	
 if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add"){
+	
+	
+	
 	$addform = new evapares_num_eval_form(null, $vars);
 
 	$alliterations = array();

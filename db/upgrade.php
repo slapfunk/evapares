@@ -330,5 +330,20 @@ function xmldb_evapares_upgrade($oldversion) {
     	upgrade_mod_savepoint(true, 2016011101, 'evapares');
     }
     
+    if ($oldversion < 2016011500) {
+    
+    	// Define field nota to be added to evapares_evaluations.
+    	$table = new xmldb_table('evapares_evaluations');
+    	$field = new xmldb_field('nota', XMLDB_TYPE_NUMBER, '3, 1', null, null, null, null, 'iterations_id');
+    
+    	// Conditionally launch add field nota.
+    	if (!$dbman->field_exists($table, $field)) {
+    		$dbman->add_field($table, $field);
+    	}
+    
+    	// Evapares savepoint reached.
+    	upgrade_mod_savepoint(true, 2016011500, 'evapares');
+    }
+    
     return true;
 }

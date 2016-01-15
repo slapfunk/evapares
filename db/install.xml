@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/evapares/db" VERSION="20160111" COMMENT="XMLDB file for Moodle mod/evapares"
+<XMLDB PATH="mod/evapares/db" VERSION="20160115" COMMENT="XMLDB file for Moodle mod/evapares"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -28,6 +28,7 @@
         <FIELD NAME="alu_evalua_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="the alumn that answers this evaluation (fk)"/>
         <FIELD NAME="alu_evaluado_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="the id of the alumn that is been evaluated"/>
         <FIELD NAME="iterations_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="nota" TYPE="number" LENGTH="3" NOTNULL="false" SEQUENCE="false" DECIMALS="1"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
