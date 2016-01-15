@@ -60,7 +60,6 @@ else{
 	$PAGE->set_cm($cm);
 	$PAGE->set_title(format_string($evapares->name));
 	$PAGE->set_heading(format_string($course->fullname));
-	$PAGE->requires->js('/mod/evapares/js/controladorbotonbuscar.js', true);
 	
 	echo $OUTPUT->header();
 	
@@ -83,7 +82,7 @@ else{
 			'resp'=>$evapares->n_respuestas
 	);
 	
-	if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add"){
+if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add"){
 	$addform = new evapares_num_eval_form(null, $vars);
 
 	$alliterations = array();
@@ -96,7 +95,6 @@ else{
 		
 	}
 	else if($datas = $addform->get_data()){
-		var_dump($datas);
 		
 		for($i = 0; $i <= $evapares->total_iterations + 1; $i++ ){
 			$idfe = "FE$i";
@@ -111,6 +109,7 @@ else{
 			
 			$alliterations[]=$record;
 		}
+		
 		$DB->insert_records("evapares_iterations", $alliterations);
 		
 		for($i = 1; $i <= $evapares->n_preguntas; $i++ ){
@@ -124,36 +123,34 @@ else{
 			
 			$DB->insert_record("evapares_questions", $recp);
 			
-			$sql = "SELECT id 
-					FROM {evapares_questions}
-					WHERE evapares_id = ?
-					LIMIT 1";
+			$questionid = $DB->get_records("evapares_questions", array('evapares_id'=>$cmid));
+ 			
+ 			foreach($questionid as $key => $value){
+ 			$llaves[$i] = $key;
+ 			}
 			
-			$questionid = $DB->get_records_sql($sql, array($cmid));
-			print_r($questionid);
-			echo "<br> soy un id ".$questionid[0]->id."</br>";
 			for($j = 1; $j <= $evapares->n_respuestas; $j++ ){
 				$idr = "R$i$j";
 
 				$recr = new stdClass();
 			
 				$recr->number = $i.'.'.$j;
-				$recr->question_id = $questionid->id;
+				$recr->question_id = $questionid[$llaves[$i]]->id;
 				$recr->text = $datas->$idr;
 			
-				$allanswers[]=$recr;
-				
+				$allanswers[]=$recr;		
 			}
-			var_dump($allanswers);
-			$DB->insert_records("evapares_answers", $allanswers);
-		}
 
+			$DB->insert_records("evapares_answers", $allanswers);
+			unset($allanswers);
+			
+		}
+		
 			$action = "view";
 
 	}
 }
 if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add"){
-	
 
 	$addform->display();
 
@@ -177,12 +174,9 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 	$tbz[] = new tabobject('tb2',$CFG->wwwroot.'/mod/evapares/results_tab.php','Restocambiaenlang');
 	$tabz[]=$tbz;
 	print_tabs($tabz,$currenttab,$inactive, $activated);
+	
 
 }
 echo $OUTPUT->footer();
-	
-	
 		
  	}
-	
-
