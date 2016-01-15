@@ -42,12 +42,16 @@ class evapares_evalu_usua extends moodleform {
 		$data_chan=array();
 		array_push($data_chan,'cambiarlang');
 		$insta_qry=$DB->get_records_sql('SELECT instance FROM {course_modules} WHERE id = ?', array($cmid));
-		$insta=$insta_qry['instance'];
+		foreach($insta_qry as $llave => $resultado){
+			$insta=$resultado;
+		}
 		$itera_qry = $DB->get_records_sql('SELECT id FROM {evapares_iterations} WHERE evapares_id = ? AND n_iteration=?', array($insta,'0'));
-		$itera=$itera_qry['id'];
+		foreach($itera_qry as $llave => $resultado){
+			$itera=$resultado;
+		}
 		$answrs_qry = $DB->get_records_sql('SELECT answers FROM {evapares_evaluations} WHERE iterations_id = ? And alu_evalua=?', array($itera,$iduser));
 		$ans=false;
-		foreach($answrs_qry as $answers){
+		foreach($answrs_qry as $llave=> $answers){
 			if($answers==1)$ans=true;
 		}
 		$respondido='';
@@ -62,12 +66,14 @@ class evapares_evalu_usua extends moodleform {
 			$data_chan=array();
 			
 			$itera_qry = $DB->get_records_sql('SELECT id,evaluation_name FROM {evapares_iterations} WHERE evapares_id = ? AND n_iteration=?', array($insta,$i));
-			$itera=$itera_qry['id'];
-			$nomitera=$itera_query['evaluation_name'];
+			foreach($itera_qry as $llave => $resultado){
+				$itera=$resultado['id'];
+				$nomitera=$resultado['evaluation_name'];
+			}
 			array_push($data_chan,$nomitera);
 			$answrs_qry = $DB->get_records_sql('SELECT answers FROM {evapares_evaluations} WHERE iterations_id = ? And alu_evalua=? ', array($itera,$iduser));
 			$ans=false;
-			foreach($answrs_qry as $answers){
+			foreach($answrs_qry as $llave=> $answers){
 				if($answers==1)$ans=true;
 			}
 			$respondido='';
@@ -86,6 +92,7 @@ class evapares_evalu_usua extends moodleform {
 		$itera=$itera_qry['id'];
 		$answrs_qry = $DB->get_records_sql('SELECT answers FROM {evapares_evaluations} WHERE iterations_id = ? And alu_evalua=?', array($itera,$iduser));
 		$ans=false;
+		var_dump($answrs_qry);
 		foreach($answrs_qry as $answers){
 			if($answers==1)$ans=true;
 		}

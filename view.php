@@ -165,19 +165,30 @@ elseif(has_capability('mod/evapares:courseevaluations', $context) && $action == 
 
 elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "view"){
 	if(!isset($currenttab)){
-		$currenttab=1;
+		$currenttab='tb1';
 	}
 	$tbz = array();
 	$tabz=array();
 	$inactive = array();
 	$activated = array();
-	$inactive = array('edit');
-	$activated = array('edit');
-	$tbz[] = new tabobject('tb1',$CFG->wwwroot.'/mod/evapares/evaluations_tab.php', 'estocambiaenlang');
-	$tbz[] = new tabobject('tb2',$CFG->wwwroot.'/mod/evapares/results_tab.php','Restocambiaenlang');
+	$inactive = array('7');
+	$activated = array('tb1');
+	$tbz[] = new tabobject('tb1',new moodle_url($CFG->wwwroot.'/mod/evapares/view.php',array('mode'=>'evaluation')), 'estocambiaenlang');
+	$tbz[] = new tabobject('tb2',new moodle_url($CFG->wwwroot.'/mod/evapares/view.php',array('mode'=>'resultados')),'Restocambiaenlang');
 	$tabz[]=$tbz;
 	print_tabs($tabz,$currenttab,$inactive, $activated);
-	
+	if(!isset($_REQUEST['mode'])){
+		$mode='evaluation';
+	}
+	else if(isset($_REQUEST['mode'])){
+		$mode=$_REQUEST['mode'];
+	}
+	if($mode=='evaluation'){
+		include('evaluations_tab.php');
+	}
+	else{
+		include('results_tab.php');
+	}
 
 }
 echo $OUTPUT->footer();

@@ -5,7 +5,7 @@ require_once($CFG->dirroot.'/course/moodleform_mod.php');
 require_once('/forms/forms_alu.php');
 
 global $CFG, $DB, $OUTPUT;
-$action = optional_param("action", "view", PARAM_TEXT);
+echo 'punto de control 1';
 $cmid = required_param('id', PARAM_INT);
 
 if(! $cm = get_coursemodule_from_id('evapares', $cmid))
@@ -26,6 +26,8 @@ if(!has_capability('mod/evapares:courseevaluations', $context) && !has_capabilit
 	print_error("no tiene la capacidad de estar en  esta pagina");
 }
 else{
+	echo 'punto de control 2';
+	$iduser=$USER->id;
 	$vars=array('num'=>$evapares->total_iterations,"cmid"=>$cmid,"iduser"=>$iduser);//iduser hay que saber de donde
 	$addform = new evapares_evalu_usua(null,$vars);//editars
 	echo $OUTPUT->header();
