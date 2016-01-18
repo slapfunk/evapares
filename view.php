@@ -216,8 +216,8 @@ $tbz = array();
 	$activated = array();
 	$inactive = array('7');
 	$activated = array('tb1');
-	$tbz[] = new tabobject('tb1',new moodle_url($CFG->wwwroot.'/mod/evapares/view.php',array('mode'=>'evaluation')), 'estocambiaenlang');
-	$tbz[] = new tabobject('tb2',new moodle_url($CFG->wwwroot.'/mod/evapares/view.php',array('mode'=>'resultados')),'Restocambiaenlang');
+	$tbz[] = new tabobject('tb1',new moodle_url($CFG->wwwroot.'/mod/evapares/view.php',array('mode'=>'evaluation','id' => $cm->id)), 'estocambiaenlang');
+	$tbz[] = new tabobject('tb2',new moodle_url($CFG->wwwroot.'/mod/evapares/view.php',array('mode'=>'resultados','id' => $cm->id)),'Restocambiaenlang');
 	$tabz[]=$tbz;
 	print_tabs($tabz,$currenttab,$inactive, $activated);
 	if(!isset($_REQUEST['mode'])){
@@ -311,10 +311,10 @@ $tbz = array();
 		
 		
 	}
-	else{
-		include('results_tab.php');
-	}
-
+		elseif($mode = 'resultados'){
+	include(results_tab.php);
+}
+	
 }
 echo $OUTPUT->footer();
 		
