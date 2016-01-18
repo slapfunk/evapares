@@ -91,6 +91,7 @@ if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add
 	$alliterations = array();
 	$allquestions = array();
 	$allanswers = array();
+	$allcombs = array();
 	
 	if( $addform->is_cancelled() ){
 		$backtocourse = new moodle_url("course/view.php",array('id'=>$course->id));
@@ -114,6 +115,47 @@ if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add
 		}
 		
 		$DB->insert_records("evapares_iterations", $alliterations);
+		
+		$sql = 'SELECT GM1.userid AS a_evalua, GM2.userid AS a_evaluado, EI.id As id_iteration, EI.n_iteration AS n_iteration
+			    FROM mdl_groups_members AS GM1, mdl_groups_members AS GM2, mdl_evapares_iterations AS EI
+				WHERE GM1.groupid = Gm2.groupid AND EI.evapares_id = ?';
+		
+		$consulta = $DB-> get_recordset_sql($sql ,array($cm->id));
+		
+		foreach($consulta as $insert){
+			if($insert->a_evalua == $insert->a_evaluado && $insert->n_iteration == 0 || $insert->n_iteration == $evapares->total_iterations +1){
+		
+				$rec = new stdClass();
+		
+				$rec->ssc_stop = null;
+				$rec->ssc_start = null;
+				$rec->ssc_continue = null;
+				$rec->answers = '0';
+				$rec->alu_evalua_id = $insert->a_evalua;
+				$rec->alu_evaluado_id = $insert->a_evaluado;
+				$rec->iterations_id = $insert->id_iteration;
+		
+				$allcombs[] = $rec;
+		
+			}elseif($insert->a_evalua != $insert->a_evaluado && $insert->n_iteration > 0){
+		
+				$rec = new stdClass();
+		
+				$rec->ssc_stop = null;
+				$rec->ssc_start = null;
+				$rec->ssc_continue = null;
+				$rec->answers = '0';
+				$rec->alu_evalua_id = $insert->a_evalua;
+				$rec->alu_evaluado_id = $insert->a_evaluado;
+				$rec->iterations_id = $insert->id_iteration;
+		
+				$allcombs[] = $rec;
+		
+			}
+		}
+		
+		$DB->insert_records("evapares_evaluations", $allcombs);
+		
 		
 		for($i = 1; $i <= $evapares->n_preguntas; $i++ ){
 			$idp = "P$i";
