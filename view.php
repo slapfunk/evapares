@@ -234,15 +234,16 @@ $tbz = array();
 		$data_chan=array();
 		array_push($data_chan,'cambiarlang');
 		$itera_qry = $DB->get_records_sql('SELECT id FROM {evapares_iterations} WHERE evapares_id = ? AND n_iteration=?', 
-				array($cmid,'0'));
+				array($cm->id,'0'));
 		foreach($itera_qry as $llave => $resultado){
 			$itera=$resultado;
 		}
-		$answrs_qry = $DB->get_records_sql('SELECT answers FROM {evapares_evaluations} WHERE iterations_id = ? And alu_evalua=?', 
-				array($itera,$iduser));
+	
+		$answrs_qry = $DB->get_records_sql('SELECT answers FROM {evapares_evaluations} WHERE iterations_id = ? And alu_evalua_id=?', 
+				array($itera->id,$iduser));
 		$ans=false;
 		foreach($answrs_qry as $llave=> $answers){
-			if($answers==1)$ans=true;
+			if($answers->answers==1)$ans=true;
 		}
 		$respondido='';
 		if($ans)$respondio='pix/respondido.jpg';
@@ -252,21 +253,22 @@ $tbz = array();
 		array_push($data_chan,'<img src="pix/respondible.jpg" View" style="width:15px;height:15px;">');
 		array_push($data_chan,'<img src="pix/ver.jpg" View" style="width:15px;height:15px;">');//editar para que sea el boton de jquery
 		array_push($supa_data_sama,$data_chan);
+		$num=$evapares->total_iterations;
 		for($i=1;$i<=$num;$i++){
 			$data_chan=array();
 				
 			$itera_qry = $DB->get_records_sql('SELECT id,evaluation_name FROM {evapares_iterations} WHERE evapares_id = ? AND n_iteration=?',
-					array($cmid,$i));
+					array($cm->id,$i));
 			foreach($itera_qry as $llave => $resultado){
-				$itera=$resultado['id'];
-				$nomitera=$resultado['evaluation_name'];
+				$itera=$resultado->id;
+				$nomitera=$resultado->evaluation_name;
 			}
 			array_push($data_chan,$nomitera);
-			$answrs_qry = $DB->get_records_sql('SELECT answers FROM {evapares_evaluations} WHERE iterations_id = ? And alu_evalua=? ', 
+			$answrs_qry = $DB->get_records_sql('SELECT answers FROM {evapares_evaluations} WHERE iterations_id = ? And alu_evalua_id=? limit 1 ', 
 					array($itera,$iduser));
 			$ans=false;
 			foreach($answrs_qry as $llave=> $answers){
-				if($answers==1)$ans=true;
+				if($answers->answers==1)$ans=true;
 			}
 			$respondido='';
 			if($ans)$respondio='pix/respondido.jpg';
@@ -280,14 +282,15 @@ $tbz = array();
 		$data_chan=array();
 		array_push($data_chan,'cambiarlang');
 		$fin=$num+1;
-		$itera_qry = $DB->get_records_sql('SELECT id FROM {evapares_iterations} WHERE evapares_id = ? AND n_iteration=?', array($cmid,$fin));
-		$itera=$itera_qry['id'];
-		$answrs_qry = $DB->get_records_sql('SELECT answers FROM {evapares_evaluations} WHERE iterations_id = ? And alu_evalua=?', 
+		$itera_qry = $DB->get_records_sql('SELECT id FROM {evapares_iterations} WHERE evapares_id = ? AND n_iteration=? limit 1', array($cm->id,$fin));
+		foreach($itera_qry as $llave => $resultado){
+			$itera=$resultado->id;
+		}
+		$answrs_qry = $DB->get_records_sql('SELECT answers FROM {evapares_evaluations} WHERE iterations_id = ? And alu_evalua_id=? limit 1', 
 				array($itera,$iduser));
 		$ans=false;
-		var_dump($answrs_qry);
 		foreach($answrs_qry as $answers){
-			if($answers==1)$ans=true;
+			if($answers->answers==1)$ans=true;
 		}
 		$respondido='';
 		if($ans)$respondio='pix/respondido.jpg';
@@ -297,6 +300,7 @@ $tbz = array();
 		array_push($data_chan,'<img src="pix/respondible.jpg" View" style="width:15px;height:15px;">');
 		array_push($data_chan,'<img src="pix/ver.jpg" View" style="width:15px;height:15px;">');//editar para que sea el boton de jquery
 		array_push($supa_data_sama,$data_chan);
+		$table->data = $supa_data_sama;
 		echo html_writer::table($table);
 // 		$iduser=$USER->id;
 // 		$vars=array('num'=>$evapares->total_iterations,"cmid"=>$cmid,"iduser"=>$iduser);//iduser hay que saber de donde
