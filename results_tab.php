@@ -17,15 +17,9 @@ require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
 require_once($CFG->dirroot.'/course/moodleform_mod.php');
 
+global $CFG, $DB, $OUTPUT, $USER;
 
-
-/**
- * Module instance settings form
- *
- * @package    mod_evapares
- * @copyright  2015 Your Name
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 echo "mira tus 	resultado aqui";
+var_dump($USER->id);
 	
 	

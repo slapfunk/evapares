@@ -180,7 +180,7 @@ if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add
 
 				$recr = new stdClass();
 			
-				$recr->number = $i.'.'.$j;
+				$recr->number = $j;
 				$recr->question_id = $questionid[$llaves[$i]]->id;
 				$recr->text = $datas->$idr;
 			
