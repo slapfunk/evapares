@@ -31,7 +31,8 @@ require_once($CFG->dirroot.'/course/moodleform_mod.php');
 require_once('/forms/forms_v.php');
 
 global $CFG, $DB, $OUTPUT; 
-
+echo "<script src='../evapares/js/jquery.js'></script>
+<script src='../evapares/js/controladorbotonbuscar.js'></script>";
 $action = optional_param("action", "view", PARAM_TEXT);
 $cmid = required_param('id', PARAM_INT);
 
@@ -236,11 +237,11 @@ $tbz = array();
 		$itera_qry = $DB->get_records_sql('SELECT id FROM {evapares_iterations} WHERE evapares_id = ? AND n_iteration=?', 
 				array($cm->id,'0'));
 		foreach($itera_qry as $llave => $resultado){
-			$itera=$resultado;
+			$itera=$resultado->id;
 		}
 	
 		$answrs_qry = $DB->get_records_sql('SELECT answers FROM {evapares_evaluations} WHERE iterations_id = ? And alu_evalua_id=?', 
-				array($itera->id,$iduser));
+				array($itera,$iduser));
 		$ans=false;
 		foreach($answrs_qry as $llave=> $answers){
 			if($answers->answers==1)$ans=true;
@@ -249,8 +250,18 @@ $tbz = array();
 		if($ans)$respondio='pix/respondido.jpg';
 		else $respondio='pix/norespondido.jpg';
 		array_push($data_chan,'<img src="'.$respondio.'" style="width:15px;height:15px;">');
-		//revisar si esta activa la entrega inicial
-		array_push($data_chan,'<img src="pix/respondible.jpg" View" style="width:15px;height:15px;">');
+		//revisar si esta activa la entrega inicial $respondible = bool
+		$respondible=true;
+		//
+		$string_to_strong='<img src="pix/';
+		if($respondible){
+			$string_to_strong=$string_to_strong.'respondible.jpg" View" style="width:15px;height:15px;">';
+		}
+		else {
+			$string_to_strong=$string_to_strong.'norespondible.jpg" View" style="width:15px;height:15px;">';
+		}
+		array_push($data_chan,$string_to_strong);
+		//if $respondible -> poner boton, else -> not
 		array_push($data_chan,'<img src="pix/ver.jpg" View" style="width:15px;height:15px;">');//editar para que sea el boton de jquery
 		array_push($supa_data_sama,$data_chan);
 		$num=$evapares->total_iterations;
@@ -276,7 +287,7 @@ $tbz = array();
 			array_push($data_chan,'<img src="'.$respondio.'" style="width:15px;height:15px;">');
 			//revisar si esta activa la entrega inicial
 			array_push($data_chan,'<img src="pix/respondible.jpg" View" style="width:15px;height:15px;">');
-			array_push($data_chan,'<img src="pix/ver.jpg" View" style="width:15px;height:15px;">');//editar para que sea el boton de jquery
+			array_push($data_chan,'<img id="0" src="pix/ver.jpg" View" style="width:15px;height:15px;">');//editar para que sea el boton de jquery
 			array_push($supa_data_sama,$data_chan);
 		}
 		$data_chan=array();
