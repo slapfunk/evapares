@@ -19,7 +19,59 @@ require_once($CFG->dirroot.'/course/moodleform_mod.php');
 
 global $CFG, $DB, $OUTPUT, $USER;
 
-echo "mira tus 	resultado aqui";
-var_dump($USER->id);
+$iterations = $DB->get_records("evapares_iterations", array('evapares_id'=>$cmid));
+
+$resultados = $DB->get_records("evapares_evaluations", array('alu_evaluado_id'=>$USER->id),'iterations_id ASC');
+
+$headings = array('Stop','Start','Continue');
+
+$n_table = 0;
+ 		
+foreach($resultados as $param){
 	
+ 	if($param->alu_evalua_id != $param->alu_evaluado_id){
+ 		
+ 		if($param->iterations_id != $n_table){
+ 			if($n_table != 0){
+ 				
+ 				$table->data = $supa_data_sama;
+ 				echo $iterations[$param->iterations_id - 1]->evaluation_name;
+ 				//COMPROBAR CON FECHA
+ 				echo html_writer::table($table);
+ 				
+ 			}
+		
+ 			$table = new html_table();
+ 			$table->head = $headings ;
+ 			$supa_data_sama=array();
+ 			$data_chan=array();
+ 			
+ 			array_push($data_chan,$param->ssc_stop);
+ 			array_push($data_chan,$param->ssc_start);
+ 			array_push($data_chan,$param->ssc_continue);
+ 			array_push($supa_data_sama,$data_chan);
+ 			
+ 			$data_chan=array();
+ 			
+ 			$n_table = $param->iterations_id;
+ 			
+ 		}else{
+ 			
+ 			array_push($data_chan,$param->ssc_stop);
+ 			array_push($data_chan,$param->ssc_start);
+ 			array_push($data_chan,$param->ssc_continue);
+ 			array_push($supa_data_sama,$data_chan);
+ 			
+ 			$data_chan=array();
+ 			
+ 		}
+ 	
+	}
 	
+}
+$table->data = $supa_data_sama;
+echo $iterations[$param->iterations_id]->evaluation_name;
+echo html_writer::table($table);
+
+
+

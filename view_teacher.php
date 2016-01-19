@@ -1,5 +1,5 @@
 //Pruebas de query
-
+<?php
 echo"<br><br><br>" ;
 $user = $DB->get_record_sql('SELECT * FROM mdl_course WHERE id = 1');
 echo $user->id ;
