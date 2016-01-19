@@ -312,7 +312,7 @@ $tbz = array();
 		
 	}
 		elseif($mode = 'resultados'){
-	include(results_tab.php);
+	include('results_tab.php');
 }
 	
 }
