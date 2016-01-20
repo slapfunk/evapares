@@ -48,8 +48,8 @@ $context = context_module::instance($cm->id);
 $iduser=$USER->id;
 
 require_login();
-echo '<script src="../js/jquery.js"></script>
-<script src="../js/controladorbotonbuscar.js"></script>';
+echo '<script src="../evapares/js/jquery.js"></script>
+<script src="../evapares/js/controladorbotonbuscar.js"></script>';
 // Print the page header.
 if(!has_capability('mod/evapares:courseevaluations', $context) && !has_capability('mod/evapares:myevaluations', $context))
 {	
@@ -248,12 +248,10 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 		$table->head = array('buscalang', 'buscalang', 'buscalang', 'buscalang');
 		$supa_data_sama=array();
 		$data_chan=array();
-		array_push($data_chan,'cambiarlang');
+		array_push($data_chan,'cambiarlang');//inicial
 		$itera_qry = $DB->get_records_sql('SELECT id FROM {evapares_iterations} WHERE evapares_id = ? AND n_iteration=?', 
 				array($cm->id,'0'));
-		foreach($itera_qry as $llave => $resultado){
-			$itera=$resultado->id;
-		}
+		foreach($itera_qry as $llave => $resultado){$itera=$resultado->id;}
 		if($evapares->ssc==0)$sscb=false;
 		else if($evapares->ssc==1)$sscb=true;
 		$vars = array('num'=>$evapares->total_iterations,
@@ -288,6 +286,7 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 		array_push($data_chan,$string_to_strong);
 		//if $respondible -> poner boton, else -> not
 		array_push($data_chan,'<img src="pix/ver.jpg" id="0" View" style="width:15px;height:15px;">');//editar para que sea el boton de jquery
+		array_push($supa_data_sama,$data_chan);
 		$addform = new evapares_evalu_usua(null, $varrs['0']);
 		if( $addform->is_cancelled() ){
 			$backtocourse = new moodle_url("course/view.php",array('id'=>$course->id));
@@ -295,9 +294,6 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 		}
 		array_push($forms,$addform);
 		//revisar si esta activa la entrega inicial
-		array_push($data_chan,'<img src="pix/respondible.jpg" View" style="width:15px;height:15px;">');
-		array_push($data_chan,'<img src="pix/ver.jpg" View" style="width:15px;height:15px;">');//editar para que sea el boton de jquery
-		array_push($supa_data_sama,$data_chan);
 		$num=$evapares->total_iterations;
 		for($i=1;$i<=$num;$i++){
 			$data_chan=array();
@@ -334,9 +330,6 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 			array_push($data_chan,'<img id="'.$i.'" src="pix/ver.jpg" View" style="width:15px;height:15px;">');//editar para que sea el boton de jquery
 			$addform = new evapares_evalu_usua(null, $varrs[$i]);
 			array_push($forms,$addform);
-
-			array_push($data_chan,'<img src="pix/ver.jpg" View" style="width:15px;height:15px;">');//editar para que sea el boton de jquery
-
 			array_push($supa_data_sama,$data_chan);
 		}
 		$data_chan=array();
