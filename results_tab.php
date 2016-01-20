@@ -23,10 +23,17 @@ $iterations = $DB->get_records("evapares_iterations", array('evapares_id'=>$cmid
 
 $resultados = $DB->get_records("evapares_evaluations", array('alu_evaluado_id'=>$USER->id),'iterations_id ASC');
 
+$questions = $DB->get_records("evapares_questions", array('evapares_id'=>$cmid));
+
+foreach($questions as $att){
+	$answers = $DB->get_records("evapares_answers", array('questions_id'=>$att->id));
+}
+
+
 $headings = array('Stop','Start','Continue');
 
 $n_table = 0;
- 		
+ var_dump($questions);		
 foreach($resultados as $param){
 	
  	if($param->alu_evalua_id != $param->alu_evaluado_id){
@@ -35,9 +42,12 @@ foreach($resultados as $param){
  			if($n_table != 0){
  				
  				$table->data = $supa_data_sama;
+ 				echo $param->iterations_id - 1;
  				echo $iterations[$param->iterations_id - 1]->evaluation_name;
  				//COMPROBAR CON FECHA
- 				echo html_writer::table($table);
+ 				echo html_writer::table($table);		
+ 				
+ 				
  				
  			}
 		
