@@ -25,20 +25,18 @@ $resultados = $DB->get_records("evapares_evaluations", array('alu_evaluado_id'=>
 
 $questions = $DB->get_records("evapares_questions", array('evapares_id'=>$cmid));
 
-foreach($questions as $att){	
-	$q_text[$att->id] = $att->text;
-	$answers[$att->id] = $DB->get_records("evapares_answers", array('question_id'=>$att->id));
-}
-var_dump($q_text);
-var_dump($answers);
-
-// foreach($q_text as $key => $value){
-// 	echo $q_text[$key]
-// }
+ foreach($questions as $att){
+// 	$q_text[$att->id] = $att->text;
+ 	$answers[$att->id] = $DB->get_records("evapares_answers", array('question_id'=>$att->id));
+	
+ }
+//var_dump($q_text);
+ var_dump($answers);
 
 $headings = array('Stop','Start','Continue');
 
 $n_table = 0;
+$cont_ans = 0;
 	
 foreach($resultados as $param){
 	
@@ -48,13 +46,11 @@ foreach($resultados as $param){
  			if($n_table != 0){
  				
  				$table->data = $supa_data_sama;
- 				echo $param->iterations_id - 1;
- 				echo $iterations[$param->iterations_id - 1]->evaluation_name;
+ 				//echo $param->iterations_id - 1;
+ 				echo '<strong>'.$iterations[$param->iterations_id - 1]->evaluation_name.'</strong>';
  				//COMPROBAR CON FECHA
  				echo html_writer::table($table);		
-
- 				
- 				
+				}
  			}
 		
  			$table = new html_table();
