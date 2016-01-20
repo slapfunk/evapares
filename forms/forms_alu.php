@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -31,8 +30,7 @@ class evapares_evalu_usua extends moodleform {
 
 		$mform = $this->_form;
 		$instance = $this->_customdata;
-		$num=$instance	['num']; 		
-		$cmid =$instance['cmid'];
+		$num=$instance	['num'];
 		$iduser =$instance['iduser'];
 		$iter_id=$instance['iter_id'];
 		$n_pregs=$instance['n_pregs'];//$evapares->n_preguntas
@@ -40,7 +38,7 @@ class evapares_evalu_usua extends moodleform {
 		$ssc_bool=$instance['ssc'];//$evapares->ssc
 		$cm_id=$instance['cm_id'];//$cm->id
 		$fin=$num+1;
-		$n_itera_qry= $DB->get_records_sql('SELECT n_ieration FROM {evapares_iterations} WHERE id = ?', 
+		$n_itera_qry= $DB->get_records_sql('SELECT n_iteration FROM {evapares_iterations} WHERE id = ?', 
 				array($iter_id));
 		foreach($n_itera_qry as $llave => $resultado){
 			$n_itera=$resultado->n_iteration;
@@ -62,7 +60,7 @@ class evapares_evalu_usua extends moodleform {
 					foreach($resptext_qry as $llave => $resultado){
 						$resptext=$resultado->text;
 					}
-					$radioarray[] =& $mform->createElement('radio', 'pr'.$p,'' , $resptext, $r, $attributes);
+					$radioarray[] =& $mform->createElement('radio', 'pr'.$p,'' , $resptext, $r, '');
 				}
 				$mform->addGroup($radioarray, 'radioar', '', array(' '), false);
 				$mform->setDefault('pr'.$p, 1);
@@ -71,8 +69,8 @@ class evapares_evalu_usua extends moodleform {
 		if($n_itera>0){
 			$mform->addElement('header', 'eva_pares', 'cambiaellang');
 			$evaluado_qry= $DB->get_records_sql('SELECT alu_evaluado_id FROM {evapares_evaluations}
-					WHERE alu_evalua_id = ? AND iteration=?',
-							array($iduser,$n_itera));
+					WHERE alu_evalua_id = ? AND iterations_id=?',
+							array($iduser,$iter_id));
 			foreach($evaluado_qry as $llave => $resultado){
 				$evaluado=$resultado->alu_evaluado_id;
 				$evaluado_name_qry= $DB->get_records_sql('SELECT firstname, lastname FROM {user} WHERE id = ?',
@@ -104,7 +102,7 @@ class evapares_evalu_usua extends moodleform {
 						foreach($resptext_qry as $llave => $resultado){
 							$resptext=$resultado->text;
 						}
-						$radioarray[] =& $mform->createElement('radio', 'pr'.$p.'al'.$evaluado,'' , $resptext, $r, $attributes);
+						$radioarray[] =& $mform->createElement('radio', 'pr'.$p.'al'.$evaluado,'' , $resptext, $r, '');
 					}
 					$mform->addGroup($radioarray, 'radioar', '', array(' '), false);
 					$mform->setDefault('pr'.$p.'al'.$evaluado, 1);
@@ -116,4 +114,4 @@ class evapares_evalu_usua extends moodleform {
 	}
 			 		
 }
-			 		
+		 		

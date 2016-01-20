@@ -1,5 +1,38 @@
 $(document).ready(function(){
 	$('#0').on('click',function(){
-		alert('funciona');
+		$('#deb').load("evaload.php?tag=0");
+	});
+	$('#1').on('click',function(){
+		$('#deb').load("evaload.php?tag=1");
+	});
+	$('#2').on('click',function(){
+		$('#deb').load("evaload.php?tag=2");
+	});
+	$('#3').on('click',function(){
+		$('#deb').load("evaload.php?tag=3");
+	});
+	$('#4').on('click',function(){
+		$('#deb').load("evaload.php?tag=4");
+	});
+	$('#5').on('click',function(){
+		$('#deb').load("evaload.php?tag=5");
+	});
+	$('#6').on('click',function(){
+		$('#deb').load("evaload.php?tag=6");
+	});
+	$('#7').on('click',function(){
+		$('#deb').load("evaload.php?tag=7");
+	});
+	$('#8').on('click',function(){
+		$('#deb').load("evaload.php?tag=8");
+	});
+	$('#9').on('click',function(){
+		$('#deb').load("evaload.php?tag=9");
+	});
+	$('#10').on('click',function(){
+		$('#deb').load("evaload.php?tag=10");
+	});
+	$('#11').on('click',function(){
+		$('#deb').load("evaload.php?tag=11");
 	});
 });

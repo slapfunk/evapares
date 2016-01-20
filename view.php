@@ -32,8 +32,7 @@ require_once('/forms/forms_v.php');
 require_once('/forms/forms_alu.php');
 
 global $CFG, $DB, $OUTPUT; 
-echo "<script src='../evapares/js/jquery.js'></script>
-<script src='../evapares/js/controladorbotonbuscar.js'></script>";
+
 $action = optional_param("action", "view", PARAM_TEXT);
 $cmid = required_param('id', PARAM_INT);
 
@@ -252,7 +251,7 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 		$itera_qry = $DB->get_records_sql('SELECT id FROM {evapares_iterations} WHERE evapares_id = ? AND n_iteration=?', 
 				array($cm->id,'0'));
 		foreach($itera_qry as $llave => $resultado){
-			$itera=$resultado->id;
+			$itera=$resultado;
 		}
 		if($evapares->ssc==0)$sscb=false;
 		else if($evapares->ssc==1)$sscb=true;
@@ -266,7 +265,7 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 		);
 		array_push($varrs,$vars);
 		$answrs_qry = $DB->get_records_sql('SELECT answers FROM {evapares_evaluations} WHERE iterations_id = ? And alu_evalua_id=?', 
-				array($itera,$iduser));
+				array($itera->id,$iduser));
 		$ans=false;
 		foreach($answrs_qry as $llave=> $answers){
 			if($answers->answers==1)$ans=true;
@@ -294,6 +293,9 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 			redirect($backtocourse);
 		}
 		array_push($forms,$addform);
+		//revisar si esta activa la entrega inicial
+		array_push($data_chan,'<img src="pix/respondible.jpg" View" style="width:15px;height:15px;">');
+		array_push($data_chan,'<img src="pix/ver.jpg" View" style="width:15px;height:15px;">');//editar para que sea el boton de jquery
 		array_push($supa_data_sama,$data_chan);
 		$num=$evapares->total_iterations;
 		for($i=1;$i<=$num;$i++){
@@ -327,9 +329,13 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 			array_push($data_chan,'<img src="'.$respondio.'" style="width:15px;height:15px;">');
 			//revisar si esta activa la entrega inicial
 			array_push($data_chan,'<img src="pix/respondible.jpg" View" style="width:15px;height:15px;">');
+
 			array_push($data_chan,'<img id="'.$i.'" src="pix/ver.jpg" View" style="width:15px;height:15px;">');//editar para que sea el boton de jquery
 			$addform = new evapares_evalu_usua(null, $varrs[$i]);
 			array_push($forms,$addform);
+
+			array_push($data_chan,'<img src="pix/ver.jpg" View" style="width:15px;height:15px;">');//editar para que sea el boton de jquery
+
 			array_push($supa_data_sama,$data_chan);
 		}
 		$data_chan=array();
@@ -386,4 +392,4 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 echo $OUTPUT->footer();
 		
  	}
-	
+		
