@@ -25,15 +25,21 @@ $resultados = $DB->get_records("evapares_evaluations", array('alu_evaluado_id'=>
 
 $questions = $DB->get_records("evapares_questions", array('evapares_id'=>$cmid));
 
-foreach($questions as $att){
-	$answers = $DB->get_records("evapares_answers", array('questions_id'=>$att->id));
+foreach($questions as $att){	
+	$q_text[$att->id] = $att->text;
+	$answers[$att->id] = $DB->get_records("evapares_answers", array('question_id'=>$att->id));
 }
+var_dump($q_text);
+var_dump($answers);
 
+// foreach($q_text as $key => $value){
+// 	echo $q_text[$key]
+// }
 
 $headings = array('Stop','Start','Continue');
 
 $n_table = 0;
- var_dump($questions);		
+	
 foreach($resultados as $param){
 	
  	if($param->alu_evalua_id != $param->alu_evaluado_id){
@@ -46,7 +52,7 @@ foreach($resultados as $param){
  				echo $iterations[$param->iterations_id - 1]->evaluation_name;
  				//COMPROBAR CON FECHA
  				echo html_writer::table($table);		
- 				
+
  				
  				
  			}
