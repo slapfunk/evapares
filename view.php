@@ -48,7 +48,8 @@ $context = context_module::instance($cm->id);
 $iduser=$USER->id;
 
 require_login();
-
+echo '<script src="../js/jquery.js"></script>
+<script src="../js/controladorbotonbuscar.js"></script>';
 // Print the page header.
 if(!has_capability('mod/evapares:courseevaluations', $context) && !has_capability('mod/evapares:myevaluations', $context))
 {	
@@ -251,7 +252,7 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 		$itera_qry = $DB->get_records_sql('SELECT id FROM {evapares_iterations} WHERE evapares_id = ? AND n_iteration=?', 
 				array($cm->id,'0'));
 		foreach($itera_qry as $llave => $resultado){
-			$itera=$resultado;
+			$itera=$resultado->id;
 		}
 		if($evapares->ssc==0)$sscb=false;
 		else if($evapares->ssc==1)$sscb=true;
@@ -265,7 +266,7 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 		);
 		array_push($varrs,$vars);
 		$answrs_qry = $DB->get_records_sql('SELECT answers FROM {evapares_evaluations} WHERE iterations_id = ? And alu_evalua_id=?', 
-				array($itera->id,$iduser));
+				array($itera,$iduser));
 		$ans=false;
 		foreach($answrs_qry as $llave=> $answers){
 			if($answers->answers==1)$ans=true;
