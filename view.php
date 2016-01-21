@@ -289,6 +289,16 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 			redirect($backtocourse);
 		}
 		array_push($forms,$addform);
+		if( $forms['0']->is_cancelled() ){
+			$backtocourse = new moodle_url("course/view.php",array('id'=>$course->id));
+			redirect($backtocourse);
+		}
+		else if($datas = $forms['0']->get_data()){
+			//////////////////////////////////////////////////////////////////////////////////
+			
+			
+			
+		}
 		//revisar si esta activa la entrega inicial
 		$num=$evapares->total_iterations;
 		for($i=1;$i<=$num;$i++){
@@ -326,6 +336,18 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 			array_push($data_chan,'<button id="f'.$i.'"><img src="pix/ver.jpg" View" style="width:15px;height:15px;"></button>');//editar para que sea el boton de jquery
 			$addform = new evapares_evalu_usua(null, $varrs[$i]);
 			array_push($forms,$addform);
+			if( $forms[$i]->is_cancelled() ){
+				$backtocourse = new moodle_url("course/view.php",array('id'=>$course->id));
+				redirect($backtocourse);
+			}
+			else if($datas = $forms[$i]->get_data()){
+				////////////////////////////////////////////////////////////////////////////
+				
+				
+				
+				
+				
+			}
 			array_push($supa_data_sama,$data_chan);
 		}
 		$data_chan=array();
@@ -359,6 +381,19 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 		array_push($data_chan,'<button id="f'.$fin.'"><img src="pix/ver.jpg" id="'.$fin.'" View" style="width:15px;height:15px;"></button>');//editar para que sea el boton de jquery
 		$addform = new evapares_evalu_usua(null, $varrs[$fin]);
 		array_push($forms,$addform);
+		if( $forms[$fin]->is_cancelled() ){
+			$backtocourse = new moodle_url("course/view.php",array('id'=>$course->id));
+			redirect($backtocourse);
+		}
+		else if($datas = $forms[$fin]->get_data()){
+			////////////////////////////////////////////////////////////////////////
+			
+			
+			
+			
+			
+			
+		}
 		array_push($supa_data_sama,$data_chan);
 		$table->data = $supa_data_sama;
 		echo html_writer::table($table);
