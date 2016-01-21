@@ -23,15 +23,20 @@ $iterations = $DB->get_records("evapares_iterations", array('evapares_id'=>$cmid
 
 $resultados = $DB->get_records("evapares_evaluations", array('alu_evaluado_id'=>$USER->id),'iterations_id ASC');
 
-$questions = $DB->get_records("evapares_questions", array('evapares_id'=>$cmid));
+$query = "SELECT Q.text AS preg, Q.id AS pregid, A.text AS resp, A.id AS ansid
+		  FROM mdl_evapares_questions AS Q, mdl_evapares_answers AS A
+		  WHERE Q.evapares_id = 147 AND Q.id = A.question_id";
+//var_dump($cons);
 
- foreach($questions as $att){
-// 	$q_text[$att->id] = $att->text;
- 	$answers[$att->id] = $DB->get_records("evapares_answers", array('question_id'=>$att->id));
+//$questions = $DB->get_records("evapares_questions", array('evapares_id'=>$cmid));
+
+//  foreach($questions as $att){
+// // 	$q_text[$att->id] = $att->text;
+//  	$answers[$att->id] = $DB->get_records("evapares_answers", array('question_id'=>$att->id));
 	
- }
+//  }
 //var_dump($q_text);
- var_dump($answers);
+ //var_dump($answers);
 
 $headings = array('Stop','Start','Continue');
 
@@ -47,12 +52,24 @@ foreach($resultados as $param){
  				
  				$table->data = $supa_data_sama;
  				//echo $param->iterations_id - 1;
- 				echo '<strong>'.$iterations[$param->iterations_id - 1]->evaluation_name.'</strong>';
+ 				echo '<strong>'.$iterations[$param->iterations_id - 1]->evaluation_name.'</strong><br>'; 				
  				//COMPROBAR CON FECHA
- 				echo html_writer::table($table);		
-				}
- 			}
-		
+ 				echo html_writer::table($table);
+
+ 				$cons = $DB-> get_recordset_sql($query ,array($cm->id));
+ 					
+ 				$tempid = 0;
+ 				foreach($cons as $p_a){
+ 				
+ 					if($p_a->pregid != $tempid){
+ 						echo '<strong>'.$p_a->preg.'</strong><br>';
+ 						$tempid = $p_a->pregid;
+ 					}
+ 					echo $p_a->resp.'<br>';
+ 				}
+ 				echo '<hr>';
+			}
+ 				
  			$table = new html_table();
  			$table->head = $headings ;
  			$supa_data_sama=array();
@@ -82,8 +99,19 @@ foreach($resultados as $param){
 	
 }
 $table->data = $supa_data_sama;
-echo $iterations[$param->iterations_id]->evaluation_name;
+echo '<strong>'.$iterations[$param->iterations_id]->evaluation_name.'</strong><br>';
 echo html_writer::table($table);
+$cons = $DB-> get_recordset_sql($query ,array($cm->id));
+
+$tempid = 0;
+foreach($cons as $p_a){
+
+	if($p_a->pregid != $tempid){
+		echo '<strong>'.$p_a->preg.'</strong><br>';
+		$tempid = $p_a->pregid;
+	}
+	echo $p_a->resp.'<br>';
+}
 
 
 
