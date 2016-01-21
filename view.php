@@ -220,10 +220,6 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 			$currenttab='tb2';
 		}
 	}
-	echo html_writer::start_tag('div',array( 'id'=>'deb'));
-	if(!isset($iterationclicked)){
-		$iterationclicked=-1;
-	}
 	$tbz = array();
 	$tabz=array();
 	$inactive = array();
@@ -285,7 +281,7 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 		}
 		array_push($data_chan,$string_to_strong);
 		//if $respondible -> poner boton, else -> not
-		array_push($data_chan,'<img src="pix/ver.jpg" id="0" View" style="width:15px;height:15px;">');//editar para que sea el boton de jquery
+		array_push($data_chan,'<button id="f0"><img src="pix/ver.jpg"  View" style="width:15px;height:15px;"></button>');//editar para que sea el boton de jquery
 		array_push($supa_data_sama,$data_chan);
 		$addform = new evapares_evalu_usua(null, $varrs['0']);
 		if( $addform->is_cancelled() ){
@@ -304,12 +300,12 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 				$itera=$resultado->id;
 				$nomitera=$resultado->evaluation_name;
 			}
-			$vars = array('num'=>$evapares->total_iterations,
+			$vars = array('num'=>$evapares->total_iterations,//
 					"iduser"=>$iduser,
 					'iter_id'=>$itera,
-					'n_pregs'=>$evapares->n_preguntas,
-					'n_resps'=>$evapares->n_respuestas,
-					'ssc'=>$sscb,
+					'n_pregs'=>$evapares->n_preguntas,//
+					'n_resps'=>$evapares->n_respuestas,//
+					'ssc'=>$sscb,//
 					'cm_id'=>$cm->id
 			);
 			array_push($varrs,$vars);
@@ -327,7 +323,7 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 			//revisar si esta activa la entrega inicial
 			array_push($data_chan,'<img src="pix/respondible.jpg" View" style="width:15px;height:15px;">');
 
-			array_push($data_chan,'<img id="'.$i.'" src="pix/ver.jpg" View" style="width:15px;height:15px;">');//editar para que sea el boton de jquery
+			array_push($data_chan,'<button id="f'.$i.'"><img src="pix/ver.jpg" View" style="width:15px;height:15px;"></button>');//editar para que sea el boton de jquery
 			$addform = new evapares_evalu_usua(null, $varrs[$i]);
 			array_push($forms,$addform);
 			array_push($supa_data_sama,$data_chan);
@@ -360,14 +356,16 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 		array_push($data_chan,'<img src="'.$respondio.'" style="width:15px;height:15px;">');
 		//revisar si esta activa la entrega final
 		array_push($data_chan,'<img src="pix/respondible.jpg" View" style="width:15px;height:15px;">');
-		array_push($data_chan,'<img src="pix/ver.jpg" id="'.$fin.'" View" style="width:15px;height:15px;">');//editar para que sea el boton de jquery
+		array_push($data_chan,'<button id="f'.$fin.'"><img src="pix/ver.jpg" id="'.$fin.'" View" style="width:15px;height:15px;"></button>');//editar para que sea el boton de jquery
 		$addform = new evapares_evalu_usua(null, $varrs[$fin]);
 		array_push($forms,$addform);
 		array_push($supa_data_sama,$data_chan);
 		$table->data = $supa_data_sama;
 		echo html_writer::table($table);
-		if(!$iterationclicked==-1){
-			$forms[$iterationclicked]->display();
+		for($t=0;$t<=$fin;$t++){
+			echo html_writer::start_tag('div',array( 'id'=>'t'.$t, 'class'=>'hide formulario'));
+			$forms[$t]->display();
+			echo html_writer::end_tag('div');
 		}
 // 		$iduser=$USER->id;
 // 		$vars=array('num'=>$evapares->total_iterations,"cmid"=>$cmid,"iduser"=>$iduser);//iduser hay que saber de donde

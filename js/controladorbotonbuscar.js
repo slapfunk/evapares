@@ -1,38 +1,50 @@
 $(document).ready(function(){
-	$('#0').on('click',function(){
-		$('#deb').load("evaload.php?tag=0");
+	$('#f0').on('click',function(){
+		$('.formulario').addClass('hide').removeClass('show');
+		$('#t0').addClass('show').removeClass('hide');
 	});
-	$('#1').on('click',function(){
-		$('#deb').load("evaload.php?tag=1");
+	$('#f1').on('click',function(){
+		$('.formulario').addClass('hide').removeClass('show');
+		$('#t1').addClass('show').removeClass('hide');
 	});
-	$('#2').on('click',function(){
-		$('#deb').load("evaload.php?tag=2");
+	$('#f2').on('click',function(){
+		$('.formulario').addClass('hide').removeClass('show');
+		$('#t2').addClass('show').removeClass('hide');
 	});
-	$('#3').on('click',function(){
-		$('#deb').load("evaload.php?tag=3");
+	$('#f3').on('click',function(){
+		$('.formulario').addClass('hide').removeClass('show');
+		$('#t3').addClass('show').removeClass('hide');
 	});
-	$('#4').on('click',function(){
-		$('#deb').load("evaload.php?tag=4");
+	$('#f4').on('click',function(){
+		$('.formulario').addClass('hide').removeClass('show');
+		$('#t4').addClass('show').removeClass('hide');
 	});
-	$('#5').on('click',function(){
-		$('#deb').load("evaload.php?tag=5");
+	$('#f5').on('click',function(){
+		$('.formulario').addClass('hide').removeClass('show');
+		$('#t5').addClass('show').removeClass('hide');
 	});
-	$('#6').on('click',function(){
-		$('#deb').load("evaload.php?tag=6");
+	$('#f6').on('click',function(){
+		$('.formulario').addClass('hide').removeClass('show');
+		$('#t6').addClass('show').removeClass('hide');
 	});
-	$('#7').on('click',function(){
-		$('#deb').load("evaload.php?tag=7");
+	$('#f7').on('click',function(){
+		$('.formulario').addClass('hide').removeClass('show');
+		$('#t7').addClass('show').removeClass('hide');
 	});
-	$('#8').on('click',function(){
-		$('#deb').load("evaload.php?tag=8");
+	$('#f8').on('click',function(){
+		$('.formulario').addClass('hide').removeClass('show');
+		$('#t8').addClass('show').removeClass('hide');
 	});
-	$('#9').on('click',function(){
-		$('#deb').load("evaload.php?tag=9");
+	$('#f9').on('click',function(){
+		$('.formulario').addClass('hide').removeClass('show');
+		$('#t9').addClass('show').removeClass('hide');
 	});
-	$('#10').on('click',function(){
-		$('#deb').load("evaload.php?tag=10");
+	$('#f10').on('click',function(){
+		$('.formulario').addClass('hide').removeClass('show');
+		$('#t10').addClass('show').removeClass('hide');
 	});
-	$('#11').on('click',function(){
-		$('#deb').load("evaload.php?tag=11");
+	$('#f11').on('click',function(){
+		$('.formulario').addClass('hide').removeClass('show');
+		$('#t11').addClass('show').removeClass('hide');
 	});
 });
