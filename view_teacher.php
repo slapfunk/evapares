@@ -115,6 +115,6 @@ $table->data = 	//Codigo para la tabla
 	$table->head = $headings ;
 	$table->data = $bidimensional ;
 	
-	echo html_writer::table($table);
+echo "hola" ;
 
 echo html_writer::table($table);
