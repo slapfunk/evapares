@@ -26,22 +26,10 @@ $resultados = $DB->get_records("evapares_evaluations", array('alu_evaluado_id'=>
 $query = "SELECT Q.text AS preg, Q.id AS pregid, A.text AS resp, A.id AS ansid
 		  FROM mdl_evapares_questions AS Q, mdl_evapares_answers AS A
 		  WHERE Q.evapares_id = 147 AND Q.id = A.question_id";
-//var_dump($cons);
-
-//$questions = $DB->get_records("evapares_questions", array('evapares_id'=>$cmid));
-
-//  foreach($questions as $att){
-// // 	$q_text[$att->id] = $att->text;
-//  	$answers[$att->id] = $DB->get_records("evapares_answers", array('question_id'=>$att->id));
-	
-//  }
-//var_dump($q_text);
- //var_dump($answers);
 
 $headings = array('Stop','Start','Continue');
 
 $n_table = 0;
-$cont_ans = 0;
 	
 foreach($resultados as $param){
 	
