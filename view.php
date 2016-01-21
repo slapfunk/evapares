@@ -213,7 +213,7 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 		$currenttab='tb1';
 	}
 	else {
-		if($_REQUEST['mode']=='evaluaton'){
+		if($_REQUEST['mode']=='evaluation'){
 			$currenttab='tb1';
 		}
 		else if ($_REQUEST['mode']=='resultados'){
