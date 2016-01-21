@@ -26,7 +26,8 @@ class evapares_evalu_usua extends moodleform {
 	
 	function definition() {
 	
-		global $DB;
+		global $DB,$COURSE;
+		//$iterations = $DB->get_records("evapares_iterations", array('evapares_id'=>$cmid));
 
 		$mform = $this->_form;
 		$instance = $this->_customdata;
@@ -109,6 +110,8 @@ class evapares_evalu_usua extends moodleform {
 				}
 			}
 		}
+		$mform->addElement('hidden', 'id',$cm_id);
+		$mform->setType('id', PARAM_INT);
 				
 		$this->add_action_buttons();
 	}
