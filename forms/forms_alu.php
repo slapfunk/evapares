@@ -39,6 +39,10 @@ class evapares_evalu_usua extends moodleform {
 		$ssc_bool=$instance['ssc'];//$evapares->ssc
 		$cm_id=$instance['cm_id'];//$cm->id
 		$fin=$num+1;
+		$notas= array();
+		for($clay=0;$clay<=12;$clay++){
+			$notas[]=1+($clay*0.5);
+		}
 		$n_itera_qry= $DB->get_records_sql('SELECT n_iteration FROM {evapares_iterations} WHERE id = ?', 
 				array($iter_id));
 		foreach($n_itera_qry as $llave => $resultado){
@@ -110,7 +114,8 @@ class evapares_evalu_usua extends moodleform {
 					$mform->addGroup($radioarray, 'radioar', '', array(' '), false);
 					$mform->setDefault('pr'.$p.'al'.$evaluado, 1);
 				}
-				
+
+				$mform->addElement('select', 'n'.$p,'notacambialang', $notas);
 			}
 		}
 		$mform->addElement('hidden', 'id',$cm_id);
