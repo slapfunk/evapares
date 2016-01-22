@@ -109,22 +109,22 @@ class evapares_num_eval_form extends moodleform {
 			$date = $data['FE'.$i];
 			
 			if( empty($data['NE'.$i])){
-				$errors['NE'.$i] = 'Campo NOMBRE obligtorio';
+				$errors['NE'.$i] = get_string('addName','mod_evapares');
 			}
 			if( $data['FE'.$i] >= $date[0]) {
-				$errors['FE'.$i] = 'Debe escojer una FECHA';
+				$errors['FE'.$i] = get_string('ChooseDate','mod_evapares');
 			}
 		for($j = 1; $j <= $preg; $j++){
 			$question = $data['P'.$j];
 			
 			if( empty($data['P'.$j])){
-				$errors['P'.$j] = 'Campo PREGUNTA obligtorio';
+				$errors['P'.$j] = get_string('AddQuestion','mod_evapares');
 			}
 				for($h = 1; $h <= $resp; $h++){
 					$answer = $data['R'.$j.$h];
 					
 					if( empty($data['R'.$j.$h])){
-						$errors['R'.$j.$h] = 'Campo Respuesta obligtorio';
+						$errors['R'.$j.$h] = get_string('addAnswer','mod_evapares');
 					}
 			}
 		}
