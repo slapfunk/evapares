@@ -111,7 +111,7 @@ class evapares_num_eval_form extends moodleform {
 			if( empty($data['NE'.$i])){
 				$errors['NE'.$i] = get_string('addName','mod_evapares');
 			}
-			if( $data['FE'.$i] >= $date[0]) {
+			if( $data['FE'.$i] <= $date[0]) {
 				$errors['FE'.$i] = get_string('ChooseDate','mod_evapares');
 			}
 		for($j = 1; $j <= $preg; $j++){
