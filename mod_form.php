@@ -52,17 +52,17 @@ class mod_evapares_mod_form extends moodleform_mod {
 //         }
       
   // We now define the amount of Evaluations, Questions, Answers and time availability options respectively
-        $AmountEval= 10 ; 
-        $AmountQuest = 5 ;
-        $AmountAns = 7 ;
-        $AmountTime = 5 ; 
+        $AmountEval= 10; 
+        $AmountQuest = 20;
+        $AmountAns = 7;
+        $AmountTime = 14; 
         //Here we fill different arrays with all the different options
 	   $evaluations = array();
 	   for ($i=0; $i <= $AmountEval ; $i++){ $evaluations[$i] = $i;}
 	   $questions = array();
 	   for ($i=1; $i <= $AmountQuest ; $i++){ $questions[$i] = $i;}
 	   $answers = array();
-	   for ($i=1; $i <= $AmountAns ; $i++){ $answers[$i] = $i;}
+	   for ($i=2; $i <= $AmountAns ; $i++){ $answers[$i] = $i;}
 	   $time = array();
 	   for ($i=1; $i <= $AmountTime ; $i++){ $time[$i] = $i;}
 	   

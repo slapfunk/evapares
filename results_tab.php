@@ -25,7 +25,7 @@ $resultados = $DB->get_records("evapares_evaluations", array('alu_evaluado_id'=>
 
 $query = "SELECT Q.text AS preg, Q.id AS pregid, A.text AS resp, A.id AS ansid
 		  FROM mdl_evapares_questions AS Q, mdl_evapares_answers AS A
-		  WHERE Q.evapares_id = 147 AND Q.id = A.question_id";
+		  WHERE Q.evapares_id = ? AND Q.id = A.question_id";
 
 $headings = array('Stop','Start','Continue');
 
@@ -48,7 +48,7 @@ foreach($resultados as $param){
  					
  				$tempid = 0;
  				foreach($cons as $p_a){
- 				
+
  					if($p_a->pregid != $tempid){
  						echo '<strong>'.$p_a->preg.'</strong><br>';
  						$tempid = $p_a->pregid;
