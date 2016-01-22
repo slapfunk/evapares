@@ -83,11 +83,11 @@ class evapares_evalu_usua extends moodleform {
 				$mform->addElement('html', '<hr>');
 				$mform->addElement('static',$evaluado ,'cambiaenlang','<h3>'.$evaluado_name.'</h3>');
 				if($ssc_bool){
-					$mform->addElement('textarea', "ssc_stop".$evaluado,'STOP', 'wrap="virtual" rows="5" cols="60"');
+					$mform->addElement('textarea', "ssc_stop".$evaluado,'STOP', 'wrap="virtual" rows="2" cols="60"');
 					$mform->setType("ssc_stop".$evaluado, PARAM_TEXT);
-					$mform->addElement('textarea', "ssc_start".$evaluado,'START', 'wrap="virtual" rows="5" cols="60"');
+					$mform->addElement('textarea', "ssc_start".$evaluado,'START', 'wrap="virtual" rows="2" cols="60"');
 					$mform->setType("ssc_start".$evaluado, PARAM_TEXT);
-					$mform->addElement('textarea', "ssc_continue".$evaluado,'CONTINUE', 'wrap="virtual" rows="5" cols="60"');
+					$mform->addElement('textarea', "ssc_continue".$evaluado,'CONTINUE', 'wrap="virtual" rows="2" cols="60"');
 					$mform->setType("ssc_start".$evaluado, PARAM_TEXT);
 				}
 				for($p=1;$p<=$n_pregs;$p++){
