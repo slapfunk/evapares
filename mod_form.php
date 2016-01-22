@@ -91,5 +91,6 @@ class mod_evapares_mod_form extends moodleform_mod {
         // Add standard buttons, common to all modules.
         $this->add_action_buttons();
     }
+
 }
 

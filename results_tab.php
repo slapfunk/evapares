@@ -30,7 +30,7 @@ $query = "SELECT Q.text AS preg, Q.id AS pregid, A.text AS resp, A.id AS ansid
 $headings = array('Stop','Start','Continue');
 
 $n_table = 0;
-	
+
 foreach($resultados as $param){
 	
  	if($param->alu_evalua_id != $param->alu_evaluado_id){

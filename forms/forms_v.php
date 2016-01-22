@@ -48,7 +48,7 @@ class evapares_num_eval_form extends moodleform {
 		$mform->addElement('hidden', 'NE'.$i, 'Evaluacion Inicial');
 		$mform->setType('NE'.$i, PARAM_TEXT);
 
-		$mform->addElement('date_time_selector', 'FE'.$i,get_string('personalEvalInitial','mod_evapares'), array('optional'=>true));
+		$mform->addElement('date_time_selector', 'FE'.$i,get_string('personalEvalInitial','mod_evapares'));
 		$mform->setDefault('available', 0);
 
 			} elseif($i > 0 && $i < $num + 1){
@@ -56,7 +56,7 @@ class evapares_num_eval_form extends moodleform {
 		$mform->addElement('text', 'NE'.$i,get_string('DeliverableName', 'mod_evapares').$i);
 		$mform->setType('NE'.$i, PARAM_TEXT);
 
-		$mform->addElement('date_time_selector', 'FE'.$i,get_string('dueDate','mod_evapares').$i, array('optional'=>true));
+		$mform->addElement('date_time_selector', 'FE'.$i,get_string('dueDate','mod_evapares').$i);
 		$mform->setDefault('available', 0);
 
 			} elseif($i == $num +1){
@@ -64,13 +64,13 @@ class evapares_num_eval_form extends moodleform {
 		$mform->addElement('hidden', 'NE'.$i, 'Evaluacion Final');
 		$mform->setType('NE'.$i, PARAM_TEXT);
 
-		$mform->addElement('date_time_selector', 'FE'.$i,get_string('finalDate', 'mod_evapares'), array('optional'=>true));
+		$mform->addElement('date_time_selector', 'FE'.$i,get_string('finalDate', 'mod_evapares'));
 		$mform->setDefault('available', 0);
 		
 			}
 		}
 		
-		$mform->addElement('header', 'Detalle_Preguntas', get_string('DeliverableDetails','mod_evapares'));
+		$mform->addElement('header', 'Detalle_Preguntas', 'detalle preguntas(buscar en lang)');
 		
 		for($j = 1; $j <= $preg; $j++){
 		
@@ -91,5 +91,45 @@ class evapares_num_eval_form extends moodleform {
 		
 		$this->add_action_buttons();
 	}
-	
+	function validation($data, $files){
+		global $DB;
+		
+		$instance = $this->_customdata;
+		
+		$num = $instance['num'];
+		$preg =$instance['preg'];
+		$resp =$instance['resp'];
+		
+		$date = getdate();
+		
+		$errors = array();
+		 
+		for($i = 0; $i <= $num + 1; $i++){
+			$name = $data['NE'.$i];
+			$date = $data['FE'.$i];
+			
+			if( empty($data['NE'.$i])){
+				$errors['NE'.$i] = 'Campo NOMBRE obligtorio';
+			}
+			if( $data['FE'.$i] >= $date[0]) {
+				$errors['FE'.$i] = 'Debe escojer una FECHA';
+			}
+		for($j = 1; $j <= $preg; $j++){
+			$question = $data['P'.$j];
+			
+			if( empty($data['P'.$j])){
+				$errors['P'.$j] = 'Campo PREGUNTA obligtorio';
+			}
+				for($h = 1; $h <= $resp; $h++){
+					$answer = $data['R'.$j.$h];
+					
+					if( empty($data['R'.$j.$h])){
+						$errors['R'.$j.$h] = 'Campo Respuesta obligtorio';
+					}
+			}
+		}
+		}
+
+		return $errors;
+	}
 }
