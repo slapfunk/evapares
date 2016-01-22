@@ -15,7 +15,7 @@ defined('MOODLE_INTERNAL') || die();
 $string['addSSC'] = 'Add SSC' ;
 $string['ChooseDate'] = 'You must choose a Date' ;
 $string['AddQuestion'] = 'You must add a Question' ;
-$string['AddAnswer'] = 'You must add an Answer' ;
+$string['addAnswer'] = 'You must add an Answer' ;
 $string['addName'] = 'You must add a Name' ;
 $string['answer'] = 'Answer ' ;
 $string['averagePeersEval'] = 'Peers Evaluation Average: ' ;

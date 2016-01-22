@@ -15,7 +15,7 @@ defined('MOODLE_INTERNAL') || die();
 $string['addSSC'] = 'Agregar SSC' ;
 $string['ChooseDate'] = 'Debe escojer una FECHA' ;
 $string['AddQuestion'] = 'Campo PREGUNTA obligtorio' ;
-$string['AddAnswer'] = 'Campo Respuesta obligtorio' ;
+$string['addAnswer'] = 'Campo Respuesta obligtorio' ;
 $string['addName'] = 'Campo NOMBRE obligtorio' ;
 $string['answer'] = 'Respuesta ' ;
 $string['averagePeersEval'] = 'Promedio Calificación de Pares: ' ;
