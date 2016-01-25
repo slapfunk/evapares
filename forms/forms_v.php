@@ -70,7 +70,7 @@ class evapares_num_eval_form extends moodleform {
 			}
 		}
 		
-		$mform->addElement('header', 'Detalle_Preguntas', 'detalle preguntas(buscar en lang)');
+		$mform->addElement('header', 'Detalle_Preguntas', get_string('AddMultipleOptionQuestion','mod_evapares'));
 		
 		for($j = 1; $j <= $preg; $j++){
 		
@@ -100,7 +100,7 @@ class evapares_num_eval_form extends moodleform {
 		$preg =$instance['preg'];
 		$resp =$instance['resp'];
 		
-		$date = getdate();
+		$actualdate = getdate();
 		
 		$errors = array();
 		 
@@ -108,22 +108,22 @@ class evapares_num_eval_form extends moodleform {
 			$name = $data['NE'.$i];
 			$date = $data['FE'.$i];
 			
-			if( empty($data['NE'.$i])){
+			if( empty($name)){
 				$errors['NE'.$i] = get_string('addName','mod_evapares');
 			}
-			if( $data['FE'.$i] <= $date[0]) {
+			if( $date <= $actualdate[0]) {
 				$errors['FE'.$i] = get_string('ChooseDate','mod_evapares');
 			}
 		for($j = 1; $j <= $preg; $j++){
 			$question = $data['P'.$j];
 			
-			if( empty($data['P'.$j])){
+			if( empty($question)){
 				$errors['P'.$j] = get_string('AddQuestion','mod_evapares');
 			}
 				for($h = 1; $h <= $resp; $h++){
 					$answer = $data['R'.$j.$h];
 					
-					if( empty($data['R'.$j.$h])){
+					if( empty($answer)){
 						$errors['R'.$j.$h] = get_string('addAnswer','mod_evapares');
 					}
 			}

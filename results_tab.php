@@ -27,6 +27,19 @@ $query = "SELECT Q.text AS preg, Q.id AS pregid, A.text AS resp, A.id AS ansid
 		  FROM mdl_evapares_questions AS Q, mdl_evapares_answers AS A
 		  WHERE Q.evapares_id = ? AND Q.id = A.question_id";
 
+$percentages = "SELECT Answer.`evaluations_id`, Answer.`answers_id`, COUNT(Answer.`answers_id`) AS num, Evaluation.`iterations_id`
+				FROM mdl_evapares_evlalutons_has_answ Answer
+				JOIN mdl_evapares_evaluations Evaluation ON (Evaluation.id = Answer.evaluations_id )
+				JOIN mdl_evapares_iterations Iteration ON (Evaluation.`iterations_id` = Iteration.`id`)
+				WHERE Iteration.evapares_id = 164
+				GROUP BY answers_id
+				ORDER BY answers_id";
+
+$get_pers = $DB-> get_recordset_sql($percentages ,array($cm->id));
+
+foreach($get_pers as $data){
+var_dump($data);}
+
 $headings = array('Stop','Start','Continue');
 
 $n_table = 0;
@@ -50,12 +63,13 @@ foreach($resultados as $param){
  				foreach($cons as $p_a){
 
  					if($p_a->pregid != $tempid){
- 						echo '<strong>'.$p_a->preg.'</strong><br>';
+ 						echo '<table>
+ 							  <tr><td><strong>'.$p_a->preg.'</strong></td></tr>';
  						$tempid = $p_a->pregid;
  					}
- 					echo $p_a->resp.'<br>';
+ 						echo '<tr><td></td><td>'.$p_a->resp.'</td></tr>';
  				}
- 				echo '<hr>';
+ 						echo '</table><hr>';
 			}
  				
  			$table = new html_table();

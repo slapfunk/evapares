@@ -35,7 +35,7 @@ class mod_evapares_mod_form extends moodleform_mod {
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
         // Adding the standard "name" field.
-        $mform->addElement('text', 'name', 'Nombre', array('size' => '64'));
+        $mform->addElement('text', 'name',get_string('FormName','mod_evapares'), array('size' => '64'));
         
             $mform->setType('name', PARAM_TEXT);
         

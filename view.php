@@ -28,8 +28,8 @@
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
 require_once($CFG->dirroot.'/course/moodleform_mod.php');
-require_once('/forms/forms_v.php');
-require_once('/forms/forms_alu.php');
+require_once('forms/forms_v.php');
+require_once('forms/forms_alu.php');
 
 global $CFG, $DB, $OUTPUT; 
 
@@ -97,7 +97,7 @@ if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add
 	$allcombs = array();
 	
 	if( $addform->is_cancelled() ){
-		$backtocourse = new moodle_url("course/view.php",array('id'=>$course->id));
+		$backtocourse = new moodle_url("course/view.php",array('id'=>$cm->id));
 		redirect($backtocourse);
 		
 	}
@@ -226,8 +226,8 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 	$activated = array();
 	$inactive = array('7');
 	$activated = array('tb1');
-	$tbz[] = new tabobject('tb1',new moodle_url($CFG->wwwroot.'/mod/evapares/view.php',array('mode'=>'evaluation','id' => $cm->id)), 'estocambiaenlang');
-	$tbz[] = new tabobject('tb2',new moodle_url($CFG->wwwroot.'/mod/evapares/view.php',array('mode'=>'resultados','id' => $cm->id)),'Restocambiaenlang');
+	$tbz[] = new tabobject('tb1',new moodle_url($CFG->wwwroot.'/mod/evapares/view.php',array('mode'=>'evaluation','id' => $cm->id)), get_string('eval','mod_evapares'));
+	$tbz[] = new tabobject('tb2',new moodle_url($CFG->wwwroot.'/mod/evapares/view.php',array('mode'=>'resultados','id' => $cm->id)), get_string('results','mod_evapares'));
 	$tabz[]=$tbz;
 	print_tabs($tabz,$currenttab,$inactive, $activated);
 	if(!isset($_REQUEST['mode'])){
@@ -237,14 +237,13 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 		$mode=$_REQUEST['mode'];
 	}
 	if($mode=='evaluation'){	
-		/////////////////////////////////////////////////////////////////////////////////////////////////
 		$forms= array();
 		$varrs=array();
 		$table = new html_table();
-		$table->head = array('buscalang', 'buscalang', 'buscalang', 'buscalang');
+		$table->head = array(get_string('evals','mod_evapares'), get_string('CompleteTable','mod_evapares'), get_string('activeTable','mod_evapares'), get_string('resultsTable','mod_evapares'));
 		$supa_data_sama=array();
 		$data_chan=array();
-		array_push($data_chan,'cambiarlang');//inicial
+		array_push($data_chan, get_string('initialEval','mod_evapares'));//inicial
 		$itera_qry = $DB->get_records_sql('SELECT id FROM {evapares_iterations} WHERE evapares_id = ? AND n_iteration=?', 
 				array($cm->id,'0'));
 		foreach($itera_qry as $llave => $resultado){$itera=$resultado->id;}
@@ -294,10 +293,32 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 			redirect($backtocourse);
 		}
 		else if($datas = $forms['0']->get_data()){
-			//////////////////////////////////////////////////////////////////////////////////
-			
-			
-			
+			$eva_perso = $DB->get_records('evapares_evaluations',array('iterations_id'=>$itera, 'alu_evalua_id'=>$iduser,'alu_evaluado_id'=>$iduser));
+			foreach($eva_perso as $llave => $ep){
+				$ep->answers=1;
+				$epid=$ep->id;
+			}
+			$DB->update_record('evapares_evaluations', $eva_perso[$epid], $bulk=false);	
+			for($preg_n=1;$preg_n<=$evapares->n_preguntas;$preg_n++){
+				$ev_pr=new stdClass();
+				$respuesta_perso=new stdClass();
+				$respuesta_perso->evaluations_id=$epid;
+				$rbtn='r'.$preg_n;
+				$qstn_qry = $DB->get_records_sql('SELECT id FROM {evapares_questions} WHERE n_of_question=? AND evapares_id=?',
+						array($preg_n,$cm->id));
+				foreach($qstn_qry as $llave => $resultado){
+					$qstn=$resultado->id;
+				}
+				var_dump($datas->$rbtn);
+				$responde_qry = $DB->get_records_sql('SELECT id FROM {evapares_answers} WHERE number=? AND question_id=?',
+						array($datas->$rbtn,$qstn));
+				foreach($responde_qry as $llave => $resultado){
+					$responde=$resultado->id;
+				}
+				$respuesta_perso->answers_id=$responde;
+				$DB->insert_record('evapares_evlalutons_has_answ', $respuesta_perso, $returnid=false, $bulk=false);
+			}
+
 		}
 		//revisar si esta activa la entrega inicial
 		$num=$evapares->total_iterations;
@@ -340,18 +361,53 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 				$backtocourse = new moodle_url("course/view.php",array('id'=>$course->id));
 				redirect($backtocourse);
 			}
+			/////////////////////////////////////////////////////////////AqUI
 			else if($datas = $forms[$i]->get_data()){
-				////////////////////////////////////////////////////////////////////////////
-				
-				
-				
-				
-				
+				$evaluado_qry= $DB->get_records_sql('SELECT id, alu_evaluado_id FROM {evapares_evaluations}
+					WHERE alu_evalua_id = ? AND iterations_id=?',
+						array($iduser,$itera));
+				foreach($evaluado_qry as $llave => $evaluadox){
+					$evaluado_id=$evaluadox->alu_evaluado_id;
+					$evaluazion_id=$evaluadox->id;
+					$eva_pares = $DB->get_records('evapares_evaluations',array('iterations_id'=>$itera, 'alu_evalua_id'=>$iduser,'alu_evaluado_id'=>$evaluado_id));
+					foreach($eva_pares as $llave => $ep){
+						
+						$s1='ssc_stop'.$evaluado_id;
+						$s2='ssc_start'.$evaluado_id;
+						$s3='ssc_continue'.$evaluado_id;
+						$ep->ssc_stop=$datas->$s1;
+						$ep->ssc_start=$datas->$s2;
+						$ep->ssc_continue=$datas->$s3;
+						if(!($ep->ssc_stop='...'&&$ep->ssc_start='...'&&$ep->ssc_continue='...'))$ep->answers=1;
+						$nt='na'.$evaluado_id;
+						$ep->nota=$datas->$nt;
+						$epid=$ep->id;
+						$DB->update_record('evapares_evaluations', $ep, $bulk=false);
+						for($preg_n=1;$preg_n<=$evapares->n_preguntas;$preg_n++){
+							$ev_pr=new stdClass();
+							$respuesta_pares=new stdClass();
+							$respuesta_pares->evaluations_id=$epid;
+							$rbtn='r'.$preg_n.'a'.$evaluado_id;
+							$qstn_qry = $DB->get_records_sql('SELECT id FROM {evapares_questions} WHERE n_of_question=? AND evapares_id=?',
+									array($preg_n,$cm->id));
+							foreach($qstn_qry as $llave => $resultado){
+								$qstn=$resultado->id;
+							}
+							$responde_qry = $DB->get_records_sql('SELECT id FROM {evapares_answers} WHERE number=? AND question_id=?',
+									array($datas->$rbtn,$qstn));
+							foreach($responde_qry as $llave => $resultado){
+								$responde=$resultado->id;
+							}
+							$respuesta_pares->answers_id=$responde;
+							$DB->insert_record('evapares_evlalutons_has_answ', $respuesta_pares, $returnid=false, $bulk=false);
+						}
+					}	
+				}
 			}
 			array_push($supa_data_sama,$data_chan);
 		}
 		$data_chan=array();
-		array_push($data_chan,'cambiarlang');
+		array_push($data_chan,get_string('finalDate','mod_evapares'));
 		$fin=$num+1;
 		$itera_qry = $DB->get_records_sql('SELECT id FROM {evapares_iterations} WHERE evapares_id = ? AND n_iteration=? limit 1', array($cm->id,$fin));
 		foreach($itera_qry as $llave => $resultado){

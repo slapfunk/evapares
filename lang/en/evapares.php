@@ -12,18 +12,21 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['activeTable'] = 'Active' ;
 $string['addSSC'] = 'Add SSC' ;
-$string['ChooseDate'] = 'You must choose a Date' ;
 $string['AddQuestion'] = 'You must add a Question' ;
 $string['addAnswer'] = 'You must add an Answer' ;
 $string['addName'] = 'You must add a Name' ;
+$string['AddMultipleOptionQuestion'] = 'Add a Multiple choice question ' ;
 $string['answer'] = 'Answer ' ;
 $string['averagePeersEval'] = 'Peers Evaluation Average: ' ;
 $string['amountOfAnswers'] = 'Amount of answers available for each question.' ;
 $string['amountOfEvaluations'] = 'Amount of Partial evaluations (Leaving out the initial and final ones)' ;
 $string['amountOfQuestions'] = 'Amount of Questions to be answered in each evaluation' ;
 $string['disponibilityTime'] = 'Amount of Days to complete each evaluation.' ;
+$string['ChooseDate'] = 'You must choose a Date' ;
 $string['CalificationResults'] = 'Calification Results' ;
+$string['CompleteTable'] = 'Completed' ;
 $string['dueDate'] = 'Due Date: ' ;
 $string['DeliverableDetails'] = 'Deliverable Details' ;
 $string['DeliverableName'] = 'Deliverable Name ' ;
@@ -32,20 +35,26 @@ $string['evaparesfieldset'] = 'Custom example fieldset';
 $string['evaparesname'] = 'Evaluations name';
 $string['evaparesname_help'] = 'You MUST name your evaluations. This name will be common to all of them';
 $string['evapares'] = 'evapares';
-$string['finalDate'] = 'Final Evaluation';
+$string['eval'] = 'Evaluation';
+$string['evals'] = 'Evaluations';
+$string['finalDate'] = 'Final evaluation';
 $string['gradingStuden'] = 'Student to be graded ' ;
+$string['initialEval'] = 'Initial evaluation';
 $string['modulename'] = 'evapares';
 $string['modulenameplural'] = 'evaparess';
 $string['modulename_help'] = 'Use the evapares module to create instances for studentes to 
 		evaluate themselves and their team member| The evapares module allows for students to
 		grade their peers at different stages of the project.';
+$string['FormName'] = 'NAME' ;
 $string['noCapabilities']= "You don't have the capabilities to be here" ;
-$string['option'] = "Option" ;
+$string['option'] = 'Option' ;
 $string['peers_results'] = 'Peers Evaluation Result ' ;
 $string['personalEvalInitial'] = 'Initial Personal Evaluation ' ;
 $string['personalEval'] = 'Personal Evaluation' ;
 $string['pluginadministration'] = 'evapares administration';
 $string['pluginname'] = 'evapares';
 $string['question']='Question' ;
+$string['results'] = 'Results';
+$string['resultsTable'] = 'My Results';
 $string['ssc_results'] = 'SSC Evaluation Results' ;
 $string['ssc_help'] = 'The Stop, Start, Continue (SSC) methodogy consists of three text boxes. Inside the “Stop” box the student writes what he thinks his groupmate should stop doing. In the “Start” box the student writes what his groupmate should start doing. Finally, in the “Continue”, the student has the option to write what he sees as his groupmate’s best traits and what he should continue doing. This methodology is used for diverse motives, spanning communication, personal development, teamwork, problem solving, among others. ' ;
