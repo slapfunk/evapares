@@ -40,8 +40,8 @@ class evapares_evalu_usua extends moodleform {
 		$cm_id=$instance['cm_id'];//$cm->id
 		$fin=$num+1;
 		$notas= array();
-		for($clay=0;$clay<=12;$clay++){
-			$notas[]=1+($clay*0.5);
+		for($opc_notas=0;$opc_notas<=12;$opc_notas++){
+			$notas[]=1+($opc_notas*0.5);
 		}
 		$n_itera_qry= $DB->get_records_sql('SELECT n_iteration FROM {evapares_iterations} WHERE id = ?', 
 				array($iter_id));
@@ -49,30 +49,30 @@ class evapares_evalu_usua extends moodleform {
 			$n_itera=$resultado->n_iteration;
 		}
 		if($n_itera==0||$n_itera==$fin){
-			$mform->addElement('header', 'eva_perso', 'cambiaellang');//tipo, id, string
-			for($p=1;$p<=$n_pregs;$p++){
+			$mform->addElement('header', 'eva_perso', '[ealuacion personal]');//tipo, id, string
+			for($preg_n=1;$preg_n<=$n_pregs;$preg_n++){
 				$pregtext_qry= $DB->get_records_sql('SELECT id, text FROM {evapares_questions} WHERE evapares_id = ? AND n_of_question=?',
-						array($cm_id,$p));
+						array($cm_id,$preg_n));
 				foreach($pregtext_qry as $llave => $resultado){
 					$pregid=$resultado->id;
 					$pregtext=$resultado->text;
 				}
-				$mform->addElement('static','pregunta'.$p ,'cambiaenlang',$pregtext);
+				$mform->addElement('static','pregunta'.$preg_n ,$preg_n.':','<h5>'.$pregtext.'</h5>');
 				$radioarray=array();
-				for($r=1;$r<=$n_resps;$r++){
+				for($resp_x=1;$resp_x<=$n_resps;$resp_x++){
 					$resptext_qry= $DB->get_records_sql('SELECT text FROM {evapares_answers} WHERE question_id = ? AND number=?',
-							array($pregid,$r));
+							array($pregid,$resp_x));
 					foreach($resptext_qry as $llave => $resultado){
 						$resptext=$resultado->text;
 					}
-					$radioarray[] =& $mform->createElement('radio', 'pr'.$p,'' , $resptext, $r, '');
+					$radioarray[] =& $mform->createElement('radio', 'r'.$preg_n,'' , $resptext, $resp_x, '');
 				}
-				$mform->addGroup($radioarray, 'radioar', '', array(' '), false);
-				$mform->setDefault('pr'.$p, 1);
+				$mform->addGroup($radioarray, 'radioar'.$preg_n, '', array(' '), false);
+				$mform->setDefault('pr'.$preg_n, 1);
 			}
 		}
 		if($n_itera>0){
-			$mform->addElement('header', 'eva_pares', 'cambiaellang');
+			$mform->addElement('header', 'eva_pares', '[evaluacion de pares]');
 			$evaluado_qry= $DB->get_records_sql('SELECT alu_evaluado_id FROM {evapares_evaluations}
 					WHERE alu_evalua_id = ? AND iterations_id=?',
 							array($iduser,$iter_id));
@@ -82,40 +82,45 @@ class evapares_evalu_usua extends moodleform {
 						array($evaluado));
 				foreach($evaluado_name_qry as $llave => $resultado){
 					$evaluado_name=$resultado->firstname." ".$resultado->lastname;
-				}
+				}								//$evaluado=id, $evaluado_name=firstname lastname
 				$mform->addElement('html', '<hr>');
 				$mform->addElement('html', '<hr>');
 				$mform->addElement('static',$evaluado ,'cambiaenlang','<h3>'.$evaluado_name.'</h3>');
 				if($ssc_bool){
 					$mform->addElement('textarea', "ssc_stop".$evaluado,'STOP', 'wrap="virtual" rows="2" cols="60"');
 					$mform->setType("ssc_stop".$evaluado, PARAM_TEXT);
+					$mform->setDefault("ssc_stop".$evaluado,'...');
 					$mform->addElement('textarea', "ssc_start".$evaluado,'START', 'wrap="virtual" rows="2" cols="60"');
 					$mform->setType("ssc_start".$evaluado, PARAM_TEXT);
+					$mform->setDefault("ssc_start".$evaluado,'...');
 					$mform->addElement('textarea', "ssc_continue".$evaluado,'CONTINUE', 'wrap="virtual" rows="2" cols="60"');
-					$mform->setType("ssc_start".$evaluado, PARAM_TEXT);
+					$mform->setType("ssc_continue".$evaluado, PARAM_TEXT);
+					$mform->setDefault("ssc_continue".$evaluado,'...');
 				}
-				for($p=1;$p<=$n_pregs;$p++){
+				for($preg_n=1;$preg_n<=$n_pregs;$preg_n++){
 					$pregtext_qry= $DB->get_records_sql('SELECT id, text FROM {evapares_questions} WHERE evapares_id = ? AND n_of_question=?',
-							array($cm_id,$p));
+							array($cm_id,$preg_n));
 					foreach($pregtext_qry as $llave => $resultado){
 						$pregid=$resultado->id;
 						$pregtext=$resultado->text;
 					}
-					$mform->addElement('static','pregunta'.$p ,$p.':','<h5>'.$pregtext.'</h5>');
+					$mform->addElement('static','pregunta'.$preg_n ,$preg_n.':','<h5>'.$pregtext.'</h5>');
 					$radioarray=array();
-					for($r=1;$r<=$n_resps;$r++){
+					for($resp_x=1;$resp_x<=$n_resps;$resp_x++){
 						$resptext_qry= $DB->get_records_sql('SELECT text FROM {evapares_answers} WHERE question_id = ? AND number=?',
-								array($pregid,$r));
+								array($pregid,$resp_x));
 						foreach($resptext_qry as $llave => $resultado){
 							$resptext=$resultado->text;
 						}
-						$radioarray[] =& $mform->createElement('radio', 'pr'.$p.'al'.$evaluado,'' , $resptext, $r, '');
+						$radioarray[] =& $mform->createElement('radio', 'r'.$preg_n.'a'.$evaluado,'' , $resptext, $resp_x, '');
 					}
+					$mform->setDefault('r'.$preg_n.'a'.$evaluado,1);
 					$mform->addGroup($radioarray, 'radioar', '', array(' '), false);
-					$mform->setDefault('pr'.$p.'al'.$evaluado, 1);
+					$mform->setDefault('radioar'.$preg_n.'a'.$evaluado, 1);
 				}
 
-				$mform->addElement('select', 'n'.$p,'notacambialang', $notas);
+				$mform->addElement('select', 'na'.$evaluado,'notacambialang', $notas);
+				$mform->setDefault('na'.$evaluado, 1);
 			}
 		}
 		$mform->addElement('hidden', 'id',$cm_id);
