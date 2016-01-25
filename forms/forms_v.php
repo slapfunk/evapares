@@ -70,7 +70,7 @@ class evapares_num_eval_form extends moodleform {
 			}
 		}
 		
-		$mform->addElement('header', 'Detalle_Preguntas', 'detalle preguntas(buscar en lang)');
+		$mform->addElement('header', 'Detalle_Preguntas', get_string('AddMultipleOptionQuestion','mod_evapares'));
 		
 		for($j = 1; $j <= $preg; $j++){
 		

@@ -13,22 +13,23 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['addSSC'] = 'Agregar SSC' ;
-$string['ChooseDate'] = 'Debe escojer una FECHA' ;
 $string['AddQuestion'] = 'Campo PREGUNTA obligtorio' ;
 $string['addAnswer'] = 'Campo Respuesta obligtorio' ;
 $string['addName'] = 'Campo NOMBRE obligtorio' ;
+$string['AddMultipleOptionQuestion'] = 'Agregando una pregunta de Opción multiple ' ;
 $string['answer'] = 'Respuesta ' ;
 $string['averagePeersEval'] = 'Promedio Calificación de Pares: ' ;
 $string['amountOfAnswers'] = 'Cantidad de Respuestas a Seleccionar en Cada Pregunta' ;
 $string['amountOfEvaluations'] = 'Cantidad de Entregas Parciales (Sin incluir entrega inicial y final)' ;
 $string['amountOfQuestions'] = 'Cantidad de Preguntas que se Responderán en las Evaluaciones ' ;
 $string['disponibilityTime'] = 'Cantidad de Tiempo para realizar cada evaluacion (En Dias)' ;
+$string['ChooseDate'] = 'Debe escojer una FECHA' ;
 $string['CalificationResults'] = 'Resultados Calificación' ;
 $string['dueDate'] = 'Fecha de Entrega: ' ;
 $string['DeliverableDetails'] = 'Detalle de Entregas' ;
 $string['DeliverableName'] = 'Nombre Entrega ' ;
 $string['DeliverableDate'] = 'Fecha de Entrega' ;
-$string['evaparesfieldset'] = 'Custom example fieldset';
+$string['evaparesfieldset'] = 'Ejemplo de campos personalizada';
 $string['evaparesname'] = 'Nombre de la evaluación';
 $string['evaparesname_help'] = 'Debe cambiar el nombre de la evaluación. Este nombre será común a todas las instancia de la evaluación';
 $string['evapares'] = 'evapares';
@@ -39,8 +40,9 @@ $string['modulenameplural'] = 'evaparess';
 $string['modulename_help'] = 'Utilice el módulo evapares para generar instancias de evaluación personal y grupal para
 		cada alumno| La evaluación de  evapares permite que los alumnos puedan evalaur a
 		sus compañeros de grupo en distintas etapas del proyecto.';
-$string['noCapabilities']= "No tiene la capabilidad de estar aquí" ;
-$string['option'] = "Opción" ;
+$string['noCapabilities']= 'No tiene la capabilidad de estar aquí';
+$string['FormName'] = 'Nombre' ;
+$string['option'] = 'Opción' ;
 $string['peers_results'] = 'Resultados Evaluación Pares' ;
 $string['personalEvalInitial'] = 'Evaluacion Personal Inicial' ;
 $string['personalEval'] = 'Evaluación Personal' ;

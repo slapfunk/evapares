@@ -13,16 +13,17 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['addSSC'] = 'Add SSC' ;
-$string['ChooseDate'] = 'You must choose a Date' ;
 $string['AddQuestion'] = 'You must add a Question' ;
 $string['addAnswer'] = 'You must add an Answer' ;
 $string['addName'] = 'You must add a Name' ;
+$string['AddMultipleOptionQuestion'] = 'Add a Multiple choice question ' ;
 $string['answer'] = 'Answer ' ;
 $string['averagePeersEval'] = 'Peers Evaluation Average: ' ;
 $string['amountOfAnswers'] = 'Amount of answers available for each question.' ;
 $string['amountOfEvaluations'] = 'Amount of Partial evaluations (Leaving out the initial and final ones)' ;
 $string['amountOfQuestions'] = 'Amount of Questions to be answered in each evaluation' ;
 $string['disponibilityTime'] = 'Amount of Days to complete each evaluation.' ;
+$string['ChooseDate'] = 'You must choose a Date' ;
 $string['CalificationResults'] = 'Calification Results' ;
 $string['dueDate'] = 'Due Date: ' ;
 $string['DeliverableDetails'] = 'Deliverable Details' ;
@@ -39,8 +40,9 @@ $string['modulenameplural'] = 'evaparess';
 $string['modulename_help'] = 'Use the evapares module to create instances for studentes to 
 		evaluate themselves and their team member| The evapares module allows for students to
 		grade their peers at different stages of the project.';
+$string['FormName'] = 'NAME' ;
 $string['noCapabilities']= "You don't have the capabilities to be here" ;
-$string['option'] = "Option" ;
+$string['option'] = 'Option' ;
 $string['peers_results'] = 'Peers Evaluation Result ' ;
 $string['personalEvalInitial'] = 'Initial Personal Evaluation ' ;
 $string['personalEval'] = 'Personal Evaluation' ;
