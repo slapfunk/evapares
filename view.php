@@ -28,8 +28,8 @@
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
 require_once($CFG->dirroot.'/course/moodleform_mod.php');
-require_once('/forms/forms_v.php');
-require_once('/forms/forms_alu.php');
+require_once('forms/forms_v.php');
+require_once('forms/forms_alu.php');
 
 global $CFG, $DB, $OUTPUT; 
 
@@ -226,8 +226,8 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 	$activated = array();
 	$inactive = array('7');
 	$activated = array('tb1');
-	$tbz[] = new tabobject('tb1',new moodle_url($CFG->wwwroot.'/mod/evapares/view.php',array('mode'=>'evaluation','id' => $cm->id)), 'estocambiaenlang');
-	$tbz[] = new tabobject('tb2',new moodle_url($CFG->wwwroot.'/mod/evapares/view.php',array('mode'=>'resultados','id' => $cm->id)),'Restocambiaenlang');
+	$tbz[] = new tabobject('tb1',new moodle_url($CFG->wwwroot.'/mod/evapares/view.php',array('mode'=>'evaluation','id' => $cm->id)), get_string('eval','mod_evapares'));
+	$tbz[] = new tabobject('tb2',new moodle_url($CFG->wwwroot.'/mod/evapares/view.php',array('mode'=>'resultados','id' => $cm->id)), get_string('results','mod_evapares'));
 	$tabz[]=$tbz;
 	print_tabs($tabz,$currenttab,$inactive, $activated);
 	if(!isset($_REQUEST['mode'])){
@@ -240,10 +240,10 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 		$forms= array();
 		$varrs=array();
 		$table = new html_table();
-		$table->head = array('buscalang', 'buscalang', 'buscalang', 'buscalang');
+		$table->head = array(get_string('evals','mod_evapares'), get_string('CompleteTable','mod_evapares'), get_string('activeTable','mod_evapares'), get_string('resultsTable','mod_evapares'));
 		$supa_data_sama=array();
 		$data_chan=array();
-		array_push($data_chan,'cambiarlang');//inicial
+		array_push($data_chan, get_string('initialEval','mod_evapares'));//inicial
 		$itera_qry = $DB->get_records_sql('SELECT id FROM {evapares_iterations} WHERE evapares_id = ? AND n_iteration=?', 
 				array($cm->id,'0'));
 		foreach($itera_qry as $llave => $resultado){$itera=$resultado->id;}
@@ -407,7 +407,7 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 			array_push($supa_data_sama,$data_chan);
 		}
 		$data_chan=array();
-		array_push($data_chan,'cambiarlang');
+		array_push($data_chan,get_string('finalDate','mod_evapares'));
 		$fin=$num+1;
 		$itera_qry = $DB->get_records_sql('SELECT id FROM {evapares_iterations} WHERE evapares_id = ? AND n_iteration=? limit 1', array($cm->id,$fin));
 		foreach($itera_qry as $llave => $resultado){

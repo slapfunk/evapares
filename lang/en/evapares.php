@@ -12,6 +12,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['activeTable'] = 'Active' ;
 $string['addSSC'] = 'Add SSC' ;
 $string['AddQuestion'] = 'You must add a Question' ;
 $string['addAnswer'] = 'You must add an Answer' ;
@@ -25,6 +26,7 @@ $string['amountOfQuestions'] = 'Amount of Questions to be answered in each evalu
 $string['disponibilityTime'] = 'Amount of Days to complete each evaluation.' ;
 $string['ChooseDate'] = 'You must choose a Date' ;
 $string['CalificationResults'] = 'Calification Results' ;
+$string['CompleteTable'] = 'Completed' ;
 $string['dueDate'] = 'Due Date: ' ;
 $string['DeliverableDetails'] = 'Deliverable Details' ;
 $string['DeliverableName'] = 'Deliverable Name ' ;
@@ -33,8 +35,11 @@ $string['evaparesfieldset'] = 'Custom example fieldset';
 $string['evaparesname'] = 'Evaluations name';
 $string['evaparesname_help'] = 'You MUST name your evaluations. This name will be common to all of them';
 $string['evapares'] = 'evapares';
-$string['finalDate'] = 'Final Evaluation';
+$string['eval'] = 'Evaluation';
+$string['evals'] = 'Evaluations';
+$string['finalDate'] = 'Final evaluation';
 $string['gradingStuden'] = 'Student to be graded ' ;
+$string['initialEval'] = 'Initial evaluation';
 $string['modulename'] = 'evapares';
 $string['modulenameplural'] = 'evaparess';
 $string['modulename_help'] = 'Use the evapares module to create instances for studentes to 
@@ -49,5 +54,7 @@ $string['personalEval'] = 'Personal Evaluation' ;
 $string['pluginadministration'] = 'evapares administration';
 $string['pluginname'] = 'evapares';
 $string['question']='Question' ;
+$string['results'] = 'Results';
+$string['resultsTable'] = 'My Results';
 $string['ssc_results'] = 'SSC Evaluation Results' ;
 $string['ssc_help'] = 'The Stop, Start, Continue (SSC) methodogy consists of three text boxes. Inside the “Stop” box the student writes what he thinks his groupmate should stop doing. In the “Start” box the student writes what his groupmate should start doing. Finally, in the “Continue”, the student has the option to write what he sees as his groupmate’s best traits and what he should continue doing. This methodology is used for diverse motives, spanning communication, personal development, teamwork, problem solving, among others. ' ;
