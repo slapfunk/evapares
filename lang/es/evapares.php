@@ -41,7 +41,7 @@ $string['finalDate'] = 'Evaluación final';
 $string['gradingStuden'] = 'Estudiante a ser Evaluado ' ;
 $string['initialEval'] = 'Evaluación inicial';
 $string['modulename'] = 'evapares';
-$string['modulenameplural'] = 'evaparess';
+$string['modulenameplural'] = 'evapares';
 $string['modulename_help'] = 'Utilice el módulo evapares para generar instancias de evaluación personal y grupal para
 		cada alumno| La evaluación de  evapares permite que los alumnos puedan evalaur a
 		sus compañeros de grupo en distintas etapas del proyecto.';
