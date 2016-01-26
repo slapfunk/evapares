@@ -31,7 +31,7 @@ require_once($CFG->dirroot.'/course/moodleform_mod.php');
 require_once('forms/forms_v.php');
 require_once('forms/forms_alu.php');
 
-global $CFG, $DB, $OUTPUT; 
+global $CFG, $DB, $OUTPUT, $PAGE; 
 
 $action = optional_param("action", "view", PARAM_TEXT);
 $cmid = required_param('id', PARAM_INT);
@@ -64,10 +64,10 @@ else{
 	$PAGE->set_title(format_string($evapares->name));
 	$PAGE->set_heading(format_string($course->fullname));
 	
-	echo $OUTPUT->header();
+
 	
 	if(!$grupos = $DB->get_records("groups", array('courseid'=>$course->id))){
-		
+		echo $OUTPUT->header();
 		echo 'Debe crear los grupos para continuar con la actividad <br>
 		(Administracion del curso > Usuarios > Grupos)';
 		
@@ -97,7 +97,7 @@ if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add
 	$allcombs = array();
 	
 	if( $addform->is_cancelled() ){
-		$backtocourse = new moodle_url("course/view.php",array('id'=>$cm->id));
+		$backtocourse = new moodle_url("/course/view.php",array('id'=>$course->id));
 		redirect($backtocourse);
 		
 	}
@@ -198,6 +198,7 @@ if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add
 
 	}
 }
+echo $OUTPUT->header();
 if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add"){
 
 	$addform->display();

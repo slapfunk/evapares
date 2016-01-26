@@ -114,17 +114,29 @@ class evapares_num_eval_form extends moodleform {
 			if( $date <= $actualdate[0]) {
 				$errors['FE'.$i] = get_string('ChooseDate','mod_evapares');
 			}
+			if( $i >= 1){
+				$j = $i - 1;
+				if( $data['FE'.$i] <= $data['FE'.$j]){					
+				$errors['FE'.$i] = 'las fechas de entregas deben ir en orden cronologico';
+				}
+			}
 		for($j = 1; $j <= $preg; $j++){
 			$question = $data['P'.$j];
 			
 			if( empty($question)){
 				$errors['P'.$j] = get_string('AddQuestion','mod_evapares');
 			}
+			if( strlen($question) > 200){
+				$errors['P'.$j] = 'la cantidad de caracteres no debe exeder los 200';
+			}
 				for($h = 1; $h <= $resp; $h++){
 					$answer = $data['R'.$j.$h];
 					
 					if( empty($answer)){
 						$errors['R'.$j.$h] = get_string('addAnswer','mod_evapares');
+					}
+					if( strlen($answer) > 200){
+						$errors['R'.$j.$h] = 'la cantidad de caracteres no debe exeder los 200';
 					}
 			}
 		}
