@@ -38,6 +38,7 @@ $string['evapares'] = 'evapares';
 $string['eval'] = 'Evaluation';
 $string['evals'] = 'Evaluations';
 $string['finalDate'] = 'Final evaluation';
+$string['formName'] = 'NAME' ;
 $string['gradingStuden'] = 'Student to be graded ' ;
 $string['initialEval'] = 'Initial evaluation';
 $string['modulename'] = 'evapares';
@@ -45,7 +46,6 @@ $string['modulenameplural'] = 'evaparess';
 $string['modulename_help'] = 'Use the evapares module to create instances for studentes to 
 		evaluate themselves and their team member| The evapares module allows for students to
 		grade their peers at different stages of the project.';
-$string['FormName'] = 'NAME' ;
 $string['noCapabilities']= "You don't have the capabilities to be here" ;
 $string['option'] = 'Option' ;
 $string['peers_results'] = 'Peers Evaluation Result ' ;

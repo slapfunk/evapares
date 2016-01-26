@@ -38,6 +38,7 @@ $string['evapares'] = 'evapares';
 $string['eval'] = 'Evaluación';
 $string['evals'] = 'Evaluaciones';
 $string['finalDate'] = 'Evaluación final';
+$string['formName'] = 'Nombre' ;
 $string['gradingStuden'] = 'Estudiante a ser Evaluado ' ;
 $string['initialEval'] = 'Evaluación inicial';
 $string['modulename'] = 'evapares';
@@ -46,7 +47,6 @@ $string['modulename_help'] = 'Utilice el módulo evapares para generar instancia
 		cada alumno| La evaluación de  evapares permite que los alumnos puedan evalaur a
 		sus compañeros de grupo en distintas etapas del proyecto.';
 $string['noCapabilities']= 'No tiene la capabilidad de estar aquí';
-$string['FormName'] = 'Nombre' ;
 $string['option'] = 'Opción' ;
 $string['peers_results'] = 'Resultados Evaluación Pares' ;
 $string['personalEvalInitial'] = 'Evaluacion Personal Inicial' ;
