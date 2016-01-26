@@ -27,18 +27,35 @@ $query = "SELECT Q.text AS preg, Q.id AS pregid, A.text AS resp, A.id AS ansid
 		  FROM mdl_evapares_questions AS Q, mdl_evapares_answers AS A
 		  WHERE Q.evapares_id = ? AND Q.id = A.question_id";
 
-$percentages = "SELECT Answer.`evaluations_id`, Answer.`answers_id`, COUNT(Answer.`answers_id`) AS num, Evaluation.`iterations_id`
+$percentages = "SELECT Answer.`answers_id`, Evaluation.`iterations_id`
 				FROM mdl_evapares_evlalutons_has_answ Answer
 				JOIN mdl_evapares_evaluations Evaluation ON (Evaluation.id = Answer.evaluations_id )
 				JOIN mdl_evapares_iterations Iteration ON (Evaluation.`iterations_id` = Iteration.`id`)
-				WHERE Iteration.evapares_id = 164
-				GROUP BY answers_id
-				ORDER BY answers_id";
+				WHERE Iteration.evapares_id = ?
+				ORDER BY iterations_id";
 
 $get_pers = $DB-> get_recordset_sql($percentages ,array($cm->id));
 
+$n_group_members = "SELECT COUNT(groups.groupid) AS n_members
+					FROM mdl_groups_members AS groups
+					WHERE groups.groupid = 
+				   (SELECT groups.groupid
+					FROM mdl_groups_members AS groups
+					WHERE groups.userid = ?)";
+
+$n_memb = $DB->get_recordset_sql($n_group_members, array($USER->id));
+
+foreach($n_memb as $quant){
+	$efective_members = $quant->n_members;
+}
+
+
 foreach($get_pers as $data){
-var_dump($data);}
+	$percent[] = $data;
+}
+
+$count_plc = count($percent) - 1;
+
 
 $headings = array('Stop','Start','Continue');
 
@@ -67,7 +84,19 @@ foreach($resultados as $param){
  							  <tr><td><strong>'.$p_a->preg.'</strong></td></tr>';
  						$tempid = $p_a->pregid;
  					}
- 						echo '<tr><td></td><td>'.$p_a->resp.'</td></tr>';
+ 						echo '<tr><td></td><td>'.$p_a->resp.'</td>
+ 								  <td>';
+ 						$temp = 0;
+ 						for($cont = 0; $cont <= $count_plc; $cont++){
+
+ 							if($param->iterations_id -1 == $percent[$cont]->iterations_id &&
+ 							   $percent[$cont]->answers_id == $p_a->ansid){
+ 							   	$temp = $temp + 1;
+ 							} 													
+ 						}
+ 						$perc_display = $temp * 100 / ($efective_members -1);
+ 						echo '<strong>'.$perc_display.'%</strong>';
+ 						echo'</td></tr>';
  				}
  						echo '</table><hr>';
 			}
@@ -109,12 +138,12 @@ $tempid = 0;
 foreach($cons as $p_a){
 
 	if($p_a->pregid != $tempid){
-		echo '<strong>'.$p_a->preg.'</strong><br>';
-		$tempid = $p_a->pregid;
+ 		echo '<table>
+ 			  <tr><td><strong>'.$p_a->preg.'</strong></td></tr>';
+ 		$tempid = $p_a->pregid;
 	}
-	echo $p_a->resp.'<br>';
-}
-
-
+ 		echo '<tr><td></td><td>'.$p_a->resp.'</td><tr>';
+ }
+ 		echo '</table><hr>';
 
 
