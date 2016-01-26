@@ -49,7 +49,7 @@ class evapares_evalu_usua extends moodleform {
 			$n_itera=$resultado->n_iteration;
 		}
 		if($n_itera==0||$n_itera==$fin){
-			$mform->addElement('header', 'eva_perso', '[ealuacion personal]');//tipo, id, string
+			$mform->addElement('header', 'eva_perso', 'Evaluación personal');//tipo, id, string
 			for($preg_n=1;$preg_n<=$n_pregs;$preg_n++){
 				$pregtext_qry= $DB->get_records_sql('SELECT id, text FROM {evapares_questions} WHERE evapares_id = ? AND n_of_question=?',
 						array($cm_id,$preg_n));
@@ -72,7 +72,7 @@ class evapares_evalu_usua extends moodleform {
 			}
 		}
 		if($n_itera>0){
-			$mform->addElement('header', 'eva_pares', '[evaluacion de pares]');
+			$mform->addElement('header', 'eva_pares', 'Evaluación de pares');
 			$evaluado_qry= $DB->get_records_sql('SELECT alu_evaluado_id FROM {evapares_evaluations}
 					WHERE alu_evalua_id = ? AND iterations_id=?',
 							array($iduser,$iter_id));
@@ -85,7 +85,7 @@ class evapares_evalu_usua extends moodleform {
 				}								//$evaluado=id, $evaluado_name=firstname lastname
 				$mform->addElement('html', '<hr>');
 				$mform->addElement('html', '<hr>');
-				$mform->addElement('static',$evaluado ,'cambiaenlang','<h3>'.$evaluado_name.'</h3>');
+				$mform->addElement('static',$evaluado ,'<h3>'.'Alumno a evaluar:'.'<h3>','<h3>'.$evaluado_name.'</h3>');
 				if($ssc_bool){
 					$mform->addElement('textarea', "ssc_stop".$evaluado,'STOP', 'wrap="virtual" rows="2" cols="60"');
 					$mform->setType("ssc_stop".$evaluado, PARAM_TEXT);
@@ -119,7 +119,7 @@ class evapares_evalu_usua extends moodleform {
 					$mform->setDefault('radioar'.$preg_n.'a'.$evaluado, 1);
 				}
 
-				$mform->addElement('select', 'na'.$evaluado,'notacambialang', $notas);
+				$mform->addElement('select', 'na'.$evaluado,'NOTA:', $notas);
 				$mform->setDefault('na'.$evaluado, 1);
 			}
 		}
