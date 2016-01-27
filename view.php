@@ -247,10 +247,10 @@ FROM mdl_evapares_evaluations eval
    WHERE `alu_evalua_id`!=`alu_evaluado_id`)
 GROUP BY userid');
 
-$resultados = $DB->get_records_sql('SELECT `iterations_id`,alu_evalua_id AS evaluador
+$resultados = $DB->get_records_sql('SELECT eval.id `iterations_id`,alu_evalua_id AS evaluador
 		,alu_evaluado_id AS Evaluado,`answers`, iter.id AS iteration
-FROM mdl_evapares_evaluations eval
-INNER JOIN mdl_evapares_iterations iter ON iter.id = eval.iterations_id
+FROM {evapares_evaluations} eval
+INNER JOIN {evapares_iterations} iter ON iter.id = eval.iterations_id
 WHERE iter.evapares_id ='.$cmid.'
 ORDER BY `alu_evalua_id`, `iterations_id`') ; 
 $StartDate = $DB->get_records_sql('SELECT eval.id, iter.`start_date` FROM mdl_evapares_evaluations eval 
@@ -356,6 +356,9 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 		$mode=$_REQUEST['mode'];
 	}
 	if($mode=='evaluation'){
+		if(!isset($_SESSION['itra'])){
+			$_SESSION['itra']=999;
+		}
 		$forms= array();
 		$varrs=array();
 		$table = new html_table();
@@ -399,7 +402,7 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 		}
 		array_push($data_chan,$string_to_strong);
 		//if $respondible -> poner boton, else -> not
-		array_push($data_chan,'<button id="f0" onclick="$_SESSION[\'itra\']=0;"><img src="pix/ver.jpg"  View" style="width:15px;height:15px;"></button>');//editar para que sea el boton de jquery
+		array_push($data_chan,'<button id="f0" ><img src="pix/ver.jpg"  View" style="width:15px;height:15px;"></button>');//editar para que sea el boton de jquery
 		array_push($supa_data_sama,$data_chan);
 		$addform = new evapares_evalu_usua(null, $varrs['0']);
 		if( $addform->is_cancelled() ){
@@ -407,6 +410,7 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 			redirect($backtocourse);
 		}
 		array_push($forms,$addform);
+		var_dump($_SESSION['itra']);
 		if( $forms['0']->is_cancelled() ){
 			$backtocourse = new moodle_url("course/view.php",array('id'=>$course->id));
 			redirect($backtocourse);
@@ -437,6 +441,7 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 					}
 					$respuesta_perso->answers_id=$responde;
 					$DB->insert_record('evapares_eval_has_answ', $respuesta_perso, $returnid=false, $bulk=false);
+					echo "guardo la inicial";
 				}
 			
 			}
@@ -476,9 +481,10 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 			//revisar si esta activa la entrega inicial
 			array_push($data_chan,'<img src="pix/respondible.jpg" View" style="width:15px;height:15px;">');
 
-			array_push($data_chan,'<button id="f'.$i.'" onclick="$_SESSION[\'itra\']='.$i.';"><img src="pix/ver.jpg" View" style="width:15px;height:15px;"></button>');//editar para que sea el boton de jquery
+			array_push($data_chan,'<button id="f'.$i.'" ><img src="pix/ver.jpg" View" style="width:15px;height:15px;"></button>');//editar para que sea el boton de jquery
 			$addform = new evapares_evalu_usua(null, $varrs[$i]);
 			array_push($forms,$addform);
+			var_dump($_SESSION['itra']);
 			if( $forms[$i]->is_cancelled() ){
 				$backtocourse = new moodle_url("course/view.php",array('id'=>$course->id));
 				redirect($backtocourse);
@@ -523,6 +529,7 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 								}
 								$respuesta_pares->answers_id=$responde;
 								$DB->insert_record('evapares_eval_has_answ', $respuesta_pares, $returnid=false, $bulk=false);
+								echo "guardo la iteracion ".$i;
 							}
 						}
 					}
@@ -559,9 +566,10 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 		array_push($data_chan,'<img src="'.$respondio.'" style="width:15px;height:15px;">');
 		//revisar si esta activa la entrega final
 		array_push($data_chan,'<img src="pix/respondible.jpg" View" style="width:15px;height:15px;">');
-		array_push($data_chan,'<button id="f'.$fin.'" onclick="$_SESSION[\'itra\']='.$fin.';"><img src="pix/ver.jpg" id="'.$fin.'" View" style="width:15px;height:15px;"></button>');//editar para que sea el boton de jquery
+		array_push($data_chan,'<button id="f'.$fin.'" ><img src="pix/ver.jpg" id="'.$fin.'" View" style="width:15px;height:15px;"></button>');//editar para que sea el boton de jquery
 		$addform = new evapares_evalu_usua(null, $varrs[$fin]);
 		array_push($forms,$addform);
+		var_dump($_SESSION['itra']);
 		if( $forms[$fin]->is_cancelled() ){
 			$backtocourse = new moodle_url("course/view.php",array('id'=>$course->id));
 			redirect($backtocourse);
@@ -631,6 +639,7 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 							}
 							$respuesta_pares->answers_id=$responde;
 							$DB->insert_record('evapares_eval_has_answ', $respuesta_pares, $returnid=false, $bulk=false);
+							echo "guardo la iteracion final";
 						}
 					}
 				}
