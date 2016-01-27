@@ -293,20 +293,20 @@ function xmldb_evapares_upgrade($oldversion) {
     }
     if ($oldversion < 2015122905) {
     
-    	  // Define table evapares_evlalutons_has_answ to be created.
-        $table = new xmldb_table('evapares_evlalutons_has_answ');
+    	  // Define table evapares_eval_has_answ to be created.
+        $table = new xmldb_table('evapares_eval_has_answ');
 
-        // Adding fields to table evapares_evlalutons_has_answ.
+        // Adding fields to table evapares_eval_has_answ.
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('evaluations_id', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
         $table->add_field('answers_id', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
 
-        // Adding keys to table evapares_evlalutons_has_answ.
+        // Adding keys to table evapares_eval_has_answ.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $table->add_key('nneval', XMLDB_KEY_FOREIGN, array('evaluations_id'), 'evapares_evaluations', array('id'));
         $table->add_key('nnans', XMLDB_KEY_FOREIGN, array('answers_id'), 'evapares_answers', array('id'));
 
-        // Conditionally launch create table for evapares_evlalutons_has_answ.
+        // Conditionally launch create table for evapares_eval_has_answ.
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }

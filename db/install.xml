@@ -72,7 +72,7 @@
         <KEY NAME="answestion" TYPE="foreign" FIELDS="question_id" REFTABLE="evapares_questions" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="evapares_evlalutons_has_answ" COMMENT="n-n that assigns answers to the evaluations">
+    <TABLE NAME="evapares_eval_has_answ" COMMENT="n-n that assigns answers to the evaluations">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="evaluations_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>

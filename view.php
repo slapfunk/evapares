@@ -272,9 +272,30 @@ foreach($SUPERQUERY AS $values)
 	$bidimensional[$values->userid][0] =$values->group_id;
 	$bidimensional[$values->userid][1] =$values->username;
 	$bidimensional[$values->userid][2] =$values->userid;
-	$bidimensional[$values->userid][3] =$values->sumastop;
-	$bidimensional[$values->userid][4] =$values->sumastart;
-	$bidimensional[$values->userid][5] =$values->sumacontinue;
+	if ($values->sumastop)
+	{
+		$bidimensional[$values->userid][3] =$values->sumastop;
+	}
+	else
+	{
+		$bidimensional[$values->userid][3] = 0;
+	}
+	if ($values->sumastart)
+	{
+		$bidimensional[$values->userid][4] =$values->sumastart;
+	}
+	else
+	{
+		$bidimensional[$values->userid][4] = 0 ;
+	}
+	if($values->sumacontinue)
+	{
+		$bidimensional[$values->userid][5] =$values->sumacontinue;
+	}
+	else
+	{
+		$bidimensional[$values->userid][5] = 0 ;
+	}
 	$partialKey = 1 ; 
 	foreach ($resultados AS $partialEvaluationsValues)
 	{
@@ -334,7 +355,7 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 	else if(isset($_REQUEST['mode'])){
 		$mode=$_REQUEST['mode'];
 	}
-	if($mode=='evaluation'){	
+	if($mode=='evaluation'){
 		$forms= array();
 		$varrs=array();
 		$table = new html_table();
@@ -378,7 +399,7 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 		}
 		array_push($data_chan,$string_to_strong);
 		//if $respondible -> poner boton, else -> not
-		array_push($data_chan,'<button id="f0"><img src="pix/ver.jpg"  View" style="width:15px;height:15px;"></button>');//editar para que sea el boton de jquery
+		array_push($data_chan,'<button id="f0" onclick="$_SESSION[\'itra\']=0;"><img src="pix/ver.jpg"  View" style="width:15px;height:15px;"></button>');//editar para que sea el boton de jquery
 		array_push($supa_data_sama,$data_chan);
 		$addform = new evapares_evalu_usua(null, $varrs['0']);
 		if( $addform->is_cancelled() ){
@@ -390,31 +411,34 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 			$backtocourse = new moodle_url("course/view.php",array('id'=>$course->id));
 			redirect($backtocourse);
 		}
-		else if($datas = $forms['0']->get_data()){
-			$eva_perso = $DB->get_records('evapares_evaluations',array('iterations_id'=>$itera, 'alu_evalua_id'=>$iduser,'alu_evaluado_id'=>$iduser));
-			foreach($eva_perso as $llave => $ep){
-				$ep->answers=1;
-				$epid=$ep->id;
-			}
-			$DB->update_record('evapares_evaluations', $eva_perso[$epid], $bulk=false);	
-			for($preg_n=1;$preg_n<=$evapares->n_preguntas;$preg_n++){
-				$ev_pr=new stdClass();
-				$respuesta_perso=new stdClass();
-				$respuesta_perso->evaluations_id=$epid;
-				$rbtn='r'.$preg_n;
-				$qstn_qry = $DB->get_records_sql('SELECT id FROM {evapares_questions} WHERE n_of_question=? AND evapares_id=?',
-						array($preg_n,$cm->id));
-				foreach($qstn_qry as $llave => $resultado){
-					$qstn=$resultado->id;
+		else if($datas = $forms['0']->get_data()&&isset($_SESSION['itra'])){
+			if($_SESSION['itra']==0){
+				$eva_perso = $DB->get_records('evapares_evaluations',array('iterations_id'=>$itera, 'alu_evalua_id'=>$iduser,'alu_evaluado_id'=>$iduser));
+				foreach($eva_perso as $llave => $ep){
+					$ep->answers=1;
+					$epid=$ep->id;
 				}
-				var_dump($datas->$rbtn);
-				$responde_qry = $DB->get_records_sql('SELECT id FROM {evapares_answers} WHERE number=? AND question_id=?',
-						array($datas->$rbtn,$qstn));
-				foreach($responde_qry as $llave => $resultado){
-					$responde=$resultado->id;
+				$DB->update_record('evapares_evaluations', $eva_perso[$epid], $bulk=false);
+				for($preg_n=1;$preg_n<=$evapares->n_preguntas;$preg_n++){
+					$ev_pr=new stdClass();
+					$respuesta_perso=new stdClass();
+					$respuesta_perso->evaluations_id=$epid;
+					$rbtn='r'.$preg_n;
+					$qstn_qry = $DB->get_records_sql('SELECT id FROM {evapares_questions} WHERE n_of_question=? AND evapares_id=?',
+							array($preg_n,$cm->id));
+					foreach($qstn_qry as $llave => $resultado){
+						$qstn=$resultado->id;
+					}
+					var_dump($datas->$rbtn);
+					$responde_qry = $DB->get_records_sql('SELECT id FROM {evapares_answers} WHERE number=? AND question_id=?',
+							array($datas->$rbtn,$qstn));
+					foreach($responde_qry as $llave => $resultado){
+						$responde=$resultado->id;
+					}
+					$respuesta_perso->answers_id=$responde;
+					$DB->insert_record('evapares_eval_has_answ', $respuesta_perso, $returnid=false, $bulk=false);
 				}
-				$respuesta_perso->answers_id=$responde;
-				$DB->insert_record('evapares_evlalutons_has_answ', $respuesta_perso, $returnid=false, $bulk=false);
+			
 			}
 
 		}
@@ -452,7 +476,7 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 			//revisar si esta activa la entrega inicial
 			array_push($data_chan,'<img src="pix/respondible.jpg" View" style="width:15px;height:15px;">');
 
-			array_push($data_chan,'<button id="f'.$i.'"><img src="pix/ver.jpg" View" style="width:15px;height:15px;"></button>');//editar para que sea el boton de jquery
+			array_push($data_chan,'<button id="f'.$i.'" onclick="$_SESSION[\'itra\']='.$i.';"><img src="pix/ver.jpg" View" style="width:15px;height:15px;"></button>');//editar para que sea el boton de jquery
 			$addform = new evapares_evalu_usua(null, $varrs[$i]);
 			array_push($forms,$addform);
 			if( $forms[$i]->is_cancelled() ){
@@ -460,47 +484,50 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 				redirect($backtocourse);
 			}
 			/////////////////////////////////////////////////////////////AqUI
-			else if($datas = $forms[$i]->get_data()){
-				$evaluado_qry= $DB->get_records_sql('SELECT id, alu_evaluado_id FROM {evapares_evaluations}
+			else if($datas = $forms[$i]->get_data()&&isset($_SESSION['itra'])){
+				if($_SESSION['itra']==$i){
+					$evaluado_qry= $DB->get_records_sql('SELECT id, alu_evaluado_id FROM {evapares_evaluations}
 					WHERE alu_evalua_id = ? AND iterations_id=?',
-						array($iduser,$itera));
-				foreach($evaluado_qry as $llave => $evaluadox){
-					$evaluado_id=$evaluadox->alu_evaluado_id;
-					$evaluazion_id=$evaluadox->id;
-					$eva_pares = $DB->get_records('evapares_evaluations',array('iterations_id'=>$itera, 'alu_evalua_id'=>$iduser,'alu_evaluado_id'=>$evaluado_id));
-					foreach($eva_pares as $llave => $ep){
-						
-						$s1='ssc_stop'.$evaluado_id;
-						$s2='ssc_start'.$evaluado_id;
-						$s3='ssc_continue'.$evaluado_id;
-						$ep->ssc_stop=$datas->$s1;
-						$ep->ssc_start=$datas->$s2;
-						$ep->ssc_continue=$datas->$s3;
-						if(!($ep->ssc_stop='...'&&$ep->ssc_start='...'&&$ep->ssc_continue='...'))$ep->answers=1;
-						$nt='na'.$evaluado_id;
-						$ep->nota=$datas->$nt;
-						$epid=$ep->id;
-						$DB->update_record('evapares_evaluations', $ep, $bulk=false);
-						for($preg_n=1;$preg_n<=$evapares->n_preguntas;$preg_n++){
-							$ev_pr=new stdClass();
-							$respuesta_pares=new stdClass();
-							$respuesta_pares->evaluations_id=$epid;
-							$rbtn='r'.$preg_n.'a'.$evaluado_id;
-							$qstn_qry = $DB->get_records_sql('SELECT id FROM {evapares_questions} WHERE n_of_question=? AND evapares_id=?',
-									array($preg_n,$cm->id));
-							foreach($qstn_qry as $llave => $resultado){
-								$qstn=$resultado->id;
+							array($iduser,$itera));
+					foreach($evaluado_qry as $llave => $evaluadox){
+						$evaluado_id=$evaluadox->alu_evaluado_id;
+						$evaluazion_id=$evaluadox->id;
+						$eva_pares = $DB->get_records('evapares_evaluations',array('iterations_id'=>$itera, 'alu_evalua_id'=>$iduser,'alu_evaluado_id'=>$evaluado_id));
+						foreach($eva_pares as $llave => $ep){
+					
+							$s1='ssc_stop'.$evaluado_id;
+							$s2='ssc_start'.$evaluado_id;
+							$s3='ssc_continue'.$evaluado_id;
+							$ep->ssc_stop=$datas->$s1;
+							$ep->ssc_start=$datas->$s2;
+							$ep->ssc_continue=$datas->$s3;
+							if(!($ep->ssc_stop='...'&&$ep->ssc_start='...'&&$ep->ssc_continue='...'))$ep->answers=1;
+							$nt='na'.$evaluado_id;
+							$ep->nota=$datas->$nt;
+							$epid=$ep->id;
+							$DB->update_record('evapares_evaluations', $ep, $bulk=false);
+							for($preg_n=1;$preg_n<=$evapares->n_preguntas;$preg_n++){
+								$ev_pr=new stdClass();
+								$respuesta_pares=new stdClass();
+								$respuesta_pares->evaluations_id=$epid;
+								$rbtn='r'.$preg_n.'a'.$evaluado_id;
+								$qstn_qry = $DB->get_records_sql('SELECT id FROM {evapares_questions} WHERE n_of_question=? AND evapares_id=?',
+										array($preg_n,$cm->id));
+								foreach($qstn_qry as $llave => $resultado){
+									$qstn=$resultado->id;
+								}
+								$responde_qry = $DB->get_records_sql('SELECT id FROM {evapares_answers} WHERE number=? AND question_id=?',
+										array($datas->$rbtn,$qstn));
+								foreach($responde_qry as $llave => $resultado){
+									$responde=$resultado->id;
+								}
+								$respuesta_pares->answers_id=$responde;
+								$DB->insert_record('evapares_eval_has_answ', $respuesta_pares, $returnid=false, $bulk=false);
 							}
-							$responde_qry = $DB->get_records_sql('SELECT id FROM {evapares_answers} WHERE number=? AND question_id=?',
-									array($datas->$rbtn,$qstn));
-							foreach($responde_qry as $llave => $resultado){
-								$responde=$resultado->id;
-							}
-							$respuesta_pares->answers_id=$responde;
-							$DB->insert_record('evapares_evlalutons_has_answ', $respuesta_pares, $returnid=false, $bulk=false);
 						}
-					}	
+					}
 				}
+				
 			}
 			array_push($supa_data_sama,$data_chan);
 		}
@@ -532,21 +559,82 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 		array_push($data_chan,'<img src="'.$respondio.'" style="width:15px;height:15px;">');
 		//revisar si esta activa la entrega final
 		array_push($data_chan,'<img src="pix/respondible.jpg" View" style="width:15px;height:15px;">');
-		array_push($data_chan,'<button id="f'.$fin.'"><img src="pix/ver.jpg" id="'.$fin.'" View" style="width:15px;height:15px;"></button>');//editar para que sea el boton de jquery
+		array_push($data_chan,'<button id="f'.$fin.'" onclick="$_SESSION[\'itra\']='.$fin.';"><img src="pix/ver.jpg" id="'.$fin.'" View" style="width:15px;height:15px;"></button>');//editar para que sea el boton de jquery
 		$addform = new evapares_evalu_usua(null, $varrs[$fin]);
 		array_push($forms,$addform);
 		if( $forms[$fin]->is_cancelled() ){
 			$backtocourse = new moodle_url("course/view.php",array('id'=>$course->id));
 			redirect($backtocourse);
 		}
-		else if($datas = $forms[$fin]->get_data()){
-			////////////////////////////////////////////////////////////////////////
-			
-			
-			
-			
-			
-			
+		else if($datas = $forms[$fin]->get_data()&&isset($_SESSION['itra'])){
+			if($_SESSION['itra']==$fin){
+				///////////////////////////////////////////////////////
+				$eva_perso = $DB->get_records('evapares_evaluations',array('iterations_id'=>$itera, 'alu_evalua_id'=>$iduser,'alu_evaluado_id'=>$iduser));
+				foreach($eva_perso as $llave => $ep){
+					$ep->answers=1;
+					$epid=$ep->id;
+				}
+				$DB->update_record('evapares_evaluations', $eva_perso[$epid], $bulk=false);
+				for($preg_n=1;$preg_n<=$evapares->n_preguntas;$preg_n++){
+					$ev_pr=new stdClass();
+					$respuesta_perso=new stdClass();
+					$respuesta_perso->evaluations_id=$epid;
+					$rbtn='r'.$preg_n;
+					$qstn_qry = $DB->get_records_sql('SELECT id FROM {evapares_questions} WHERE n_of_question=? AND evapares_id=?',
+							array($preg_n,$cm->id));
+					foreach($qstn_qry as $llave => $resultado){
+						$qstn=$resultado->id;
+					}
+					$responde_qry = $DB->get_records_sql('SELECT id FROM {evapares_answers} WHERE number=? AND question_id=?',
+							array($datas->$rbtn,$qstn));
+					foreach($responde_qry as $llave => $resultado){
+						$responde=$resultado->id;
+					}
+					$respuesta_perso->answers_id=$responde;
+					$DB->insert_record('evapares_eval_has_answ', $respuesta_perso, $returnid=false, $bulk=false);
+				}
+				//////////////////////////////////////////////////////////
+				$evaluado_qry= $DB->get_records_sql('SELECT id, alu_evaluado_id FROM {evapares_evaluations}
+					WHERE alu_evalua_id = ? AND iterations_id=?',
+						array($iduser,$itera));
+				foreach($evaluado_qry as $llave => $evaluadox){
+					$evaluado_id=$evaluadox->alu_evaluado_id;
+					$evaluazion_id=$evaluadox->id;
+					$eva_pares = $DB->get_records('evapares_evaluations',array('iterations_id'=>$itera, 'alu_evalua_id'=>$iduser,'alu_evaluado_id'=>$evaluado_id));
+					foreach($eva_pares as $llave => $ep2){
+							
+						$s1='ssc_stop'.$evaluado_id;
+						$s2='ssc_start'.$evaluado_id;
+						$s3='ssc_continue'.$evaluado_id;
+						$ep2->ssc_stop=$datas->$s1;
+						$ep2->ssc_start=$datas->$s2;
+						$ep2->ssc_continue=$datas->$s3;
+						if(!($ep2->ssc_stop='...'&&$ep2->ssc_start='...'&&$ep2->ssc_continue='...'))$ep2->answers=1;
+						$nt='na'.$evaluado_id;
+						$ep2->nota=$datas->$nt;
+						$epid=$ep2->id;
+						$DB->update_record('evapares_evaluations', $ep2, $bulk=false);
+						for($preg_n=1;$preg_n<=$evapares->n_preguntas;$preg_n++){
+							$ev_pr=new stdClass();
+							$respuesta_pares=new stdClass();
+							$respuesta_pares->evaluations_id=$epid;
+							$rbtn='r'.$preg_n.'a'.$evaluado_id;
+							$qstn_qry = $DB->get_records_sql('SELECT id FROM {evapares_questions} WHERE n_of_question=? AND evapares_id=?',
+									array($preg_n,$cm->id));
+							foreach($qstn_qry as $llave => $resultado){
+								$qstn=$resultado->id;
+							}
+							$responde_qry = $DB->get_records_sql('SELECT id FROM {evapares_answers} WHERE number=? AND question_id=?',
+									array($datas->$rbtn,$qstn));
+							foreach($responde_qry as $llave => $resultado){
+								$responde=$resultado->id;
+							}
+							$respuesta_pares->answers_id=$responde;
+							$DB->insert_record('evapares_eval_has_answ', $respuesta_pares, $returnid=false, $bulk=false);
+						}
+					}
+				}
+			}
 		}
 		array_push($supa_data_sama,$data_chan);
 		$table->data = $supa_data_sama;
