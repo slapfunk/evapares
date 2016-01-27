@@ -142,7 +142,18 @@ foreach($cons as $p_a){
  			  <tr><td><strong>'.$p_a->preg.'</strong></td></tr>';
  		$tempid = $p_a->pregid;
 	}
- 		echo '<tr><td></td><td>'.$p_a->resp.'</td><tr>';
+ 		echo '<tr><td></td><td>'.$p_a->resp.'</td><td>';
+ 		$temp = 0;
+ 		for($cont = 0; $cont <= $count_plc; $cont++){
+ 			if($param->iterations_id == $percent[$cont]->iterations_id &&
+ 					$percent[$cont]->answers_id == $p_a->ansid){
+
+ 						$temp = $temp + 1;
+ 			}
+ 		}
+ 		$perc_display = $temp * 100 / ($efective_members -1);
+ 		echo '<strong>'.$perc_display.'%</strong>';
+ 		echo'</td></tr>';
  }
  		echo '</table><hr>';
 
