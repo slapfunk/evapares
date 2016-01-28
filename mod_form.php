@@ -31,10 +31,10 @@ class mod_evapares_mod_form extends moodleform_mod {
         global $CFG, $COURSE;
         $mform = $this->_form;
 
-        // Adding the "general" fieldset, where all the common settings are showed.
+// Adding the "general" fieldset, where all the common settings are showed.
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
-        // Adding the standard "name" field.
+// Adding the standard "name" field.
         $mform->addElement('text', 'name',get_string('formName','mod_evapares'), array('size' => '64'));
         
             $mform->setType('name', PARAM_TEXT);
@@ -43,20 +43,14 @@ class mod_evapares_mod_form extends moodleform_mod {
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('name', 'evaparesname', 'evapares');//lang
 
-        // Adding the standard "intro" and "introformat" fields.
-        
-//      if($CFG->version > 2014111008) {
-//             $this->standard_intro_elements('hola');
-//         } else {
-//             $this->add_intro_editor();
-//         }
-      
-  // We now define the amount of Evaluations, Questions, Answers and time availability options respectively
+ 
+// Defines the amount of Evaluations, Questions, Answers and time availability options respectively
         $AmountEval= 10; 
         $AmountQuest = 20;
         $AmountAns = 7;
-        $AmountTime = 14; 
-        //Here we fill different arrays with all the different options
+        $AmountTime = 14;
+        
+// Fills different arrays with all the different options
 	   $evaluations = array();
 	   for ($i=0; $i <= $AmountEval ; $i++){ $evaluations[$i] = $i;}
 	   $questions = array();
@@ -66,8 +60,7 @@ class mod_evapares_mod_form extends moodleform_mod {
 	   $time = array();
 	   for ($i=1; $i <= $AmountTime ; $i++){ $time[$i] = $i;}
 	   
-	   //Add all the fields to be completed
-
+//Add all the fields to be completed
         $mform->addElement('checkbox', 'ssc',get_string('addSSC', 'mod_evapares'));
         
         $mform->addElement('select', 'total_iterations',get_string('amountOfEvaluations','mod_evapares'), $evaluations);
@@ -84,11 +77,11 @@ class mod_evapares_mod_form extends moodleform_mod {
 
                 
 
-        // Add standard elements, common to all modules.
+// Add standard elements, common to all modules.
         $this->standard_coursemodule_elements();
 
 
-        // Add standard buttons, common to all modules.
+// Add standard buttons, common to all modules.
         $this->add_action_buttons();
     }
 
