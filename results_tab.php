@@ -19,9 +19,6 @@ require_once($CFG->dirroot.'/course/moodleform_mod.php');
 
 global $CFG, $DB, $OUTPUT, $USER, $PAGE;
 
-//$PAGE->requires->jquery ();
-//$PAGE->requires->jquery_plugin ( 'ui' );
-//$PAGE->requires->jquery_plugin ( 'ui-css' );
 $PAGE->requires->js (new moodle_url('/mod/evapares/js/accordion.js') );
 
 ?>
@@ -71,11 +68,20 @@ $count_plc = count($percent) - 1;
 
 $headings = array('Stop','Start','Continue');
 
+// number that verifies the table associated with each iteration
 $n_table = 0;
+
 echo'<div class="accordion">';
-foreach($resultados as $param){	
+
+foreach($resultados as $param){
+	
+// verifies that the state is not self-assessment	
  	if($param->alu_evalua_id != $param->alu_evaluado_id){
+ 		
+// check table associated with the iteration		
  		if($param->iterations_id != $n_table){
+ 			
+// verified that this isn't the first iteration 			
  			if($n_table != 0){
  				
  				$table->data = $supa_data_sama;
@@ -83,28 +89,33 @@ foreach($resultados as $param){
  				echo '<h3>'.$iterations[$param->iterations_id - 1]->evaluation_name.'</h3>';
  				echo'<div>';
  				//COMPROBAR CON FECHA
+// displays the table created in a previous loop
  				echo html_writer::table($table);
 
  				$cons = $DB-> get_recordset_sql($query ,array($cm->id));
- 					
+ 				
+// number used to verify the ID of the answers 					
  				$tempid = 0;
  				echo'<table>';
  				foreach($cons as $p_a){
 
+// verify the ID of the question with the actual state
  					if($p_a->pregid != $tempid){
  						echo '<tr><td><strong>'.$p_a->preg.'</strong></td></tr>';
  						$tempid = $p_a->pregid;
  					}
  						echo '<tr><td></td><td>'.$p_a->resp.'</td>
  								  <td>';
+ 						
+// count how many times an alternative was chosen
  						$temp = 0;
- 						for($cont = 0; $cont <= $count_plc; $cont++){
-
+ 						for($cont = 0; $cont <= $count_plc; $cont++){							
  							if($param->iterations_id -1 == $percent[$cont]->iterations_id &&
  							   $percent[$cont]->answers_id == $p_a->ansid){
  							   	$temp = $temp + 1;
  							} 													
  						}
+// calculates in percentages how many times an alternative was chosen
  						$perc_display = $temp * 100 / ($efective_members -1);
  						echo '<strong>'.$perc_display.'%</strong>';
  						echo'</td></tr>';
@@ -112,7 +123,8 @@ foreach($resultados as $param){
  						echo '</table>';
  						echo '</div>';
 			}
-				
+	
+// creates the SSC table that will be displayed in the next loop
  			$table = new html_table();
  			$table->head = $headings ;
  			$supa_data_sama=array();
@@ -129,6 +141,7 @@ foreach($resultados as $param){
  			
  		}else{
  			
+// refills the SSC table that will be displayed in the next loop
  			array_push($data_chan,$param->ssc_stop);
  			array_push($data_chan,$param->ssc_start);
  			array_push($data_chan,$param->ssc_continue);
@@ -146,18 +159,24 @@ foreach($resultados as $param){
 $table->data = $supa_data_sama;
 echo '<h3>'.$iterations[$param->iterations_id]->evaluation_name.'</h3>';
 echo '<div>';
+
+// displays the table created in the last loop
 echo html_writer::table($table);
 $cons = $DB-> get_recordset_sql($query ,array($cm->id));
 
+// number used to verify the ID of the answers
 $tempid = 0;
 foreach($cons as $p_a){
 
+// verify the ID of the question with the actual state
 	if($p_a->pregid != $tempid){
  		echo '<table>
  			  <tr><td><strong>'.$p_a->preg.'</strong></td></tr>';
  		$tempid = $p_a->pregid;
 	}
  		echo '<tr><td></td><td>'.$p_a->resp.'</td><td>';
+ 		
+// count how many times an alternative was chosen
  		$temp = 0;
  		for($cont = 0; $cont <= $count_plc; $cont++){
  			if($param->iterations_id == $percent[$cont]->iterations_id &&
@@ -166,6 +185,8 @@ foreach($cons as $p_a){
  						$temp = $temp + 1;
  			}
  		}
+ 		
+// calculates in percentages how many times an alternative was chosen
  		$perc_display = $temp * 100 / ($efective_members -1);
  		echo '<strong>'.$perc_display.'%</strong>';
  		echo'</td></tr>';
@@ -173,6 +194,3 @@ foreach($cons as $p_a){
  		echo '</table><hr>';
  		echo '</div>';
  		echo '</div>';
- 		?>
-
-
