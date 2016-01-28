@@ -33,34 +33,43 @@ class evapares_num_eval_form extends moodleform {
 		
 	$mform = $this->_form;
 	$instance = $this->_customdata;		
-
+	
+// amount of iterations
 		$num = $instance['num'];
 		$cmid =$instance['cmid'];
+		
+//amount of questions		
 		$preg =$instance['preg'];
+		
+//amount of answers
 		$resp =$instance['resp'];
 
 		$mform->addElement('header', 'Detalle_Entregas', get_string('DeliverableDetails','mod_evapares'));
 
+// creates the respective form for each iteration
 		for($i = 0; $i <= $num + 1; $i++){
-		
+
+// initial evaluation
 			if($i == 0){
-				
+
 		$mform->addElement('hidden', 'NE'.$i, 'Evaluacion Inicial');
 		$mform->setType('NE'.$i, PARAM_TEXT);
 
 		$mform->addElement('date_time_selector', 'FE'.$i,get_string('personalEvalInitial','mod_evapares'));
 		$mform->setDefault('available', 0);
 
+// intermediates evaluations
 			} elseif($i > 0 && $i < $num + 1){
-			
+
 		$mform->addElement('text', 'NE'.$i,get_string('DeliverableName', 'mod_evapares').$i);
 		$mform->setType('NE'.$i, PARAM_TEXT);
 
 		$mform->addElement('date_time_selector', 'FE'.$i,get_string('dueDate','mod_evapares').$i);
 		$mform->setDefault('available', 0);
 
+// final evaluation
 			} elseif($i == $num +1){
-				
+
 		$mform->addElement('hidden', 'NE'.$i, 'Evaluacion Final');
 		$mform->setType('NE'.$i, PARAM_TEXT);
 
@@ -71,13 +80,15 @@ class evapares_num_eval_form extends moodleform {
 		}
 		
 		$mform->addElement('header', 'Detalle_Preguntas', get_string('AddMultipleOptionQuestion','mod_evapares'));
-		
+
+// creates the questions with the respective answers
 		for($j = 1; $j <= $preg; $j++){
-		
+
+// questions
 			$mform->addElement('textarea', "P$j",get_string('question','mod_evapares').$j, 'wrap="virtual" rows="5" cols="60"');
 			$mform->setType("P$j", PARAM_TEXT);
 		
-				
+// answers	
 			for($h = 1; $h <= $resp; $h++){
 				$idm = "R$j$h";
 				
@@ -91,6 +102,8 @@ class evapares_num_eval_form extends moodleform {
 		
 		$this->add_action_buttons();
 	}
+	
+// validates thet the fields are properly filled
 	function validation($data, $files){
 		global $DB;
 		
