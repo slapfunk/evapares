@@ -346,8 +346,10 @@ GROUP BY alu_evalua_id='.$bidimensional[$values->userid][2]) ;
 	if(count($bidimensional[$values->userid]) > count($headings)-1) break ;
 	}
 }
-echo "<h3><u> <divc><span style='margin-left:120px ; width:45%;' >Última Evaluación</span></u>
-		   <span style = 'float : right ; width: 55%;'><u>Resumen Semestral</u> </span></div></h3>" ;
+echo "<h3><u> <divc><span style='margin-left:120px ; width:45%;' >".$get_string('lastEvaluation','mod_evapares')
+	."</span></u>
+		   <span style = 'float : right ; width: 55%;'><u>".$get_string('periodSummary','mod_evapares').
+	"</u> </span></div></h3>" ;
 $sizePercentage = array('5%','10%','5%','5%','5%','5%','10%') ;
 $table = new html_table();
 $table->head = $headings ;
