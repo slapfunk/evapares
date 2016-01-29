@@ -84,7 +84,7 @@ $NumberOfStudentsInCourse = $DB->get_record_sql('SELECT cr.SHORTNAME, cr.FULLNAM
 												          cr.FULLNAME
 												 ORDER  BY `ENROLLED` ASC ') ;
 //get group_id, user_id and user_name, and the sums for stop, start, continue
-$SUPERQUERY = $DB->get_records_sql('SELECT g.id AS group_id, u.username AS USERname,u.id AS USERid, SUM(length("ssc_stop")) AS SumaStop,  SUM(length(`ssc_start`)) AS SumaStart, SUM(length(`ssc_continue`)) AS SumaContinue
+$SUPERQUERY = $DB->get_records_sql('SELECT u.id AS userid, g.id AS group_id, u.username AS USERname, SUM(length("ssc_stop")) AS SumaStop,  SUM(length(`ssc_start`)) AS SumaStart, SUM(length(`ssc_continue`)) AS SumaContinue
 FROM mdl_user u
 INNER JOIN mdl_role_assignments ra ON ra.userid = u.id
 INNER JOIN mdl_context ct ON ct.id = ra.contextid
@@ -97,7 +97,7 @@ WHERE length(`ssc_stop`)
 IN (SELECT LENGTH(`ssc_stop`)
 FROM mdl_evapares_evaluations eval
    WHERE `alu_evalua_id`!=`alu_evaluado_id`)
-GROUP BY eval.alu_evaluado_id');
+GROUP BY userid');
 
 $resultados = $DB->get_records_sql('SELECT `iterations_id`,alu_evalua_id AS evaluador
 		,alu_evaluado_id AS Evaluado,`answers`, iter.id AS iteration
@@ -124,9 +124,31 @@ foreach($SUPERQUERY AS $values)
 	$bidimensional[$values->userid][0] =$values->group_id;
 	$bidimensional[$values->userid][1] =$values->username;
 	$bidimensional[$values->userid][2] =$values->userid;
-	$bidimensional[$values->userid][3] =$values->sumastop;
-	$bidimensional[$values->userid][4] =$values->sumastart;
-	$bidimensional[$values->userid][5] =$values->sumacontinue;
+	//If values are NULL, write '0' in the table
+	if ($values->sumastop)
+			{
+				$bidimensional[$values->userid][3] =$values->sumastop;
+			}
+			else
+				{
+					$bidimensional[$values->userid][3] = 0;
+				}
+	if ($values->sumastart)
+			{
+				$bidimensional[$values->userid][4] =$values->sumastart;
+			}
+			else
+				{
+					$bidimensional[$values->userid][4] = 0 ;
+				}
+	if($values->sumacontinue)
+			{
+				$bidimensional[$values->userid][5] =$values->sumacontinue;
+			}
+			else
+				{ 
+					$bidimensional[$values->userid][5] = 0 ; 
+				}
 	$partialKey = 1 ; 
 	foreach ($resultados AS $partialEvaluationsValues)
 	{
@@ -150,9 +172,30 @@ foreach($SUPERQUERY AS $values)
 }
 
 
-echo "SUPERDUPER"; 
+echo "<h3> <divc><span style='margin-left:120px ; width:45%; background-color:orange;' >Última Evaluación</span>  
+		   <span style = 'margin-right: 30 px ; background-color:green; width: 55%;'>Resumen Semestral </span></div></h3>" ;
+$sizePercentage = array('5%','10%','5%','5%','5%','5%','10%') ;
 $table = new html_table();
 $table->head = $headings ;
 $table->data = $bidimensional ;
+$table-> size = $sizePercentage ; 
 
 echo html_writer::table($table);
+
+
+//Reedicion luego de que lo que subiera tirase especios vacios
+
+
+
+
+SELECT u.id AS userid, g.id AS group_id, u.username AS username, SUM(length(ssc_stop)), SUM(length(ssc_start)), SUM(length(ssc_continue))
+FROM mdl_user u
+INNER JOIN mdl_role_assignments ra ON ra.userid = u.id
+INNER JOIN mdl_context ct ON ct.id = ra.contextid
+INNER JOIN mdl_course c ON c.id = ct.instanceid
+INNER JOIN mdl_role r ON r.id = ra.roleid
+INNER JOIN mdl_groups_members gm ON gm.userid = u.id
+INNER JOIN mdl_groups g ON g.id = gm.groupid
+LEFT JOIN mdl_evapares_evaluations eval ON u.id= eval.alu_evaluado_id
+WHERE alu_evalua_id != alu_evaluado_id
+group BY userid
