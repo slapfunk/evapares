@@ -31,11 +31,11 @@ $PAGE->requires->js (new moodle_url('/mod/evapares/js/accordion.js') );
 $iterations = $DB->get_records("evapares_iterations", array('evapares_id'=>$cmid));
 
 //$resultados = $DB->get_records("evapares_evaluations", array('alu_evaluado_id'=>$USER->id),'iterations_id ASC');
-$resultquery =  'SELECT * from mdl_evapares_evaluations AS eval
+$resultquery =  'SELECT * FROM mdl_evapares_evaluations AS eval
  				 INNER JOIN mdl_evapares_iterations AS iter 
  				 ON eval.iterations_id = iter.id 
- 				 WHERE iter.evapares_id = 2 
- 				 AND eval.alu_evaluado_id = 3';
+ 				 WHERE iter.evapares_id = ? 
+ 				 AND eval.alu_evaluado_id = ?';
 
 $resultados = $DB-> get_recordset_sql($resultquery ,array($cm->id, $USER->id));
 //var_dump($resultados);
