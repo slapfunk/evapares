@@ -30,15 +30,14 @@ $PAGE->requires->js (new moodle_url('/mod/evapares/js/accordion.js') );
 
 $iterations = $DB->get_records("evapares_iterations", array('evapares_id'=>$cmid));
 
-//$resultados = $DB->get_records("evapares_evaluations", array('alu_evaluado_id'=>$USER->id),'iterations_id ASC');
 $resultquery =  'SELECT * FROM mdl_evapares_evaluations AS eval
  				 INNER JOIN mdl_evapares_iterations AS iter 
  				 ON eval.iterations_id = iter.id 
  				 WHERE iter.evapares_id = ? 
- 				 AND eval.alu_evaluado_id = ?';
+ 				 AND eval.alu_evaluado_id = ?
+ 				 ORDER BY iterations_id ASC';
 
 $resultados = $DB-> get_recordset_sql($resultquery ,array($cm->id, $USER->id));
-//var_dump($resultados);
 
 $query = "SELECT Q.text AS preg, Q.id AS pregid, A.text AS resp, A.id AS ansid
 		  FROM mdl_evapares_questions AS Q, mdl_evapares_answers AS A
@@ -80,9 +79,9 @@ $headings = array('Stop','Start','Continue');
 $n_table = 0;
 
 echo'<div class="accordion">';
-//var_dump($resultados);
+
 foreach($resultados as $param){
-	//var_dump($param);
+
 // verifies that the state is not self-assessment	
  	if($param->alu_evalua_id != $param->alu_evaluado_id){
  		
@@ -199,6 +198,6 @@ foreach($cons as $p_a){
  		echo '<strong>'.$perc_display.'%</strong>';
  		echo'</td></tr>';
  }
- 		echo '</table>';
- 		echo '</div>';
-  		echo '</div>';
+ 		echo '</table>
+			  </div>
+  		      </div>';
