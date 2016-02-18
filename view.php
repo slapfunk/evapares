@@ -205,162 +205,10 @@ if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add
 
 }
 elseif(has_capability('mod/evapares:courseevaluations', $context) && $action == "view"){
-	
-//Beginning of Teacher's view
-$bidimensional = array() ;	
-//Count the amount of students in the course cd.id=2
-$NumberOfStudentsInCourse = $DB->get_record_sql('SELECT cr.SHORTNAME, cr.FULLNAME,
-      											 COUNT(ra.ID) AS enrolled
-												 FROM   {course} cr
-				       							 JOIN {context} ct
-						        				 ON ( ct.INSTANCEID = cr.ID )
-						      					 LEFT JOIN `MDL_ROLE_ASSIGNMENTS` ra
-              									 ON ( ra.CONTEXTID = ct.ID )
-												 WHERE  ct.CONTEXTLEVEL = 50
-												       AND ra.ROLEID = 5
-                                                       AND cr.id ='.$course->id.'
-												 GROUP  BY cr.SHORTNAME,
-												          cr.FULLNAME
-												 ORDER  BY `ENROLLED` ASC ') ;
-//get group_id, user_id and user_name, and the sums for stop, start, continue
-$SUPERQUERY = $DB->get_records_sql('SELECT u.id AS userid, g.id AS group_id, u.username AS username, SUM(length(ssc_stop)) AS sumastop,
-		SUM(length(ssc_start)) AS sumastart, SUM(length(ssc_continue)) AS sumacontinue
-FROM {user} u
-INNER JOIN {role_assignments} ra ON ra.userid = u.id
-INNER JOIN {context} ct ON ct.id = ra.contextid
-INNER JOIN {course} c ON c.id = ct.instanceid
-INNER JOIN {role} r ON r.id = ra.roleid
-INNER JOIN {groups_members} gm ON gm.userid = u.id
-INNER JOIN {groups} g ON g.id = gm.groupid
-INNER JOIN {course_modules} cm ON cm.course = c.id
-LEFT JOIN {evapares_evaluations} eval ON u.id= eval.alu_evaluado_id
-WHERE alu_evalua_id != alu_evaluado_id
-AND cm.id = '.$cm->id.'		
-group BY userid');
 
-$resultados = $DB->get_records_sql('SELECT eval.id `iterations_id`,alu_evalua_id AS evaluador
-		,alu_evaluado_id AS Evaluado,`answers`, iter.id AS iteration
-FROM {evapares_evaluations} eval
-INNER JOIN {evapares_iterations} iter ON iter.id = eval.iterations_id
-WHERE iter.evapares_id ='.$cmid.'
-ORDER BY `alu_evalua_id`, `iterations_id`') ; 
-$StartDate = $DB->get_records_sql('SELECT iter.n_iteration,iter.start_date AS start_date
-FROM mdl_user u
-INNER JOIN {role_assignments} ra ON ra.userid = u.id
-INNER JOIN {context} ct ON ct.id = ra.contextid
-INNER JOIN {course} c ON c.id = ct.instanceid
-LEFT JOIN {evapares_evaluations} eval ON u.id= eval.alu_evaluado_id
-LEFT JOIN {evapares_iterations} iter ON iter.id = eval.iterations_id
-WHERE c.id = '.$course->id.'
-GROUP BY n_iteration
-		') ; 
-$iterations = $DB->get_records_sql('SELECT n_iteration
-		FROM {evapares_iterations}
-		WHERE evapares_id='.$cm->id )  ;
+	include('view_teacher.php');
 
-$actualDate = time() ;
-// Add the date with which to retrieve the data for the last evapares iteration
-// $lastIteration = 0 ;
-// $dates = array() ;
-// foreach ($StartDate[1] as $dates)
-// {
-// if ($actualDate <= $date[1])
-// 	{
-// 	$lastIteration = $dates->n_iteration ;
-// 	}	
-// 	array_push($dates, $date->start_date) ; 
-// }
-// 	var_dump($lastIteration) ;
-
-//Table Headers
-$headings= array('Grupo', 'Integrante', 'Res','S','S','C','Ev. Parcial','Ev. Inicial');
-//Add a column for every extra evaluation besides Initial and Final Ones
-for($i=0; $i<($evapares->total_iterations) ; $i){
-	$i++ ;
-	array_push($headings,'Ev. '.$i) ;
 }
-array_push($headings, 'Ev.Final') ;
-
-//Table Data
-
-foreach($SUPERQUERY AS $values)
-{
-	$bidimensional[$values->userid][0] =$values->group_id;
-	$bidimensional[$values->userid][1] =$values->username;
-	$bidimensional[$values->userid][2] =$values->userid;
-	//If values are NULL, write '0' in the table
-	if ($values->sumastop)
-			{
-				$bidimensional[$values->userid][3] =$values->sumastop;
-			}
-			else
-				{
-					$bidimensional[$values->userid][3] = 0;
-				}
-	if ($values->sumastart)
-			{
-				$bidimensional[$values->userid][4] =$values->sumastart;
-			}
-			else
-				{
-					$bidimensional[$values->userid][4] = 0 ;
-				}
-				
-	if($values->sumacontinue)
-			{
-				$bidimensional[$values->userid][5] =$values->sumacontinue;
-			}
-			else
-				{ 
-					$bidimensional[$values->userid][5] = 0 ; 
-				}
-	$partialKey = 1 ; 
-	foreach ($resultados AS $partialEvaluationsValues)
-	{
-		//Here we had a problem after a db actualization, the problem wasn't found so a patch was implemented
-		//This will do a series of queries, after each one of them checking for the 'answers' column
-		//the same code that ran before, didn't anymore, if with time, try and change this
-$resultadoInvividual = $DB->get_records_sql('SELECT eval.id `iterations_id`,alu_evalua_id AS evaluador
-		,alu_evaluado_id AS Evaluado,`answers`, iter.id AS iteration
-FROM {evapares_evaluations} eval
-INNER JOIN {user} u ON u.id = eval.alu_evalua_id
-INNER JOIN {evapares_iterations} iter ON iter.id = eval.iterations_id
-WHERE iter.evapares_id = 8
-GROUP BY alu_evalua_id='.$bidimensional[$values->userid][2]) ;
-		if($StartDate<= $actualDate)
-		{
-			if($resultadoInvividual->answers == 0)
-			{
-				$bidimensional[$values->userid][5+$partialKey] ='<img src="pix/respondible.jpg" style=width:15px;height:15px;>';
-			}
-			elseif($resultadoInvividual->answers == 0)
-			{
-				$bidimensional[$values->userid][5+$partialKey] ='<img src="pix/norespondible.jpg" style=width:15px;height:15px;>';
-			}
-		}
-		else
-		{
-			$bidimensional[$values->userid][5+$partialKey] ='<img src="pix/nodisponible.jpg" style=width:15px;height:15px;>';
-		}
-		$partialKey++ ;
-	if(count($bidimensional[$values->userid]) > count($headings)-1) break ;
-	}
-}
-echo "<h3><u> <divc><span style='margin-left:120px ; width:45%;' >".$get_string('lastEvaluation','mod_evapares')
-	."</span></u>
-		   <span style = 'float : right ; width: 55%;'><u>".$get_string('periodSummary','mod_evapares').
-	"</u> </span></div></h3>" ;
-$sizePercentage = array('5%','10%','5%','5%','5%','5%','10%') ;
-$table = new html_table();
-$table->head = $headings ;
-$table->data = $bidimensional ;
-$table->size = $sizePercentage ; 
-echo html_writer::table($table);
-}
-
-//End of Teacher's View
-
-
 elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "view"){
 	if(!isset($_REQUEST['mode'])){
 		$currenttab='tb1';
@@ -444,7 +292,7 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 			redirect($backtocourse);
 		}
 		array_push($forms,$addform);
-		var_dump($_SESSION['itra']);
+	
 		if( $forms['0']->is_cancelled() ){
 			$backtocourse = new moodle_url("course/view.php",array('id'=>$course->id));
 			redirect($backtocourse);
@@ -467,7 +315,7 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 					foreach($qstn_qry as $llave => $resultado){
 						$qstn=$resultado->id;
 					}
-					var_dump($datas->$rbtn);
+					
 					$responde_qry = $DB->get_records_sql('SELECT id FROM {evapares_answers} WHERE number=? AND question_id=?',
 							array($datas->$rbtn,$qstn));
 					foreach($responde_qry as $llave => $resultado){
@@ -518,7 +366,7 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 			array_push($data_chan,'<button id="f'.$i.'" ><img src="pix/ver.jpg" View" style="width:15px;height:15px;"></button>');//editar para que sea el boton de jquery
 			$addform = new evapares_evalu_usua(null, $varrs[$i]);
 			array_push($forms,$addform);
-			var_dump($_SESSION['itra']);
+		
 			if( $forms[$i]->is_cancelled() ){
 				$backtocourse = new moodle_url("course/view.php",array('id'=>$course->id));
 				redirect($backtocourse);
@@ -603,7 +451,7 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 		array_push($data_chan,'<button id="f'.$fin.'" ><img src="pix/ver.jpg" id="'.$fin.'" View" style="width:15px;height:15px;"></button>');//editar para que sea el boton de jquery
 		$addform = new evapares_evalu_usua(null, $varrs[$fin]);
 		array_push($forms,$addform);
-		var_dump($_SESSION['itra']);
+		
 		if( $forms[$fin]->is_cancelled() ){
 			$backtocourse = new moodle_url("course/view.php",array('id'=>$course->id));
 			redirect($backtocourse);
@@ -687,13 +535,6 @@ elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "vie
 			$forms[$t]->display();
 			echo html_writer::end_tag('div');
 		}
-// 		$iduser=$USER->id;
-// 		$vars=array('num'=>$evapares->total_iterations,"cmid"=>$cmid,"iduser"=>$iduser);//iduser hay que saber de donde
-// 		$addform = new evapares_evalu_usua(null,$vars);//editars
-// 		echo $OUTPUT->header();
-// 		$addform->display();
-// 		echo $OUTPUT->footer();
-		
 		
 	}
 		elseif($mode = 'resultados'){

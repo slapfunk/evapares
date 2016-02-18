@@ -1,114 +1,70 @@
-//Pruebas de query
 <?php
-
-echo "<br>".$pruebaNombres ; 
-//$cantidadDePreguntas = $DB->get_record_sql('') ;
-for($pregunta= 0 ; $pregunta <$cantidadDePreguntas; $pregunta++){
-$check= $DB->get_record_sql('SELECT id,text FROM mdl_evapares_answers WHERE id='.$pregunta) ;
-
-
-//Retrive where the group's course id
-$groupid= $idUser->groupid ;
-$idGroup = $DB->get_record_sql('SELECT courseid FROM mdl_groups
-								INNER JOIN mdl_groups_members 
-								ON mdl_groups_members.groupid = mdl_groups.id
-								WHERE mdl_groups.id = mdl_groups_members.groupid 
-								AND mdl_groups.courseid ='.$groupid) ;
-$course = get_course($courseid);
-
-//Retrieve Group Numbers for the students
-$NumberForStudentGroup = $DB-> get_record_sql('SELECT `groupid`
-											   FROM mdl_groups_members gm
-											   JOIN mdl_groups g ON gm.groupid = g.id') ;
-
-//Count the amount of students in the course cd.id=2
-$NumberOfStudentsInCourse = $DB->get_record_sql('SELECT cr.SHORTNAME, cr.FULLNAME, 
-      											 COUNT(ra.ID) AS enrolled 
-												 FROM   `MDL_COURSE` cr 
-				       							 JOIN `MDL_CONTEXT` ct 
-						        				 ON ( ct.INSTANCEID = cr.ID ) 
-						      					 LEFT JOIN `MDL_ROLE_ASSIGNMENTS` ra 
-              									 ON ( ra.CONTEXTID = ct.ID ) 
-												 WHERE  ct.CONTEXTLEVEL = 50 
-												       AND ra.ROLEID = 5 
-                                                       AND cr.id = 2
-												 GROUP  BY cr.SHORTNAME, 
-												          cr.FULLNAME 
-												 ORDER  BY `ENROLLED` ASC ') ;
-//Retrieve Name of the students
-$NameOfTheStudentsInCourse = $DB->get_record_sql('SELECT u.username,u.id
-												  FROM mdl_user u
-												  INNER JOIN mdl_role_assignments ra ON ra.userid = u.id
-												  INNER JOIN mdl_context ct ON ct.id = ra.contextid
-												  INNER JOIN mdl_course c ON c.id = ct.instanceid
-												  INNER JOIN mdl_role r ON r.id = ra.roleid') ;
-//Retrieve the total amount of characters written FOR a SINGLE student
-$TotalLength = $DB->get_record_sql('SELECT u.username, sum(length("ssc_stop")) AS SumaStop, sum(length("ssc_stop")) AS SumaStart
-									sum(length("ssc_stop")) AS SumaContinue
-									FROM mdl_evapares_evaluations
-									INNER JOIN mdl_user  u
-									ON u.id= mdl_evapares_evaluations.alu_evaluado_id
-									WHERE length(`ssc_stop`) 
-									IN (SELECT LENGTH(`ssc_stop`)
-									   FROM mdl_evapares_evaluations
-                                       WHERE  mdl_evapares_evaluations.`alu_evaluado_id` = 4)
-									GROUP BY alu_evaluado_id') ;
-}
-
-
-
-//Start of Table coding
-
-$bidimensional = array() ;
-$headings= array('Grupo', 'Integrante', 'Res','S','S','C','Ev. Parcial','Ev. Inicial');
-
-for($i=0; $i<($evapares->total_iterations) ; $i)
-	{
-	$i++ ;
-	array_push($headings,'Evaluacion numero '.$i) ;
-	}
-	array_push($headings, 'Evaluacion Final') ;
-	
+//Beginning of Teacher's view
+$bidimensional = array() ;	
 //Count the amount of students in the course cd.id=2
 $NumberOfStudentsInCourse = $DB->get_record_sql('SELECT cr.SHORTNAME, cr.FULLNAME,
       											 COUNT(ra.ID) AS enrolled
-												 FROM   `MDL_COURSE` cr
-				       							 JOIN `MDL_CONTEXT` ct
+												 FROM   {course} cr
+				       							 JOIN {context} ct
 						        				 ON ( ct.INSTANCEID = cr.ID )
 						      					 LEFT JOIN `MDL_ROLE_ASSIGNMENTS` ra
               									 ON ( ra.CONTEXTID = ct.ID )
 												 WHERE  ct.CONTEXTLEVEL = 50
 												       AND ra.ROLEID = 5
-                                                       AND cr.id = 2
+                                                       AND cr.id ='.$course->id.'
 												 GROUP  BY cr.SHORTNAME,
 												          cr.FULLNAME
 												 ORDER  BY `ENROLLED` ASC ') ;
 //get group_id, user_id and user_name, and the sums for stop, start, continue
-$SUPERQUERY = $DB->get_records_sql('SELECT u.id AS userid, g.id AS group_id, u.username AS USERname, SUM(length("ssc_stop")) AS SumaStop,  SUM(length(`ssc_start`)) AS SumaStart, SUM(length(`ssc_continue`)) AS SumaContinue
-FROM mdl_user u
-INNER JOIN mdl_role_assignments ra ON ra.userid = u.id
-INNER JOIN mdl_context ct ON ct.id = ra.contextid
-INNER JOIN mdl_course c ON c.id = ct.instanceid
-INNER JOIN mdl_role r ON r.id = ra.roleid
-INNER JOIN mdl_groups_members gm ON gm.userid = u.id
-INNER JOIN mdl_groups g ON g.id = gm.groupid
-INNER JOIN mdl_evapares_evaluations eval ON u.id= eval.alu_evaluado_id
-WHERE length(`ssc_stop`)
-IN (SELECT LENGTH(`ssc_stop`)
-FROM mdl_evapares_evaluations eval
-   WHERE `alu_evalua_id`!=`alu_evaluado_id`)
-GROUP BY userid');
+$SUPERQUERY = $DB->get_records_sql('SELECT u.id AS userid, g.id AS group_id, u.username AS username, SUM(length(ssc_stop)) AS sumastop,
+		SUM(length(ssc_start)) AS sumastart, SUM(length(ssc_continue)) AS sumacontinue
+FROM {user} u
+INNER JOIN {role_assignments} ra ON ra.userid = u.id
+INNER JOIN {context} ct ON ct.id = ra.contextid
+INNER JOIN {course} c ON c.id = ct.instanceid
+INNER JOIN {role} r ON r.id = ra.roleid
+INNER JOIN {groups_members} gm ON gm.userid = u.id
+INNER JOIN {groups} g ON g.id = gm.groupid
+INNER JOIN {course_modules} cm ON cm.course = c.id
+LEFT JOIN {evapares_evaluations} eval ON u.id= eval.alu_evaluado_id
+WHERE alu_evalua_id != alu_evaluado_id
+AND cm.id = '.$cm->id.'		
+group BY userid');
 
-$resultados = $DB->get_records_sql('SELECT `iterations_id`,alu_evalua_id AS evaluador
+$resultados = $DB->get_records_sql('SELECT eval.id `iterations_id`,alu_evalua_id AS evaluador
 		,alu_evaluado_id AS Evaluado,`answers`, iter.id AS iteration
-FROM mdl_evapares_evaluations eval
-INNER JOIN mdl_evapares_iterations iter ON iter.id = eval.iterations_id
+FROM {evapares_evaluations} eval
+INNER JOIN {evapares_iterations} iter ON iter.id = eval.iterations_id
 WHERE iter.evapares_id ='.$cmid.'
-ORDER BY `alu_evalua_id`, `iterations_id`') ; 
-$StartDate = $DB->get_records_sql('SELECT eval.id, iter.`start_date` FROM mdl_evapares_evaluations eval 
-								INNER JOIN mdl_evapares_iterations iter ON iter.id = eval.iterations_id 
-								GROUP BY iter.id') ; 
+ORDER BY `alu_evalua_id`, `iterations_id`') ;
+
+$StartDate = $DB->get_records_sql('SELECT iter.n_iteration,iter.start_date AS start_date
+FROM mdl_user u
+INNER JOIN {role_assignments} ra ON ra.userid = u.id
+INNER JOIN {context} ct ON ct.id = ra.contextid
+INNER JOIN {course} c ON c.id = ct.instanceid
+LEFT JOIN {evapares_evaluations} eval ON u.id= eval.alu_evaluado_id
+LEFT JOIN {evapares_iterations} iter ON iter.id = eval.iterations_id
+WHERE c.id = '.$course->id.'
+GROUP BY n_iteration
+		') ; 
+$iterations = $DB->get_records_sql('SELECT n_iteration
+		FROM {evapares_iterations}
+		WHERE evapares_id='.$cm->id )  ;
+
 $actualDate = time() ;
+// Add the date with which to retrieve the data for the last evapares iteration
+// $lastIteration = 0 ;
+// $dates = array() ;
+// foreach ($StartDate[1] as $dates)
+// {
+// if ($actualDate <= $date[1])
+// 	{
+// 	$lastIteration = $dates->n_iteration ;
+// 	}	
+// 	array_push($dates, $date->start_date) ; 
+// }
+// 	var_dump($lastIteration) ;
 
 //Table Headers
 $headings= array('Grupo', 'Integrante', 'Res','S','S','C','Ev. Parcial','Ev. Inicial');
@@ -118,7 +74,9 @@ for($i=0; $i<($evapares->total_iterations) ; $i){
 	array_push($headings,'Ev. '.$i) ;
 }
 array_push($headings, 'Ev.Final') ;
+
 //Table Data
+
 foreach($SUPERQUERY AS $values)
 {
 	$bidimensional[$values->userid][0] =$values->group_id;
@@ -141,6 +99,7 @@ foreach($SUPERQUERY AS $values)
 				{
 					$bidimensional[$values->userid][4] = 0 ;
 				}
+				
 	if($values->sumacontinue)
 			{
 				$bidimensional[$values->userid][5] =$values->sumacontinue;
@@ -152,50 +111,47 @@ foreach($SUPERQUERY AS $values)
 	$partialKey = 1 ; 
 	foreach ($resultados AS $partialEvaluationsValues)
 	{
+		//Here we had a problem after a db actualization, the problem wasn't found so a patch was implemented
+		//This will do a series of queries, after each one of them checking for the 'answers' column
+		//the same code that ran before, didn't anymore, if with time, try and change this
+		
+$resultadoInvividual = $DB->get_records_sql('SELECT eval.id `iterations_id`,alu_evalua_id AS evaluador
+		,alu_evaluado_id AS Evaluado,`answers`, iter.id AS iteration
+FROM {evapares_evaluations} eval
+INNER JOIN {user} u ON u.id = eval.alu_evalua_id
+INNER JOIN {evapares_iterations} iter ON iter.id = eval.iterations_id
+WHERE iter.evapares_id = '.$cm->id.'
+GROUP BY alu_evalua_id='.$bidimensional[$values->userid][2]) ;
+
 		if($StartDate<= $actualDate)
 		{
-		if($partialEvaluationsValues->answers != 0)
+			if($resultadoInvividual->answers == 0)
 			{
-			$bidimensional[$values->userid][5+$partialKey] ='<img src="pix/respondible.jpg" style=width:15px;height:15px;>';
+				$bidimensional[$values->userid][5+$partialKey] ='<img src="pix/respondible.jpg" style=width:15px;height:15px;>';
 			}
-			else
-				{
+			elseif($resultadoInvividual->answers == 0)
+			{
 				$bidimensional[$values->userid][5+$partialKey] ='<img src="pix/norespondible.jpg" style=width:15px;height:15px;>';
-				}
+			}
 		}
 		else
 		{
-		$bidimensional[$values->userid][5+$partialKey] ='<img src="pix/norespondido.jpg" style=width:15px;height:15px;>';
+			$bidimensional[$values->userid][5+$partialKey] ='<img src="pix/nodisponible.jpg" style=width:15px;height:15px;>';
 		}
 		$partialKey++ ;
+	if(count($bidimensional[$values->userid]) > count($headings)-1) break ;
 	}
 }
-
-
-echo "<h3> <divc><span style='margin-left:120px ; width:45%; background-color:orange;' >Última Evaluación</span>  
-		   <span style = 'margin-right: 30 px ; background-color:green; width: 55%;'>Resumen Semestral </span></div></h3>" ;
+echo "<h3><u> <divc><span style='margin-left:120px ; width:45%;' >".//$get_string('lastEvaluation','mod_evapares')
+	'asdf'."</span></u>
+		   <span style = 'float : right ; width: 55%;'><u>".//$get_string('periodSummary','mod_evapares')
+		   'asdf2'."</u> </span></div></h3>" ;
 $sizePercentage = array('5%','10%','5%','5%','5%','5%','10%') ;
 $table = new html_table();
 $table->head = $headings ;
 $table->data = $bidimensional ;
-$table-> size = $sizePercentage ; 
-
+$table->size = $sizePercentage ; 
 echo html_writer::table($table);
 
 
-//Reedicion luego de que lo que subiera tirase especios vacios
-
-
-
-
-SELECT u.id AS userid, g.id AS group_id, u.username AS username, SUM(length(ssc_stop)), SUM(length(ssc_start)), SUM(length(ssc_continue))
-FROM mdl_user u
-INNER JOIN mdl_role_assignments ra ON ra.userid = u.id
-INNER JOIN mdl_context ct ON ct.id = ra.contextid
-INNER JOIN mdl_course c ON c.id = ct.instanceid
-INNER JOIN mdl_role r ON r.id = ra.roleid
-INNER JOIN mdl_groups_members gm ON gm.userid = u.id
-INNER JOIN mdl_groups g ON g.id = gm.groupid
-LEFT JOIN mdl_evapares_evaluations eval ON u.id= eval.alu_evaluado_id
-WHERE alu_evalua_id != alu_evaluado_id
-group BY userid
+//End of Teacher's View
