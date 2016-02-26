@@ -2,19 +2,19 @@
 //Beginning of Teacher's view
 $bidimensional = array() ;	
 //Count the amount of students in the course cd.id=2
-$NumberOfStudentsInCourse = $DB->get_record_sql('SELECT cr.SHORTNAME, cr.FULLNAME,
-      											 COUNT(ra.ID) AS enrolled
-												 FROM   {course} cr
-				       							 JOIN {context} ct
-						        				 ON ( ct.INSTANCEID = cr.ID )
-						      					 LEFT JOIN `MDL_ROLE_ASSIGNMENTS` ra
-              									 ON ( ra.CONTEXTID = ct.ID )
-												 WHERE  ct.CONTEXTLEVEL = 50
-												       AND ra.ROLEID = 5
-                                                       AND cr.id ='.$course->id.'
-												 GROUP  BY cr.SHORTNAME,
-												          cr.FULLNAME
-												 ORDER  BY `ENROLLED` ASC ') ;
+// $NumberOfStudentsInCourse = $DB->get_record_sql('SELECT cr.SHORTNAME, cr.FULLNAME,
+//       											 COUNT(ra.ID) AS enrolled
+// 												 FROM   {course} cr
+// 				       							 JOIN {context} ct
+// 						        				 ON ( ct.INSTANCEID = cr.ID )
+// 						      					 LEFT JOIN `MDL_ROLE_ASSIGNMENTS` ra
+//               									 ON ( ra.CONTEXTID = ct.ID )
+// 												 WHERE  ct.CONTEXTLEVEL = 50
+// 												       AND ra.ROLEID = 5
+//                                                        AND cr.id ='.$course->id.'
+// 												 GROUP  BY cr.SHORTNAME,
+// 												          cr.FULLNAME
+// 												 ORDER  BY `ENROLLED` ASC ') ;
 //get group_id, user_id and user_name, and the sums for stop, start, continue
 $SUPERQUERY = $DB->get_records_sql('SELECT u.id AS userid, g.id AS group_id, u.username AS username, SUM(length(ssc_stop)) AS sumastop,
 		SUM(length(ssc_start)) AS sumastart, SUM(length(ssc_continue)) AS sumacontinue
@@ -46,8 +46,15 @@ INNER JOIN {course} c ON c.id = ct.instanceid
 LEFT JOIN {evapares_evaluations} eval ON u.id= eval.alu_evaluado_id
 LEFT JOIN {evapares_iterations} iter ON iter.id = eval.iterations_id
 WHERE c.id = '.$course->id.'
-GROUP BY n_iteration
-		') ; 
+GROUP BY n_iteration') ; 
+
+// $resultadoInvividual = $DB->get_records_sql("SELECT eval.id `iterations_id`,alu_evalua_id AS evaluador
+// 			,alu_evaluado_id AS Evaluado,`answers`, iter.id AS iteration
+// 	FROM {evapares_evaluations} eval
+// 	INNER JOIN {user} u ON u.id = eval.alu_evalua_id
+// 	INNER JOIN {evapares_iterations} iter ON iter.id = eval.iterations_id
+// 	WHERE iter.evapares_id = '.$cm->id.'");
+
 $iterations = $DB->get_records_sql('SELECT n_iteration
 		FROM {evapares_iterations}
 		WHERE evapares_id='.$cm->id )  ;
@@ -83,6 +90,7 @@ foreach($SUPERQUERY AS $values)
 	$bidimensional[$values->userid][1] =$values->username;
 	$bidimensional[$values->userid][2] =$values->userid;
 	//If values are NULL, write '0' in the table
+	
 	if ($values->sumastop)
 			{
 				$bidimensional[$values->userid][3] =$values->sumastop;
@@ -115,35 +123,32 @@ foreach($SUPERQUERY AS $values)
 		//This will do a series of queries, after each one of them checking for the 'answers' column
 		//the same code that ran before, didn't anymore, if with time, try and change this
 		
-$resultadoInvividual = $DB->get_records_sql('SELECT eval.id `iterations_id`,alu_evalua_id AS evaluador
-		,alu_evaluado_id AS Evaluado,`answers`, iter.id AS iteration
-FROM {evapares_evaluations} eval
-INNER JOIN {user} u ON u.id = eval.alu_evalua_id
-INNER JOIN {evapares_iterations} iter ON iter.id = eval.iterations_id
-WHERE iter.evapares_id = '.$cm->id.'
-GROUP BY alu_evalua_id='.$bidimensional[$values->userid][2]) ;
 
-		if($StartDate<= $actualDate)
-		{
-			if($resultadoInvividual->answers == 0)
+//	GROUP BY alu_evalua_id='.$bidimensional[$values->userid][2]) ;
+
+//echo $bidimensional[$values->userid][2];
+//var_dump($StartDate);
+//var_dump($actualDate);
+//var_dump($resultados);
+			if($StartDate<= $actualDate && $resultados->answers == 1)
 			{
-				$bidimensional[$values->userid][5+$partialKey] ='<img src="pix/respondible.jpg" style=width:15px;height:15px;>';
+				var_dump($resultadoInvividual->answers);
+ 				$bidimensional[$values->userid][5+$partialKey] ='<img src="pix/respondido.jpg" style=width:15px;height:15px;>';
 			}
-			elseif($resultadoInvividual->answers == 0)
+			elseif($StartDate<= $actualDate && $resultados->answers == 0)
 			{
 				$bidimensional[$values->userid][5+$partialKey] ='<img src="pix/norespondible.jpg" style=width:15px;height:15px;>';
 			}
-		}
-		else
-		{
-			$bidimensional[$values->userid][5+$partialKey] ='<img src="pix/nodisponible.jpg" style=width:15px;height:15px;>';
-		}
+			elseif($StartDate>= $actualDate)
+			{
+				$bidimensional[$values->userid][5+$partialKey] ='<img src="pix/nodisponible.jpg" style=width:15px;height:15px;>';
+			}
 		$partialKey++ ;
 	if(count($bidimensional[$values->userid]) > count($headings)-1) break ;
 	}
 }
 echo "<h3><u> <divc><span style='margin-left:120px ; width:45%;' >".//$get_string('lastEvaluation','mod_evapares')
-	'asdf'."</span></u>
+	'Ultima Evaluacion'."</span></u>
 		   <span style = 'float : right ; width: 55%;'><u>".//$get_string('periodSummary','mod_evapares')
 		   'asdf2'."</u> </span></div></h3>" ;
 $sizePercentage = array('5%','10%','5%','5%','5%','5%','10%') ;
