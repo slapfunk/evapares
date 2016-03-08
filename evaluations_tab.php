@@ -5,7 +5,7 @@ if(!isset($_SESSION['itra'])){
 $forms= array();
 $varrs=array();
 $table = new html_table();
-$table->head = array(get_string('evals','mod_evapares'), get_string('CompleteTable','mod_evapares'), get_string('activeTable','mod_evapares'), get_string('resultsTable','mod_evapares'));
+$table->head = array(get_string('evals','mod_evapares'), get_string('CompleteTable','mod_evapares'), get_string('activeTable','mod_evapares'), get_string('evaluateTable','mod_evapares'));
 $supa_data_sama=array();
 $data_chan=array();
 array_push($data_chan, get_string('initialEval','mod_evapares'));//inicial

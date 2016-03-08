@@ -36,6 +36,7 @@ $string['evaparesname'] = 'Nombre de la evaluaciÃ³n';
 $string['evaparesname_help'] = 'Debe cambiar el nombre de la evaluaciÃ³n. Este nombre serÃ¡ comÃºn a todas las instancia de la evaluaciÃ³n';
 $string['evapares'] = 'evapares';
 $string['eval'] = 'EvaluaciÃ³n';
+$string['evaluateTable'] = 'Evaluar';
 $string['evals'] = 'Evaluaciones';
 $string['finalDate'] = 'EvaluaciÃ³n final';
 $string['formName'] = 'Nombre' ;
