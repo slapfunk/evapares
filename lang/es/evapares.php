@@ -14,17 +14,17 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['activeTable'] = 'Activo' ;
 $string['addAnswer'] = 'Campo Respuesta obligtorio' ;
-$string['AddMultipleOptionQuestion'] = 'Agregando una pregunta de OpciÃ³n multiple ' ;
+$string['AddMultipleOptionQuestion'] = 'Agregando una pregunta de Opción multiple ' ;
 $string['addName'] = 'Campo NOMBRE obligtorio' ;
 $string['AddQuestion'] = 'Campo PREGUNTA obligtorio' ;
 $string['addSSC'] = 'Agregar SSC' ;
-$string['averagePeersEval'] = 'Promedio CalificaciÃ³n de Pares: ' ;
+$string['averagePeersEval'] = 'Promedio Calificación de Pares: ' ;
 $string['amountOfAnswers'] = 'Cantidad de Respuestas a Seleccionar en Cada Pregunta' ;
 $string['amountOfEvaluations'] = 'Cantidad de Entregas Parciales (Sin incluir entrega inicial y final)' ;
-$string['amountOfQuestions'] = 'Cantidad de Preguntas que se ResponderÃ¡n en las Evaluaciones ' ;
+$string['amountOfQuestions'] = 'Cantidad de Preguntas que se Responderán en las Evaluaciones ' ;
 $string['answer'] = 'Respuesta ' ;
 $string['ChooseDate'] = 'Debe escojer una FECHA' ;
-$string['CalificationResults'] = 'Resultados CalificaciÃ³n' ;
+$string['CalificationResults'] = 'Resultados Calificación' ;
 $string['CompleteTable'] = 'Completado' ;
 $string['disponibilityTime'] = 'Cantidad de Tiempo para realizar cada evaluacion (En Dias)' ;
 $string['DeliverableDetails'] = 'Detalle de Entregas' ;
@@ -32,35 +32,41 @@ $string['DeliverableName'] = 'Nombre Entrega ' ;
 $string['DeliverableDate'] = 'Fecha de Entrega' ;
 $string['dueDate'] = 'Fecha de Entrega: ' ;
 $string['evaparesfieldset'] = 'Ejemplo de campos personalizada';
-$string['evaparesname'] = 'Nombre de la evaluaciÃ³n';
-$string['evaparesname_help'] = 'Debe cambiar el nombre de la evaluaciÃ³n. Este nombre serÃ¡ comÃºn a todas las instancia de la evaluaciÃ³n';
+$string['evaparesname'] = 'Nombre de la evaluación';
+$string['evaparesname_help'] = 'Debe cambiar el nombre de la evaluación. Este nombre será común a todas las instancia de la evaluación';
 $string['evapares'] = 'evapares';
-$string['eval'] = 'EvaluaciÃ³n';
+$string['eval'] = 'Evaluación';
 $string['evaluateTable'] = 'Evaluar';
 $string['evals'] = 'Evaluaciones';
-$string['finalDate'] = 'EvaluaciÃ³n final';
+$string['finalDate'] = 'Evaluación final';
 $string['formName'] = 'Nombre' ;
 $string['gradingStuden'] = 'Estudiante a ser Evaluado ' ;
 $string['group'] = "Grupo" ;
-$string['lastEvaluation'] = 'Ãšltima EvaluaciÃ³n' ; 
-$string['initialEval'] = 'EvaluaciÃ³n inicial';
+$string['lastEvaluation'] = 'Última Evaluación' ; 
+$string['initialEval'] = 'Evaluación inicial';
 $string['member']= 'Integrante' ;
 $string['modulename'] = 'evapares';
 $string['modulenameplural'] = 'evapares';
-$string['modulename_help'] = 'Utilice el mÃ³dulo evapares para generar instancias de evaluaciÃ³n personal y grupal para
-		cada alumno| La evaluaciÃ³n de  evapares permite que los alumnos puedan evalaur a
-		sus compaÃ±eros de grupo en distintas etapas del proyecto.';
-$string['noCapabilities']= 'No tiene la capabilidad de estar aquÃ­';
-$string['option'] = 'OpciÃ³n' ;
+$string['modulename_help'] = 'Utilice el módulo evapares para generar instancias de evaluación personal y grupal para
+		cada alumno| La evaluación de  evapares permite que los alumnos puedan evalaur a
+		sus compañeros de grupo en distintas etapas del proyecto.';
+$string['noCapabilities']= 'No tiene la capabilidad de estar aquí';
+$string['option'] = 'Opción' ;
 $string['partial Evaluation'] = "Eval. Parcial" ;
-$string['peers_results'] = 'Resultados EvaluaciÃ³n Pares' ;
+$string['peers_results'] = 'Resultados Evaluación Pares' ;
 $string['periodSummary'] = 'Resumen Semestral' ;
 $string['personalEvalInitial'] = 'Evaluacion Personal Inicial' ;
-$string['personalEval'] = 'EvaluaciÃ³n Personal' ;
-$string['pluginadministration'] = 'AdministraciÃ³n Evapares';
+$string['personalEval'] = 'Evaluación Personal' ;
+$string['pluginadministration'] = 'Administración Evapares';
 $string['pluginname'] = 'evapares';
 $string['question']='Pregunta' ;
 $string['results'] = 'Resultados';
 $string['resultsTable'] = 'Mis Resultados';
-$string['ssc_help'] = 'La metodologÃ­a Stop, Start, Continue (SSC) consiste en tres cuadros de texto, dentro del cuadro â€œStopâ€�, dÃ³nde el estudiante siguiere quÃ© cosas realizadas por su compaÃ±ero cree que no son Ãºtiles o que deberÃ­a dejar de hacer. En el cuadro â€œStartâ€�, el estudiante indica quÃ© cree que su compaÃ±ero deberÃ­a comenzar a realizar dentro del trabajo en equipo. Finalmente, en el cuadro â€œContinueâ€�, el estudiante tiene la opciÃ³n de indicar cuÃ¡les cree que son las "mejores prÃ¡cticas" que estÃ¡ realizando su compaÃ±ero y que debiese continuar haciendo. Esta metodologÃ­a es usada para variados propÃ³sitos relacionados al desarrollo y la comunicaciÃ³n, incluyendo el crecimiento personal, trabajo en equipo, soluciÃ³n de problemas, entre otros. ' ;
-$string['ssc_results'] = 'Resultados EvaluaciÃ³n SSC' ;
+$string['ssc_help'] = 'La metodología Stop, Start, Continue (SSC) consiste en tres cuadros de texto, dentro del cuadro "Stop",
+		dónde el estudiante siguiere que cosas realizadas por su compañero cree que no son útiles o que debería dejar de hacer.
+		En el cuadro "Start", el estudiante indica que cree que su compañero debería comenzar a realizar dentro del trabajo
+		en equipo. Finalmente, en el cuadro "Continue", el estudiante tiene la opción de indicar cuales cree que son las "mejores
+		prácticas" que está realizando su compañero y que debiese continuar haciendo. Esta metodología es usada para variados
+		propósitos relacionados al desarrollo y la comunicación, incluyendo el crecimiento personal, trabajo en equipo, solución
+		de problemas, entre otros. ' ;
+$string['ssc_results'] = 'Resultados Evaluación SSC' ;
