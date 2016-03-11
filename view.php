@@ -121,7 +121,7 @@ if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add
 		
 		$sql = 'SELECT GM1.userid AS a_evalua, GM2.userid AS a_evaluado, EI.id As id_iteration, EI.n_iteration AS n_iteration
 			    FROM mdl_groups_members AS GM1, mdl_groups_members AS GM2, mdl_evapares_iterations AS EI
-				WHERE GM1.groupid = Gm2.groupid AND EI.evapares_id = ?';
+				WHERE GM1.groupid = GM2.groupid AND EI.evapares_id = ?';
 		
 		$consulta = $DB-> get_recordset_sql($sql ,array($cm->id));
 		
