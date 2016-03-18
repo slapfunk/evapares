@@ -28,66 +28,73 @@
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
 require_once($CFG->dirroot.'/course/moodleform_mod.php');
+require_once('locallib.php');
 require_once('forms/forms_v.php');
 require_once('forms/forms_alu.php');
+require_once('forms/evaluations_form.php');
 
-global $CFG, $DB, $OUTPUT, $PAGE; 
+global $CFG, $DB, $OUTPUT, $PAGE, $USER; 
+
+require_login();
 
 $action = optional_param("action", "view", PARAM_TEXT);
 $cmid = required_param('id', PARAM_INT);
+$mode = optional_param("mode", "evaluation", PARAM_TEXT);
 
-if(! $cm = get_coursemodule_from_id('evapares', $cmid))
-{print_error('cm'." id: $cmid");}
+if(! $cm = get_coursemodule_from_id('evapares', $cmid)){
+	print_error('cm'." id: $cmid");
+}
 
-if(! $evapares = $DB->get_record('evapares', array('id' => $cm->instance)))
-{print_error('evapares'." id: $cmid");}
+if(! $evapares = $DB->get_record('evapares', array('id' => $cm->instance))){
+	print_error('evapares'." id: $cmid");
+}
 
-if(! $course = $DB->get_record('course', array('id' => $cm->course)))
-{print_error('course'." id: $cmid");}
+if(! $course = $DB->get_record('course', array('id' => $cm->course))){
+	print_error('course'." id: $cmid");
+}
+
 $context = context_module::instance($cm->id);
-$iduser=$USER->id;
+$iduser = $USER->id;
 
-require_login();
 echo '<script src="../evapares/js/jquery.js"></script>
 <script src="../evapares/js/controladorbotonbuscar.js"></script>';
+
 // Print the page header.
 if(!has_capability('mod/evapares:courseevaluations', $context) && !has_capability('mod/evapares:myevaluations', $context))
 {	
 	print_error("no tiene la capacidad de estar en  esta pagina");
 }
-else{
-	$PAGE->set_url('/mod/evapares/view.php', array('id' => $cm->id));
-	$PAGE->set_context($context);
-	$PAGE->set_course($course);
-	$PAGE->set_pagelayout("incourse");
-	$PAGE->set_cm($cm);
-	$PAGE->set_title(format_string($evapares->name));
-	$PAGE->set_heading(format_string($course->fullname));
-	
 
+$PAGE->set_url('/mod/evapares/view.php', array('id' => $cm->id));
+$PAGE->set_context($context);
+$PAGE->set_course($course);
+$PAGE->set_pagelayout("incourse");
+$PAGE->set_cm($cm);
+$PAGE->set_title(format_string($evapares->name));
+$PAGE->set_heading(format_string($course->fullname));
+
+echo $OUTPUT->header();
+
+if(!$grupos = $DB->get_records("groups", array('courseid'=>$course->id))){
 	
-	if(!$grupos = $DB->get_records("groups", array('courseid'=>$course->id))){
-		echo $OUTPUT->header();
-		echo 'Debe crear los grupos para continuar con la actividad <br>
-		(Administracion del curso > Usuarios > Grupos)';
-		
-		echo $OUTPUT->footer();
-		die();
-	}
+	echo 'Debe crear los grupos para continuar con la actividad <br>
+	(Administracion del curso > Usuarios > Grupos)';
+	//TODO: Agregar boton para enviarlo a creaciónd e grupos
+	echo $OUTPUT->footer();
+	die();
+}
+
+if(!$evapares_iterations = $DB->get_records("evapares_iterations", array('evapares_id'=>$cmid))){
+	$action = "add";
+}
 	
-	if(!$evapares_iterations = $DB->get_records("evapares_iterations", array('evapares_id'=>$cmid))){
-		$action = "add";
-	}
-		
-	$vars = array('num'=>$evapares->total_iterations,
-			"cmid"=>$cmid, 
-			'preg'=>$evapares->n_preguntas, 
-			'resp'=>$evapares->n_respuestas
-	);
+$vars = array('num'=>$evapares->total_iterations,
+		"cmid"=>$cmid, 
+		'preg'=>$evapares->n_preguntas, 
+		'resp'=>$evapares->n_respuestas
+);
 	
 if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add"){
-	
-	
 	
 	$addform = new evapares_num_eval_form(null, $vars);
 
@@ -192,63 +199,57 @@ if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add
 			$DB->insert_records("evapares_answers", $allanswers);
 			unset($allanswers);
 			
-		}
-		
+		}	
 			$action = "view";
-
 	}
 }
-echo $OUTPUT->header();
+
 if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add"){
 
 	$addform->display();
 
-}
-elseif(has_capability('mod/evapares:courseevaluations', $context) && $action == "view"){
+}elseif(has_capability('mod/evapares:courseevaluations', $context) && $action == "view"){
 
 	include('view_teacher.php');
 
-}
-elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "view"){
-	if(!isset($_REQUEST['mode'])){
-		$currenttab='tb1';
-	}
-	else {
-		if($_REQUEST['mode']=='evaluation'){
-			$currenttab='tb1';
-		}
-		else if ($_REQUEST['mode']=='resultados'){
-			$currenttab='tb2';
-		}
-	}
-	$tbz = array();
-	$tabz=array();
-	$inactive = array();
-	$activated = array();
-	$inactive = array('7');
-	$activated = array('tb1');
-	$tbz[] = new tabobject('tb1',new moodle_url($CFG->wwwroot.'/mod/evapares/view.php',array('mode'=>'evaluation','id' => $cm->id)), get_string('eval','mod_evapares'));
-	$tbz[] = new tabobject('tb2',new moodle_url($CFG->wwwroot.'/mod/evapares/view.php',array('mode'=>'resultados','id' => $cm->id)), get_string('results','mod_evapares'));
-	$tabz[]=$tbz;
-	print_tabs($tabz,$currenttab,$inactive, $activated);
-	if(!isset($_REQUEST['mode'])){
-		$mode='evaluation';
-	}
-	else if(isset($_REQUEST['mode'])){
-		$mode=$_REQUEST['mode'];
-	}
-	if($mode=='evaluation'){
+}elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "view"){
+	//Vista alumnos
 
-		include('evaluations_tab.php');	
+	$tabz[] = array(
+			new tabobject(
+				'tb1',
+				new moodle_url($CFG->wwwroot.'/mod/evapares/view.php',array('mode'=>'evaluation','id' => $cm->id)), 
+				get_string('eval','mod_evapares')
+			),
+			new tabobject(
+				'tb2',
+				new moodle_url($CFG->wwwroot.'/mod/evapares/view.php',array('mode'=>'results','id' => $cm->id)),
+				get_string('results','mod_evapares')
+			)
+	);
+	
+	if($mode == 'evaluation'){
+		// TABS
+		$currenttab='tb1';
+		$activated = array('tb1');
+		print_tabs($tabz,$currenttab, $activated);
 		
-	}
-	elseif($mode = 'resultados'){
+		evapares_get_evaluations($cm->id, $cm->instance);
+		//include('evaluations_tab.php');	
+		
+		//$form = new evapares_initialevaluation(null, array("cmid" =>$cm->id));
+		//$form->display();
+		
+	}else if($mode == "results"){
+		// TABS
+		$currenttab='tb2';
+		$activated = array('tb2');
+		print_tabs($tabz,$currenttab, $activated);
 		
 		include('results_tab.php');
 	}
 	
 }
-echo $OUTPUT->footer();
-		
- 	}
+
+echo $OUTPUT->footer();		
 		
