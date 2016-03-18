@@ -16,7 +16,7 @@ $bidimensional = array() ;
 // 												          cr.FULLNAME
 // 												 ORDER  BY `ENROLLED` ASC ') ;
 //get group_id, user_id and user_name, and the sums for stop, start, continue
-$SUPERQUERY = $DB->get_records_sql('SELECT u.id AS userid, g.id AS group_id, u.username AS username, SUM(length(ssc_stop)) AS sumastop,
+$dataquery = $DB->get_records_sql('SELECT u.id AS userid, g.id AS group_id, u.username AS username, SUM(length(ssc_stop)) AS sumastop,
 		SUM(length(ssc_start)) AS sumastart, SUM(length(ssc_continue)) AS sumacontinue
 FROM {user} u
 INNER JOIN {role_assignments} ra ON ra.userid = u.id
@@ -84,11 +84,19 @@ array_push($headings, 'Ev.Final') ;
 
 //Table Data
 
-foreach($SUPERQUERY AS $values)
+foreach($dataquery AS $values)
 {
+	$deleteurlprinter = new moodle_url("/mod/evapares/student_details.php",
+			array(
+					"action" => "view",
+					"studentid" => $values->userid,
+					"cmid" => $cmid));
+			$deleteiconprinter = new pix_icon("mod/evapares/pix/ver.jpg", get_string("view_details", "mod_evapares"));
+			$deleteactionprinter = $OUTPUT->action_icon($deleteurlprinter, $deleteiconprinter);
+					
 	$bidimensional[$values->userid][0] =$values->group_id;
 	$bidimensional[$values->userid][1] =$values->username;
-	$bidimensional[$values->userid][2] =$values->userid;
+	$bidimensional[$values->userid][2] =$deleteactionprinter;
 	//If values are NULL, write '0' in the table
 	
 	if ($values->sumastop)
@@ -152,6 +160,7 @@ echo "<h3><u> <divc><span style='margin-left:120px ; width:45%;' >".//$get_strin
 		   <span style = 'float : right ; width: 55%;'><u>".//$get_string('periodSummary','mod_evapares')
 		   'Resumen de Evaluaciones'."</u> </span></div></h3>" ;
 // no reconoce estos dos ultimos langs
+
 $sizePercentage = array('5%','10%','5%','5%','5%','5%','10%') ;
 $table = new html_table();
 $table->head = $headings ;

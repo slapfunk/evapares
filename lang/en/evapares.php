@@ -64,3 +64,4 @@ $string['results'] = 'Results';
 $string['resultsTable'] = 'My Results';
 $string['ssc_help'] = 'The Stop, Start, Continue (SSC) methodogy consists of three text boxes. Inside the â€œStopâ€� box the student writes what he thinks his groupmate should stop doing. In the â€œStartâ€� box the student writes what his groupmate should start doing. Finally, in the â€œContinueâ€�, the student has the option to write what he sees as his groupmateâ€™s best traits and what he should continue doing. This methodology is used for diverse motives, spanning communication, personal development, teamwork, problem solving, among others. ' ;
 $string['ssc_results'] = 'SSC Evaluation Results' ;
+$string['view_details'] = 'View Details' ;

@@ -70,3 +70,4 @@ $string['ssc_help'] = 'La metodología Stop, Start, Continue (SSC) consiste en t
 		propósitos relacionados al desarrollo y la comunicación, incluyendo el crecimiento personal, trabajo en equipo, solución
 		de problemas, entre otros. ' ;
 $string['ssc_results'] = 'Resultados Evaluación SSC' ;
+$string['view_details'] = 'Ver Detalles' ;

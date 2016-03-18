@@ -11,13 +11,44 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
 
+//opttional param
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
 require_once($CFG->dirroot.'/course/moodleform_mod.php');
 
 global $CFG, $DB, $OUTPUT, $USER, $PAGE;
+
+$cmid = required_param('cmid', PARAM_INT);
+$studentid = required_param('studentid', PARAM_INT);
+
+if(! $cm = get_coursemodule_from_id('evapares', $cmid))
+{print_error('cm'." id: $cmid");}
+
+if(! $evapares = $DB->get_record('evapares', array('id' => $cm->instance)))
+{print_error('evapares'." id: $cmid");}
+
+if(! $course = $DB->get_record('course', array('id' => $cm->course)))
+{print_error('course'." id: $cmid");}
+$context = context_module::instance($cm->id);
+$iduser=$USER->id;
+
+require_login();
+echo '<script src="../evapares/js/jquery.js"></script>
+<script src="../evapares/js/controladorbotonbuscar.js"></script>';
+// Print the page header.
+if(!has_capability('mod/evapares:courseevaluations', $context) && !has_capability('mod/evapares:myevaluations', $context))
+{	
+	print_error("no tiene la capacidad de estar en  esta pagina");
+}
+else{
+	$PAGE->set_url('/mod/evapares/view.php', array('id' => $cm->id));
+	$PAGE->set_context($context);
+	$PAGE->set_course($course);
+	$PAGE->set_pagelayout("incourse");
+	$PAGE->set_cm($cm);
+	$PAGE->set_title(format_string($evapares->name));
+	$PAGE->set_heading(format_string($course->fullname));
 
 $PAGE->requires->js (new moodle_url('/mod/evapares/js/accordion.js') );
 
@@ -28,6 +59,7 @@ $PAGE->requires->js (new moodle_url('/mod/evapares/js/accordion.js') );
 <link rel="stylesheet" href="/resources/demos/style.css">
 <?php 
 
+
 $iterations = $DB->get_records("evapares_iterations", array('evapares_id'=>$cmid));
 
 $resultquery =  'SELECT * FROM mdl_evapares_evaluations AS eval
@@ -37,7 +69,7 @@ $resultquery =  'SELECT * FROM mdl_evapares_evaluations AS eval
  				 AND eval.alu_evaluado_id = ?
  				 ORDER BY iterations_id ASC';
 
-$resultados = $DB-> get_recordset_sql($resultquery ,array($cm->id, $USER->id));
+$resultados = $DB-> get_recordset_sql($resultquery ,array($cmid, $studentid));
 
 $query = "SELECT Q.text AS preg, Q.id AS pregid, A.text AS resp, A.id AS ansid
 		  FROM mdl_evapares_questions AS Q, mdl_evapares_answers AS A
@@ -51,7 +83,7 @@ $percentages = "SELECT Answer.`answers_id`, Evaluation.`iterations_id`
 				AND Evaluation.alu_evaluado_id = ?
 				ORDER BY iterations_id";
 
-$get_pers = $DB-> get_recordset_sql($percentages ,array($cm->id, $USER->id));
+$get_pers = $DB-> get_recordset_sql($percentages ,array($cmid, $studentid));
 
 $n_group_members = "SELECT COUNT(groups.groupid) AS n_members
 					FROM mdl_groups_members AS groups
@@ -60,7 +92,7 @@ $n_group_members = "SELECT COUNT(groups.groupid) AS n_members
 					FROM mdl_groups_members AS groups
 					WHERE groups.userid = ?)";
 
-$n_memb = $DB->get_recordset_sql($n_group_members, array($USER->id));
+$n_memb = $DB->get_recordset_sql($n_group_members, array($studentid));
 
 foreach($n_memb as $quant){
 	$efective_members = $quant->n_members;
@@ -70,14 +102,19 @@ foreach($n_memb as $quant){
 foreach($get_pers as $data){
 	$percent[] = $data;
 }
-
-$count_plc = count($percent) - 1;
+if(isset($get_pers)){
+	$count_plc = count($percent) - 1;
+}else{
+	$count_plc = 0;
+}
 	
 
 $headings = array('Stop','Start','Continue');
 
 // number that verifies the table associated with each iteration
 $n_table = 0;
+
+echo $OUTPUT->header();
 
 echo'<div class="accordion">';
 
@@ -100,7 +137,7 @@ foreach($resultados as $param){
 // displays the table created in a previous loop
  				echo html_writer::table($table);
 
- 				$cons = $DB-> get_recordset_sql($query ,array($cm->id));
+ 				$cons = $DB-> get_recordset_sql($query ,array($cmid));
  				
 // number used to verify the ID of the answers 					
  				$tempid = 0;
@@ -170,7 +207,7 @@ echo '<div>';
 
 // displays the table created in the last loop
 echo html_writer::table($table);
-$cons = $DB-> get_recordset_sql($query ,array($cm->id));
+$cons = $DB-> get_recordset_sql($query ,array($cmid));
 
 // number used to verify the ID of the answers
 $tempid = 0;
@@ -202,3 +239,5 @@ foreach($cons as $p_a){
  		echo '</table>
 			  </div>
   		      </div>';
+ 		echo $OUTPUT->footer();
+}
