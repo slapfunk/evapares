@@ -91,7 +91,7 @@ foreach($dataquery AS $values)
 					"action" => "view",
 					"studentid" => $values->userid,
 					"cmid" => $cmid));
-			$deleteiconprinter = new pix_icon("mod/evapares/pix/ver.jpg", get_string("view_details", "mod_evapares"));
+			$deleteiconprinter = new pix_icon("i/preview", get_string("view_details", "mod_evapares"));
 			$deleteactionprinter = $OUTPUT->action_icon($deleteurlprinter, $deleteiconprinter);
 					
 	$bidimensional[$values->userid][0] =$values->group_id;
