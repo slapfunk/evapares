@@ -79,20 +79,22 @@ function evapares_get_evaluations($cmid, $evaparesid){
 	foreach($evaparesiterations as $iteration){
 		
 		$actionurl = new moodle_url("#");
-		$drafticon = new pix_icon("i/grade_correct", "confirmar");
-		$statusicon = new pix_icon("i/grade_incorrect", "ni");
+		$drafticon = new pix_icon("i/grade_correct", "Entregado");
+		$statusicon = new pix_icon("i/grade_incorrect", "");
 		
 		if($iteration->n_iteration == 0){			
 			// entrega inicial
 			if( $iteration->answers == 0){
-				$drafticon = new pix_icon("i/grade_incorrect", "confirmar");
+				$drafticon = new pix_icon("i/grade_incorrect", "No entregado");
 				if( ($daysinseconds + $iteration->start_date) > time()){
 					$statusicon = new pix_icon("i/grade_correct", "si");
 					$actionurl = new moodle_url("/mod/evapares/evaluations.php", array(
 							"action" => "initial",
 							"cmid" => $cmid,
 							"instance" => $evaparesid,
-							"sesskey" => sesskey()
+							"sesskey" => sesskey(),
+							"ei" => $iteration->eiid,
+							"ee" => $iteration->id
 					));
 				}
 			}
@@ -100,14 +102,16 @@ function evapares_get_evaluations($cmid, $evaparesid){
 		}else if( $iteration->n_iteration == ($count-1) ){
 			// entrega final
 			if( $iteration->answers == 0){
-					$drafticon = new pix_icon("i/grade_incorrect", "confirmar");
+					$drafticon = new pix_icon("i/grade_incorrect", "No entregado");
 					if( ($daysinseconds + $iteration->start_date) > time()){
-						$statusicon = new pix_icon("i/grade_correct", "si");
+						$statusicon = new pix_icon("i/grade_correct", "no entregado");
 						$actionurl = new moodle_url("/mod/evapares/evaluations.php", array(
-								"action" => "final",
+								"action" => "last",
 								"cmid" => $cmid,
 								"instance" => $evaparesid,
-								"sesskey" => sesskey()
+								"sesskey" => sesskey(),
+								"ei" => $iteration->eiid,
+								"ee" => $iteration->id
 						));
 					}
 				}
@@ -115,15 +119,16 @@ function evapares_get_evaluations($cmid, $evaparesid){
 		}else{
 			//Iteraciones de entregables
 			if( $iteration->answers == 0){
-				$drafticon = new pix_icon("i/grade_incorrect", "confirmar");
+				$drafticon = new pix_icon("i/grade_incorrect", "No entregado");
 				if( ($daysinseconds + $iteration->start_date) > time()){
-					$statusicon = new pix_icon("i/grade_correct", "si");
+					$statusicon = new pix_icon("i/grade_correct", "no entregado");
 					$actionurl = new moodle_url("/mod/evapares/evaluations.php", array(
 							"action" => "interation",
 							"cmid" => $cmid,
 							"instance" => $evaparesid,
 							"sesskey" => sesskey(),
 							"ei" => $iteration->eiid,
+							"ee" => $iteration->id
 					));
 				}
 			}

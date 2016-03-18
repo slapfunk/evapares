@@ -31,15 +31,20 @@ require_once ($CFG->libdir . "/formslib.php");
 class evapares_initialevaluation extends moodleform {
 	
 	public function definition() {
-		global $DB;
+		global $DB, $USER;
 		
 		$mform = $this->_form;	
 		$instance = $this->_customdata;
 		
 		$cmid = $instance["cmid"];
+		$action = $instance["action"];
+		$evaparesid = $instance["instance"];
+		$iterationid = $instance["ei"];
+		$evaluationid = $instance["ee"];
 		
 		$initialquestions = $DB->get_recordset_select("evapares_questions", " evapares_id = ?", array($cmid));
 		
+		$counter = 1;		
 		foreach($initialquestions as $question){
 			
 			$answers = $DB->get_recordset_select("evapares_answers", " question_id = ?", array($question->id));
@@ -47,12 +52,30 @@ class evapares_initialevaluation extends moodleform {
 			$answersarray = array();
 			$answersarray["0*0"] = "Seleccione una alternativa";
 			foreach($answers as $answer){
-				$answersarray[$question->id."*".$answer->id] = $answer->text;
+				$answersarray[$answer->id] = $answer->text;
 			}
 			
-			$mform->addElement("select", $question->id."*".$answer->id ,$question->text, $answersarray);
+			$mform->addElement("select", "a$counter" ,$question->text, $answersarray);
+			$counter++;
 		}
 		
+		$mform->addElement("hidden", "action", $action);
+		$mform->setType( "action", PARAM_TEXT);
+		
+		$mform->addElement("hidden", "cmid", $cmid);
+		$mform->setType( "cmid", PARAM_INT);
+		
+		$mform->addElement("hidden", "instance", $evaparesid);
+		$mform->setType( "instance", PARAM_INT);
+		
+		$mform->addElement("hidden", "sesskey", sesskey());
+		$mform->setType( "sesskey", PARAM_ALPHANUM);
+		
+		$mform->addElement("hidden", "ei", $iterationid);	
+		$mform->setType( "ei", PARAM_INT);
+		
+		$mform->addElement("hidden", "ee", $evaluationid);
+		$mform->setType( "ee", PARAM_INT);		
 		
 		$this->add_action_buttons(true);
 	}
@@ -64,18 +87,95 @@ class evapares_initialevaluation extends moodleform {
 		
 		//comprobar que se selecciono algo en los select
 		
-		return $erros;
+		return $errors;
 	}
 }
 
-class evapares_iterationevaluation extends moodleform {
+class evapares_iterationform extends moodleform {
 
 	public function definition() {
-
+		global $DB, $USER;
+		
+		$mform = $this->_form;
+		$instance = $this->_customdata;
+		
+		$cmid = $instance["cmid"];
+		$action = $instance["action"];
+		$evaparesid = $instance["instance"];
+		$iterationid = $instance["ei"];
+		
+		$sql = "SELECT ee.id, ee.alu_evaluado_id, CONCAT(u.firstname, ' ', u.lastname) AS username
+				FROM {evapares_evaluations} AS ee JOIN {user} AS u ON (ee.alu_evaluado_id = u.id)
+				WHERE ee.iterations_id = ? AND ee.alu_evalua_id = ?";
+		$evaluations = $DB->get_records_sql($sql, array($iterationid, $USER->id));
+		
+		$counter = 1;
+		foreach($evaluations as $evaluation){
+			
+			$mform->addElement ( 'header', "name$counter", $evaluation->username, null, false);
+			
+			$mform->addElement("textarea", "star$counter", "START");
+			$mform->setType( "star$counter", PARAM_TEXT);
+			
+			$mform->addElement("textarea", "stop$counter", "STOP");
+			$mform->setType( "stop$counter", PARAM_TEXT);
+			
+			$mform->addElement("textarea", "continue$counter", "CONTINUE");
+			$mform->setType( "continue$counter", PARAM_TEXT);
+				
+			$questions = $DB->get_recordset_select("evapares_questions", " evapares_id = ?", array($cmid));
+			$aux = 1;
+			foreach($questions as $question){
+				
+				$answers = $DB->get_recordset_select("evapares_answers", " question_id = ?", array($question->id));
+				
+				$answersarray = array();
+				$answersarray["0*0"] = "Seleccione una alternativa";
+				foreach($answers as $answer){
+					$answersarray[$answer->id] = $answer->text;
+				}
+				
+				$mform->addElement("select", "a*$counter*$aux" ,$question->text, $answersarray);
+				$mform->addElement("hidden", "ee*$counter*$aux", $evaluation->id);
+				$mform->setType( "ee*$counter*$aux", PARAM_INT);
+				$aux++;
+			}
+			
+			if($counter == 1){
+				$mform->setExpanded("name$counter", true);
+			}else{
+				$mform->setExpanded("name$counter", false);
+			}
+			
+			$counter++;
+		}
+		
+		$mform->addElement("hidden", "action", $action);
+		$mform->setType( "action", PARAM_TEXT);
+		
+		$mform->addElement("hidden", "cmid", $cmid);
+		$mform->setType( "cmid", PARAM_INT);
+		
+		$mform->addElement("hidden", "instance", $evaparesid);
+		$mform->setType( "instance", PARAM_INT);
+		
+		$mform->addElement("hidden", "ei", $iterationid);
+		$mform->setType( "ei", PARAM_INT);
+		
+		$mform->addElement("hidden", "sesskey", sesskey());
+		$mform->setType( "sesskey", PARAM_ALPHANUM);
+		
+		$this->add_action_buttons(true);
 	}
 	
 	public function validation($data, $files) {
+		global $DB;
 		
+		$errors = array();
+		
+		//comprobar que se selecciono algo en los select y se rellenaron los start-stop-continue
+		
+		return $errors;
 	}
 }
 
@@ -86,7 +186,13 @@ class evapares_finalevaluation extends moodleform {
 	}
 	
 	public function validation($data, $files) {
-	
+		global $DB;
+		
+		$errors = array();
+		
+		//comprobar que se selecciono algo en los select y se rellenaron los start-stop-continue
+		
+		return $errors;
 	}
 }
 

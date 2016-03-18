@@ -21,7 +21,8 @@
  * if you like, and it can span multiple lines.
  *
  * @package    mod_evapares
- * @copyright  2015 Your Name
+ * @copyright  2016 Benjamin Espinosa (beespinosa@gmail.com)
+ * @copyright  2016 Hans Jeria (hansjeria@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -54,15 +55,11 @@ if(! $course = $DB->get_record('course', array('id' => $cm->course))){
 }
 
 $context = context_module::instance($cm->id);
-$iduser = $USER->id;
-
-echo '<script src="../evapares/js/jquery.js"></script>
-<script src="../evapares/js/controladorbotonbuscar.js"></script>';
 
 // Print the page header.
 if(!has_capability('mod/evapares:courseevaluations', $context) && !has_capability('mod/evapares:myevaluations', $context))
 {	
-	print_error("no tiene la capacidad de estar en  esta pagina");
+	print_error("No tiene la capacidad de estar en  esta pagina");
 }
 
 $PAGE->set_url('/mod/evapares/view.php', array('id' => $cm->id));
@@ -235,10 +232,6 @@ if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add
 		print_tabs($tabz,$currenttab, $activated);
 		
 		evapares_get_evaluations($cm->id, $cm->instance);
-		//include('evaluations_tab.php');	
-		
-		//$form = new evapares_initialevaluation(null, array("cmid" =>$cm->id));
-		//$form->display();
 		
 	}else if($mode == "results"){
 		// TABS

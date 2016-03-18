@@ -25,7 +25,7 @@
  * here will all be database-neutral, using the functions defined in DLL libraries.
  *
  * @package    mod_evapares
- * @copyright  2015 Your Name
+ * @copyright  2016 Hans Jeria (hansjeria@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -170,7 +170,7 @@ function xmldb_evapares_upgrade($oldversion) {
 
         // Adding fields to table evapares.
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('name', XMLDB_TYPE_CHAR, '32', null, XMLDB_NOTNULL, null, 'Evaluación de Pares');
+        $table->add_field('name', XMLDB_TYPE_CHAR, '32', null, XMLDB_NOTNULL, null, 'EvaluaciÃ³n de Pares');
         $table->add_field('ssc', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
         $table->add_field('total_iterations', XMLDB_TYPE_INTEGER, '2', null, null, null, '0');
         $table->add_field('n_days', XMLDB_TYPE_INTEGER, '2', null, null, null, null);
@@ -343,6 +343,21 @@ function xmldb_evapares_upgrade($oldversion) {
     
     	// Evapares savepoint reached.
     	upgrade_mod_savepoint(true, 2016011500, 'evapares');
+    }
+    
+    if ($oldversion < 2016021801) {
+    
+    	// Define field iterationid to be added to evapares_eval_has_answ.
+    	$table = new xmldb_table('evapares_eval_has_answ');
+    	$field = new xmldb_field('iterationid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'answers_id');
+    
+    	// Conditionally launch add field iterationid.
+    	if (!$dbman->field_exists($table, $field)) {
+    		$dbman->add_field($table, $field);
+    	}
+    
+    	// Evapares savepoint reached.
+    	upgrade_mod_savepoint(true, 2016021801, 'evapares');
     }
     
     return true;
