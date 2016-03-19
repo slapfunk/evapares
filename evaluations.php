@@ -164,7 +164,7 @@ if($action == "interation"){
 				$record->iterationid = $iterationid;
 				$records[] = $record;
 				
-				if($aux == $evapares->n_respuestas){
+				if($aux == $evapares->n_preguntas){
  				
 	 				$evaluation = $DB->get_record_sql("SELECT * FROM {evapares_evaluations} WHERE id = ?", array($value));
 	 				
