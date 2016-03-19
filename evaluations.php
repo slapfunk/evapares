@@ -38,7 +38,7 @@ $action = required_param("action", PARAM_TEXT);
 $cmid = required_param('cmid', PARAM_INT);
 $evaparesid = required_param("instance", PARAM_INT);
 $sesskey = required_param("sesskey", PARAM_ALPHANUM);
-$iterationid = optional_param("ei","-1", PARAM_INT);
+$iterationid = optional_param("ei","0", PARAM_INT);
 $evaluationid = optional_param("ee", "0", PARAM_INT);
 
 if(! $cm = get_coursemodule_from_id('evapares', $cmid)){
@@ -131,12 +131,12 @@ if($action == "interation"){
 	
 	} else if ($data = $iterationform->get_data()){
 		$counter = 1;
-		//var_dump($data);
+		var_dump($data);
 		$records = array();
 		
 		foreach($data as $field => $value){
 
-			//echo "field ".$field." value ".$value."<br>";
+			echo "field ".$field." value ".$value."<br>";
 			if($field == "star$counter"){
 				$aux = 1;
 				
@@ -173,8 +173,8 @@ if($action == "interation"){
 	 				$evaluation->scc_continue = $eva->scc_continue = $value;
 					$evaluation->answers = 1;
 	 				
-					//echo "<br><br>";
-					//var_dump($evaluation);
+					echo "<br><br>";
+					var_dump($evaluation);
 					$DB->update_record("evapares_evaluations", $evaluation);
 					$counter++;
 				}
@@ -184,8 +184,8 @@ if($action == "interation"){
 			
 			
 		}
-		//echo "<br><br>";
-		//var_dump($records);
+		echo "<br><br>";
+		var_dump($records);
 		
 		$DB->insert_records("evapares_eval_has_answ", $records);
 		
