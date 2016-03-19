@@ -115,7 +115,7 @@ if($action == "initial"){
     }
 }
 
-if($action == "interation"){
+if($action == "interation" || $action == "last"){
 	$iterationform = new evapares_iterationform(null, array(
 			"cmid" => $cmid,
 			"action" => $action,
@@ -131,12 +131,12 @@ if($action == "interation"){
 	
 	} else if ($data = $iterationform->get_data()){
 		$counter = 1;
-		var_dump($data);
+		//var_dump($data);
 		$records = array();
 		
 		foreach($data as $field => $value){
 
-			echo "field ".$field." value ".$value."<br>";
+			//echo "field ".$field." value ".$value."<br>";
 			if($field == "star$counter"){
 				$aux = 1;
 				
@@ -173,8 +173,8 @@ if($action == "interation"){
 	 				$evaluation->scc_continue = $eva->scc_continue = $value;
 					$evaluation->answers = 1;
 	 				
-					echo "<br><br>";
-					var_dump($evaluation);
+					//echo "<br><br>";
+					//var_dump($evaluation);
 					$DB->update_record("evapares_evaluations", $evaluation);
 					$counter++;
 				}
@@ -184,8 +184,8 @@ if($action == "interation"){
 			
 			
 		}
-		echo "<br><br>";
-		var_dump($records);
+		//echo "<br><br>";
+		//var_dump($records);
 		
 		$DB->insert_records("evapares_eval_has_answ", $records);
 		
@@ -194,23 +194,16 @@ if($action == "interation"){
 	}
 }
 
-if($action == "last"){
-	
-}
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading($evaluationname->evaluation_name);
 
-if($action == "initial" || $action == "last"){
+if($action == "initial"){
 	$initialform->display();
 }
 
-if($action == "interation"){
+if($action == "interation" || $action == "last"){
 	$iterationform->display();
-}
-
-if($action == "last"){
-
 }
 
 echo $OUTPUT->footer();
