@@ -1,14 +1,28 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * English strings for evapares
-*
-* You can have a rather longer description of the file as well,
-* if you like, and it can span multiple lines.
-*
-* @package    mod_evapares
-* @copyright  2015 Your Name
-* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
+ * Prints a particular instance of evapares
+ *
+ * You can have a rather longer description of the file as well,
+ * if you like, and it can span multiple lines.
+ *
+ * @package    mod_evapares
+ * @copyright  2016 Benjamin Espinosa (beespinosa@gmail.com)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -42,6 +56,7 @@ $string['finalDate'] = 'Evaluación final';
 $string['formName'] = 'Nombre' ;
 $string['gradingStuden'] = 'Estudiante a ser Evaluado ' ;
 $string['group'] = "Grupo" ;
+$string['improved']= 'Mejor�';
 $string['lastEvaluation'] = 'Última Evaluación' ; 
 $string['initialEval'] = 'Evaluación inicial';
 $string['member']= 'Integrante' ;
@@ -50,7 +65,9 @@ $string['modulenameplural'] = 'evapares';
 $string['modulename_help'] = 'Utilice el módulo evapares para generar instancias de evaluación personal y grupal para
 		cada alumno| La evaluación de  evapares permite que los alumnos puedan evalaur a
 		sus compañeros de grupo en distintas etapas del proyecto.';
+$string['name']= 'Nombre';
 $string['noCapabilities']= 'No tiene la capabilidad de estar aquí';
+$string['not_available'] = 'N.D.';
 $string['option'] = 'Opción' ;
 $string['partial Evaluation'] = "Eval. Parcial" ;
 $string['peers_results'] = 'Resultados Evaluación Pares' ;
@@ -59,7 +76,9 @@ $string['personalEvalInitial'] = 'Evaluacion Personal Inicial' ;
 $string['personalEval'] = 'Evaluación Personal' ;
 $string['pluginadministration'] = 'Administración Evapares';
 $string['pluginname'] = 'evapares';
-$string['question']='Pregunta' ;
+$string['progress'] = 'Progreso';
+$string['question']= 'Pregunta' ;
+$string['realized']= 'Realizado';
 $string['results'] = 'Resultados';
 $string['resultsTable'] = 'Mis Resultados';
 $string['ssc_help'] = 'La metodología Stop, Start, Continue (SSC) consiste en tres cuadros de texto, dentro del cuadro "Stop",
@@ -70,4 +89,6 @@ $string['ssc_help'] = 'La metodología Stop, Start, Continue (SSC) consiste en t
 		propósitos relacionados al desarrollo y la comunicación, incluyendo el crecimiento personal, trabajo en equipo, solución
 		de problemas, entre otros. ' ;
 $string['ssc_results'] = 'Resultados Evaluación SSC' ;
+$string['unrealized']= 'No Realizado';
 $string['view_details'] = 'Ver Detalles' ;
+$string['worse']= 'Empeor�';
