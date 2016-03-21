@@ -345,11 +345,11 @@ function xmldb_evapares_upgrade($oldversion) {
     	upgrade_mod_savepoint(true, 2016011500, 'evapares');
     }
     
-    if ($oldversion < 2016021801) {
+    if ($oldversion < 2016021802) {
     
     	// Define field iterationid to be added to evapares_eval_has_answ.
     	$table = new xmldb_table('evapares_eval_has_answ');
-    	$field = new xmldb_field('iterationid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'answers_id');
+    	$field = new xmldb_field('iterationid', XMLDB_TYPE_INTEGER, '10', null, null, null, '0', 'answers_id');
     
     	// Conditionally launch add field iterationid.
     	if (!$dbman->field_exists($table, $field)) {
@@ -357,9 +357,9 @@ function xmldb_evapares_upgrade($oldversion) {
     	}
     
     	// Evapares savepoint reached.
-    	upgrade_mod_savepoint(true, 2016021801, 'evapares');
+    	upgrade_mod_savepoint(true, 2016021802, 'evapares');
     }
-    
+   /* 
     if ($oldversion < 2016021802) {
     
     	// Changing nullability of field iterationid on table evapares_eval_has_answ to null.
@@ -373,7 +373,7 @@ function xmldb_evapares_upgrade($oldversion) {
     	upgrade_mod_savepoint(true, 2016021802, 'evapares');
     }
     
-    
+    */
     
     return true;
 }
