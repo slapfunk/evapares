@@ -1,12 +1,26 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * English strings for evapares
+ * Prints a particular instance of evapares
  *
  * You can have a rather longer description of the file as well,
  * if you like, and it can span multiple lines.
  *
  * @package    mod_evapares
- * @copyright  2015 Your Name
+ * @copyright  2016 Benjamin Espinosa (beespinosa@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -42,6 +56,7 @@ $string['finalDate'] = 'Final evaluation';
 $string['formName'] = 'Name' ;
 $string['gradingStuden'] = 'Student to be graded ' ;
 $string['group'] = "Group" ;
+$string['improved']= 'Improved';
 $string['lastEvaluation'] = 'Last Evaluation' ;
 $string['initialEval'] = 'Initial evaluation';
 $string['member']= 'Member' ;
@@ -50,7 +65,9 @@ $string['modulenameplural'] = 'evaparess';
 $string['modulename_help'] = 'Use the evapares module to create instances for studentes to 
 		evaluate themselves and their team member| The evapares module allows for students to
 		grade their peers at different stages of the project.';
+$string['name']= 'Name';
 $string['noCapabilities']= "You don't have the capabilities to be here" ;
+$string['not_available'] = 'N.A.';
 $string['option'] = 'Option' ;
 $string['partial_Evaluation'] = "Partial Eval." ;
 $string['peers_results'] = 'Peers Evaluation Result ' ;
@@ -59,8 +76,13 @@ $string['personalEvalInitial'] = 'Initial Personal Evaluation ' ;
 $string['personalEval'] = 'Personal Evaluation' ;
 $string['pluginadministration'] = 'evapares administration';
 $string['pluginname'] = 'evapares';
+$string['progress'] = 'Progress';
 $string['question']='Question' ;
+$string['realized']= 'Realized';
 $string['results'] = 'Results';
 $string['resultsTable'] = 'My Results';
 $string['ssc_help'] = 'The Stop, Start, Continue (SSC) methodogy consists of three text boxes. Inside the â€œStopâ€� box the student writes what he thinks his groupmate should stop doing. In the â€œStartâ€� box the student writes what his groupmate should start doing. Finally, in the â€œContinueâ€�, the student has the option to write what he sees as his groupmateâ€™s best traits and what he should continue doing. This methodology is used for diverse motives, spanning communication, personal development, teamwork, problem solving, among others. ' ;
 $string['ssc_results'] = 'SSC Evaluation Results' ;
+$string['unrealized']= 'Unrealized';
+$string['view_details'] = 'View Details' ;
+$string['worse']= 'Got Worse';
