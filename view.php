@@ -207,7 +207,7 @@ if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add
 
 }elseif(has_capability('mod/evapares:courseevaluations', $context) && $action == "view"){
 
-	include('view_teacher.php');
+	include('teacher.php');
 
 }elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "view"){
 	//Vista alumnos
