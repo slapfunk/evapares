@@ -30,7 +30,7 @@ require_once(dirname(__FILE__).'/lib.php');
 require_once('locallib.php');
 require_once('forms/evaluations_form.php');
 
-global $CFG, $DB, $OUTPUT, $PAGE, $USER, $COURSE; 
+global $DB, $OUTPUT, $PAGE, $COURSE; 
 
 require_login();
 
@@ -52,7 +52,7 @@ if(! $evapares = $DB->get_record('evapares', array('id' => $cm->instance))){
 $context = context_module::instance($cm->id);
 
 if( !has_capability('mod/evapares:myevaluations', $context) ){
-	print_erro("No tiene acceso a la página.");
+	print_error("No tiene acceso a la página.");
 }
 
 $PAGE->set_url('/mod/evapares/evaluations.php', array(
@@ -70,7 +70,7 @@ $PAGE->set_cm($cm);
 $PAGE->set_title(format_string($evapares->name));
 $PAGE->set_heading(format_string($COURSE->fullname));
 
-$evaluationname = $DB->get_record_sql("SELECT evaluation_name FROM {evapares_iterations} WHERE id = ?", array($iterationid));
+$evaluationname = $DB->get_record("evapares_iterations", array("id" => $iterationid));
 
 if($action == "initial"){
 	
@@ -105,7 +105,7 @@ if($action == "initial"){
 
         $DB->insert_records("evapares_eval_has_answ", $records);
        
-        $evaluation = $DB->get_record_sql("SELECT * FROM {evapares_evaluations} WHERE id = ?", array($evaluationid));
+        $evaluation = $DB->get_record("evapares_evaluations", array("id" => $evaluationid));
         $evaluation->answers = 1;
         
         $DB->update_record("evapares_evaluations",$evaluation);
@@ -115,7 +115,7 @@ if($action == "initial"){
     }
 }
 
-if($action == "interation" || $action == "last"){
+if($action == "iteration" || $action == "last"){
 	$iterationform = new evapares_iterationform(null, array(
 			"cmid" => $cmid,
 			"action" => $action,
@@ -137,7 +137,7 @@ if($action == "interation" || $action == "last"){
 		foreach($data as $field => $value){
 
 			//echo "field ".$field." value ".$value."<br>";
-			if($field == "star$counter"){
+			if($field == "start$counter"){
 				$aux = 1;
 				
 				$eva = new stdClass();
@@ -150,6 +150,10 @@ if($action == "interation" || $action == "last"){
 			
 			if($field == "continue$counter"){
 				$eva->scc_continue = $value;
+			}
+			
+			if($field == "n$counter"){
+				$eva->nota = (float)$value;
 			}
 			
 			if($field == "a*$counter*$aux"){
@@ -168,9 +172,13 @@ if($action == "interation" || $action == "last"){
  				
 	 				$evaluation = $DB->get_record_sql("SELECT * FROM {evapares_evaluations} WHERE id = ?", array($value));
 	 				
-	 				$evaluation->scc_start = $eva->scc_start;
-	 				$evaluation->scc_stop = $eva->scc_stop = $value;
-	 				$evaluation->scc_continue = $eva->scc_continue = $value;
+	 				//var_dump($eva);
+	 				
+	 				$evaluation->ssc_start = $eva->scc_start;
+	 				$evaluation->ssc_stop = $eva->scc_stop = $value;
+	 				$evaluation->ssc_continue = $eva->scc_continue = $value;
+	 				$evaluation->nota = $eva->nota;
+	 				$evaluation->enddate = time();
 					$evaluation->answers = 1;
 	 				
 					//echo "<br><br>";
@@ -202,7 +210,7 @@ if($action == "initial"){
 	$initialform->display();
 }
 
-if($action == "interation" || $action == "last"){
+if($action == "iteration" || $action == "last"){
 	$iterationform->display();
 }
 

@@ -33,7 +33,8 @@ function evapares_get_evaluations($cmid, $evaparesid){
 	
 	$evaluationstable = new html_table();
 	$evaluationstable->size = array(
-			"37%",
+			"28%",
+			"12%",
 			"12%",
 			"12%",
 			"12%",
@@ -44,19 +45,21 @@ function evapares_get_evaluations($cmid, $evaparesid){
 			"center",
 			"center",
 			"center",
+			"center",
 			"center"
 	);
 	$evaluationstable->head = array(
 			get_string('evals','mod_evapares'), 
 			get_string('CompleteTable','mod_evapares'), 
 			"Disponible", 
+			"Fecha de inicio",
 			"Fecha termino",
 			get_string('evaluateTable','mod_evapares')
 	);	
 
-	$evapares = $DB->get_record_sql("SELECT * FROM {evapares} WHERE id = ?", array($evaparesid));
+	$evapares = $DB->get_record("evapares", array("id" => $evaparesid));
 	
-	$daysinseconds = 24 * 60 * (int)$evapares->n_days;
+	$daysinseconds = 24 * 60 * 60 * (int)$evapares->n_days;
 	
 	$iterations = array();
 	for($count = 0;  $count <= (1 + $evapares->total_iterations); $count++){
@@ -78,11 +81,79 @@ function evapares_get_evaluations($cmid, $evaparesid){
 	
 	foreach($evaparesiterations as $iteration){
 		
-		$actionurl = new moodle_url("#");
-		$drafticon = new pix_icon("i/grade_correct", "Entregado");
-		$statusicon = new pix_icon("i/grade_incorrect", "");
+		$actionicon = $OUTPUT->action_icon(
+						new moodle_url("#"),
+						new pix_icon("i/show", "No disponible")
+				);
 		
-		if($iteration->n_iteration == 0){			
+		if( ($iteration->start_date >= time()) && ($daysinseconds + (int)$iteration->start_date <= time()) ){
+			
+			$statusicon = new pix_icon("i/grade_correct", "si");
+			
+			if( $iteration->answers == 0){
+				// No completada la evaluacion
+				$drafticon = new pix_icon("i/grade_incorrect", "No entregado");
+				
+				
+				if($iteration->n_iteration == 0){
+					$actionurl = new moodle_url("/mod/evapares/evaluations.php", array(
+							"action" => "initial",
+							"cmid" => $cmid,
+							"instance" => $evaparesid,
+							"sesskey" => sesskey(),
+							"ei" => $iteration->eiid,
+							"ee" => $iteration->id
+					));
+					
+				}else if( $iteration->n_iteration == ($count-1) ){
+					$actionurl = new moodle_url("/mod/evapares/evaluations.php", array(
+							"action" => "last",
+							"cmid" => $cmid,
+							"instance" => $evaparesid,
+							"sesskey" => sesskey(),
+							"ei" => $iteration->eiid,
+							"ee" => $iteration->id
+					));
+					
+				}else{
+					$actionurl = new moodle_url("/mod/evapares/evaluations.php", array(
+							"action" => "iteration",
+							"cmid" => $cmid,
+							"instance" => $evaparesid,
+							"sesskey" => sesskey(),
+							"ei" => $iteration->eiid,
+							"ee" => $iteration->id
+					));
+					
+				}
+				
+				$actionicon = $OUTPUT->action_icon(
+						$actionurl,
+						new pix_icon("i/manual_item", "confirmar"),
+						new confirm_action("La evaluación solo se puede realizar una sola ves, una ves enviada no se puede modificar.")
+				);
+				
+			}else{
+				$drafticon = new pix_icon("i/grade_correct", "Entregado");
+			}
+			
+		}else{
+			
+			$statusicon = new pix_icon("i/grade_incorrect", "");
+			
+			if( $iteration->answers == 0){
+				// No completada la evaluacion
+				$drafticon = new pix_icon("i/grade_incorrect", "No entregado");
+			}else{
+				$drafticon = new pix_icon("i/grade_correct", "Entregado");
+			}
+		}
+		
+		
+		/*
+		if($iteration->n_iteration == 0){
+
+
 			// entrega inicial
 			if( $iteration->answers == 0){
 				$drafticon = new pix_icon("i/grade_incorrect", "No entregado");
@@ -123,7 +194,7 @@ function evapares_get_evaluations($cmid, $evaparesid){
 				if( ($daysinseconds + $iteration->start_date) > time()){
 					$statusicon = new pix_icon("i/grade_correct", "no entregado");
 					$actionurl = new moodle_url("/mod/evapares/evaluations.php", array(
-							"action" => "interation",
+							"action" => "iteration",
 							"cmid" => $cmid,
 							"instance" => $evaparesid,
 							"sesskey" => sesskey(),
@@ -133,7 +204,7 @@ function evapares_get_evaluations($cmid, $evaparesid){
 				}
 			}
 		}
-		
+		*/
 		$draft = $OUTPUT->action_icon(
 				new moodle_url("#"),
 				$drafticon
@@ -142,16 +213,13 @@ function evapares_get_evaluations($cmid, $evaparesid){
 				new moodle_url("#"),
 				$statusicon
 		);
-		$actionicon = $OUTPUT->action_icon(
-				$actionurl,
-				new pix_icon("i/manual_item", "confirmar")
-		);
 		
 		$evaluationstable->data [] = array(
 				$iteration->evaluation_name,
 				$draft,
 				$status,
-				date("d-m-Y", ($daysinseconds + $iteration->start_date)),
+				date("d-m-Y", $iteration->start_date),
+				date("d-m-Y", ($daysinseconds + (int)$iteration->start_date)),
 				$actionicon
 		);
 		

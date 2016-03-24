@@ -31,7 +31,7 @@ require_once ($CFG->libdir . "/formslib.php");
 class evapares_initialevaluation extends moodleform {
 	
 	public function definition() {
-		global $DB, $USER;
+		global $DB;
 		
 		$mform = $this->_form;	
 		$instance = $this->_customdata;
@@ -104,9 +104,16 @@ class evapares_iterationform extends moodleform {
 		$evaparesid = $instance["instance"];
 		$iterationid = $instance["ei"];
 		
+		$grades = array();
+		$grades["0"] = "Seleccione una alternativa";
+		for ($grade = 1; $grade <= 7; $grade += 0.5) {
+			$grades["$grade"] = $grade;
+		}
+		
 		$sql = "SELECT ee.id, ee.alu_evaluado_id, CONCAT(u.firstname, ' ', u.lastname) AS username
 				FROM {evapares_evaluations} AS ee JOIN {user} AS u ON (ee.alu_evaluado_id = u.id)
-				WHERE ee.iterations_id = ? AND ee.alu_evalua_id = ?";
+				WHERE ee.iterations_id = ? AND ee.alu_evalua_id = ?
+				GROUP BY u.lastname, u.firstname";
 		$evaluations = $DB->get_records_sql($sql, array($iterationid, $USER->id));
 		
 		$counter = 1;
@@ -114,14 +121,30 @@ class evapares_iterationform extends moodleform {
 			
 			$mform->addElement ( 'header', "name$counter", $evaluation->username, null, false);
 			
-			$mform->addElement("textarea", "star$counter", "START");
-			$mform->setType( "star$counter", PARAM_TEXT);
-			
-			$mform->addElement("textarea", "stop$counter", "STOP");
-			$mform->setType( "stop$counter", PARAM_TEXT);
-			
-			$mform->addElement("textarea", "continue$counter", "CONTINUE");
-			$mform->setType( "continue$counter", PARAM_TEXT);
+			if($evaluation->alu_evaluado_id == $USER->id){
+				
+				$mform->addElement("hidden", "start$counter", "START");
+				$mform->setType( "start$counter", PARAM_TEXT);
+				
+				$mform->addElement("hidden", "stop$counter", "STOP");
+				$mform->setType( "stop$counter", PARAM_TEXT);
+				
+				$mform->addElement("hidden", "continue$counter", "CONTINUE");
+				$mform->setType( "continue$counter", PARAM_TEXT);
+				
+			}else{
+				
+				$mform->addElement("textarea", "start$counter", "START");
+				$mform->setType( "star$counter", PARAM_TEXT);
+				
+				$mform->addElement("textarea", "stop$counter", "STOP");
+				$mform->setType( "stop$counter", PARAM_TEXT);
+				
+				$mform->addElement("textarea", "continue$counter", "CONTINUE");
+				$mform->setType( "continue$counter", PARAM_TEXT);
+				
+				$mform->addElement("select", "n$counter" , "Nota", $grades);
+			}
 				
 			$questions = $DB->get_recordset_select("evapares_questions", " evapares_id = ?", array($cmid));
 			$aux = 1;
@@ -178,21 +201,3 @@ class evapares_iterationform extends moodleform {
 		return $errors;
 	}
 }
-
-class evapares_finalevaluation extends moodleform {
-
-	public function definition() {
-
-	}
-	
-	public function validation($data, $files) {
-		global $DB;
-		
-		$errors = array();
-		
-		//comprobar que se selecciono algo en los select y se rellenaron los start-stop-continue
-		
-		return $errors;
-	}
-}
-
