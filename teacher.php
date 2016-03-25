@@ -46,6 +46,10 @@ $iterations = $DB->get_records_sql('SELECT n_iteration
 									FROM {evapares_iterations}
 									WHERE evapares_id='.$cm->id );
 
+$evaluation_names = $DB->get_records_sql('SELECT ei.evaluation_name
+										  FROM `mdl_evapares_iterations` as ei
+										  WHERE ei.evapares_id ='.$cm->id);
+
 $check = $OUTPUT->pix_icon("i/grade_correct", get_string('realized','mod_evapares'));
 $cross = $OUTPUT->pix_icon("i/grade_incorrect", get_string('unrealized','mod_evapares'));
 $improve = $OUTPUT->pix_icon("s/yes", get_string('improved','mod_evapares'));
@@ -153,18 +157,29 @@ for($j = 1; $j <= count($info); $j ++){
 }
 
 //HACERLOS CON LANGS SDV,FEGRLUGFRLKIOHV-SEILROKHG-SEHIRG.SEHRG.RS
-$headings= array(get_string('group','mod_evapares'), get_string('name','mod_evapares'),
-				 'Det.', 'S', 'S', 'C', get_string('progress','mod_evapares'),'Ev. I');
+$headings = array(get_string('group','mod_evapares'), get_string('name','mod_evapares'),
+				 get_string('detail','mod_evapares'), 'Stop', 'Start', 'Continue', get_string('progress','mod_evapares'));
+
+$size = array('3%','20%','5%','5%','5%','5%','5%');
 
 //Add a column for every extra evaluation besides Initial and Final Ones
-for($i=0; $i<($evapares->total_iterations) ; $i){
-	$i++ ;
-	array_push($headings,'Ev. '.$i) ;
-}
-	array_push($headings, 'Ev. F');
 	
+	foreach($evaluation_names as $key => $names){
+		
+		array_push($headings, $names->evaluation_name);
+		array_push($size, '%5');
+
+	}
+
+	
+$url =  new moodle_url("/course/view.php",array('id' => $COURSE->id));
+echo $OUTPUT->single_button($url, get_string('back_to_course','mod_evapares'));
+
+
 $table = new html_table();
+$table->size = $size;
 $table->head = $headings;
 $table->data = $table_data;
 echo html_writer::table($table);
 
+echo $OUTPUT->single_button($url, get_string('back_to_course','mod_evapares'));

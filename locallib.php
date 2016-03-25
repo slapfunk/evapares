@@ -86,7 +86,7 @@ function evapares_get_evaluations($cmid, $evaparesid){
 						new pix_icon("i/show", "No disponible")
 				);
 		
-		if( ($iteration->start_date >= time()) && ($daysinseconds + (int)$iteration->start_date <= time()) ){
+		if( ($iteration->start_date <= time()) && ($daysinseconds + (int)$iteration->start_date >= time()) ){
 			
 			$statusicon = new pix_icon("i/grade_correct", "si");
 			
@@ -229,6 +229,6 @@ function evapares_get_evaluations($cmid, $evaparesid){
 	
 	echo html_writer::table($evaluationstable);
 	echo "<hr>";
-	echo $OUTPUT->single_button($url, "Volver al curso");
+	echo $OUTPUT->single_button($url, get_string('back_to_course','mod_evapares'));
 
 }

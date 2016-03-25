@@ -74,9 +74,11 @@ echo $OUTPUT->header();
 
 if(!$grupos = $DB->get_records("groups", array('courseid'=>$course->id))){
 	
-	echo 'Debe crear los grupos para continuar con la actividad <br>
-	(Administracion del curso > Usuarios > Grupos)';
-	//TODO: Agregar boton para enviarlo a creaciónd e grupos
+	echo get_string('no_groups','mod_evapares');
+	
+			$creategroupurl =  new moodle_url("/group/index.php",array('id' => $COURSE->id));
+			echo $OUTPUT->single_button($creategroupurl, get_string('create_groups','mod_evapares'));
+
 	echo $OUTPUT->footer();
 	die();
 }

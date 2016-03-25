@@ -52,7 +52,7 @@ class evapares_num_eval_form extends moodleform {
 // initial evaluation
 			if($i == 0){
 
-		$mform->addElement('hidden', 'NE'.$i, 'Evaluacion Inicial');
+		$mform->addElement('hidden', 'NE'.$i, get_string('initialEval','mod_evapares'));
 		$mform->setType('NE'.$i, PARAM_TEXT);
 
 		$mform->addElement('date_time_selector', 'FE'.$i,get_string('personalEvalInitial','mod_evapares'));
@@ -70,7 +70,7 @@ class evapares_num_eval_form extends moodleform {
 // final evaluation
 			} elseif($i == $num +1){
 
-		$mform->addElement('hidden', 'NE'.$i, 'Evaluacion Final');
+		$mform->addElement('hidden', 'NE'.$i, get_string('finalEval','mod_evapares'));
 		$mform->setType('NE'.$i, PARAM_TEXT);
 
 		$mform->addElement('date_time_selector', 'FE'.$i,get_string('finalDate', 'mod_evapares'));
@@ -113,7 +113,7 @@ class evapares_num_eval_form extends moodleform {
 		$preg =$instance['preg'];
 		$resp =$instance['resp'];
 		
-		$actualdate = getdate();
+		$actualdate = time();
 		
 		$errors = array();
 		 
@@ -124,9 +124,9 @@ class evapares_num_eval_form extends moodleform {
 			if( empty($name)){
 				$errors['NE'.$i] = get_string('addName','mod_evapares');
 			}
-			if( $date <= $actualdate[0]) {
-				$errors['FE'.$i] = get_string('ChooseDate','mod_evapares');
-			}
+// 			if( $date < $actualdate) {
+// 				$errors['FE'.$i] = get_string('ChooseDate','mod_evapares');
+// 			}
 			if( $i >= 1){
 				$j = $i - 1;
 				if( $data['FE'.$i] <= $data['FE'.$j]){					
