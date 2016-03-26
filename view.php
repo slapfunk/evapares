@@ -34,7 +34,7 @@ require_once('forms/forms_v.php');
 require_once('forms/forms_alu.php');
 require_once('forms/evaluations_form.php');
 
-global $CFG, $DB, $OUTPUT, $PAGE, $USER; 
+global $CFG, $DB, $OUTPUT, $PAGE;
 
 require_login();
 
@@ -110,7 +110,10 @@ if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add
 	else if($datas = $addform->get_data()){
 		
 		for($i = 0; $i <= $evapares->total_iterations + 1; $i++ ){
+			
+			//delivery date id
 			$idfe = "FE$i";
+			//delivery name id
 			$idne = "NE$i";
 			
 			$record = new stdClass();
@@ -167,6 +170,8 @@ if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add
 		
 		
 		for($i = 1; $i <= $evapares->n_preguntas; $i++ ){
+			
+			//questions id
 			$idp = "P$i";
 							
 			$recp = new stdClass();	
@@ -214,7 +219,7 @@ if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add
 }elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "view"){
 	//Vista alumnos
 
-	$tabz[] = array(
+	$tabs[] = array(
 			new tabobject(
 				'tb1',
 				new moodle_url($CFG->wwwroot.'/mod/evapares/view.php',array('mode'=>'evaluation','id' => $cm->id)), 
@@ -231,7 +236,7 @@ if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add
 		// TABS
 		$currenttab='tb1';
 		$activated = array('tb1');
-		print_tabs($tabz,$currenttab, $activated);
+		print_tabs($tabs, $currenttab, $activated);
 		
 		evapares_get_evaluations($cm->id, $cm->instance);
 		
@@ -239,7 +244,7 @@ if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add
 		// TABS
 		$currenttab='tb2';
 		$activated = array('tb2');
-		print_tabs($tabz,$currenttab, $activated);
+		print_tabs($tabs, $currenttab, $activated);
 		
 		include('results_tab.php');
 	}

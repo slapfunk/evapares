@@ -29,12 +29,12 @@ $table_data_query = "SELECT g.id AS group_id, u.lastname AS lastname, u.firstnam
 			   SUM(length(ee.ssc_continue)) AS sumacontinue, ee.answers AS rdy, AVG(ee.nota) AS avg_nota,
 			   ee.iterations_id AS it_id, ei.n_iteration AS inumb, ei.start_date AS stdate
 			   FROM mdl_user u
-			   INNER JOIN mdl_groups_members AS gm ON u.id = gm.userid
-			   INNER JOIN mdl_groups AS g ON gm.groupid = g.id
-		       INNER JOIN mdl_course AS c ON g.courseid = c.id
-		       INNER JOIN mdl_course_modules AS cm ON c.id = cm.course
-		       INNER JOIN mdl_evapares_iterations AS ei ON ei.evapares_id = cm.id
-		       INNER JOIN mdl_evapares_evaluations AS ee ON ee.iterations_id = ei.id
+			   INNER JOIN {groups_members} AS gm ON u.id = gm.userid
+			   INNER JOIN {groups} AS g ON gm.groupid = g.id
+		       INNER JOIN {course} AS c ON g.courseid = c.id
+		       INNER JOIN {course_modules} AS cm ON c.id = cm.course
+		       INNER JOIN {evapares_iterations} AS ei ON ei.evapares_id = cm.id
+		       INNER JOIN {evapares_evaluations} AS ee ON ee.iterations_id = ei.id
 		       WHERE cm.id = ?
 			   AND ee.alu_evaluado_id = u.id
 			   GROUP BY userid, it_id
@@ -47,9 +47,10 @@ $iterations = $DB->get_records_sql('SELECT n_iteration
 									WHERE evapares_id='.$cm->id );
 
 $evaluation_names = $DB->get_records_sql('SELECT ei.evaluation_name
-										  FROM `mdl_evapares_iterations` as ei
+										  FROM {evapares_iterations} as ei
 										  WHERE ei.evapares_id ='.$cm->id);
 
+//icons
 $check = $OUTPUT->pix_icon("i/grade_correct", get_string('realized','mod_evapares'));
 $cross = $OUTPUT->pix_icon("i/grade_incorrect", get_string('unrealized','mod_evapares'));
 $improve = $OUTPUT->pix_icon("s/yes", get_string('improved','mod_evapares'));
@@ -58,13 +59,14 @@ $studenticondetail = new pix_icon("i/preview", get_string("view_details", "mod_e
 
 $date = time();
 $info = array();
-$i = 1;
+$key = 1;
 
 foreach($get_table_data as $data){
 	
-	$info[$i]=$data;
-	$i = $i + 1;
+	$info[$key]=$data;
+	$key = $key + 1;
 }
+$get_table_data->close();
 
 $table_data = array();
 $current_student_data = null;
@@ -88,7 +90,7 @@ for($j = 1; $j <= count($info); $j ++){
 
 	}
 	if($date < $info[$j]->stdate && $info[$j]->inumb == 0){
-		//la evaluacion no empieza y es la n° 0
+		//checks if the evaluation has not started and is the number zero
 		
 		array_push($table_row, get_string('not_available','mod_evapares'));
 		array_push($table_row, get_string('not_available','mod_evapares'));
@@ -97,7 +99,7 @@ for($j = 1; $j <= count($info); $j ++){
 
 		
 	}elseif($date > $info[$j]->stdate && $info[$j]->inumb == 0 && $info[$j + 1]->stdate > $date){
-		// la evaluacion ya se hiso y es la n° 0 y la siguente no empieza
+		// checks if the evaluation is already madeâ€‹, is the number zero and the next does not start yet
 		
 		array_push($table_row, get_string('not_available','mod_evapares'));
 		array_push($table_row, get_string('not_available','mod_evapares'));
@@ -105,13 +107,13 @@ for($j = 1; $j <= count($info); $j ++){
 		array_push($table_row, get_string('not_available','mod_evapares'));
 
 	}elseif($date > $info[$j]->stdate && $info[$j]->inumb > 0 && $info[$j]->inumb <= $evapares->total_iterations && $info[$j + 1]->stdate > $date){
-		// la evaluacion ya se hiso y no es la n° 0 y no es la ultima y la siguente no se ha hecho
+		// checks if the evaluation is already made, is not the number zero , is not the last and the next does not start yet
 		
 		array_push($table_row, $info[$j]->sumastop);
 		array_push($table_row, $info[$j]->sumastart);
 		array_push($table_row, $info[$j]->sumacontinue);
 		
-		//comprovacin avance segun notas
+		// check progress according grades
 		if($info[$j]->avg_nota == $info[$j - 1]->avg_nota){
 			array_push($table_row, 'I');
 		}elseif($info[$j]->avg_nota > $info[$j - 1]->avg_nota){
@@ -121,13 +123,13 @@ for($j = 1; $j <= count($info); $j ++){
 		}
 		
 	}elseif($date > $info[$j]->stdate && $info[$j]->inumb == $evapares->total_iterations + 1){
-		// la evaluacion ya se hiso y es la ultima
+		// checks if the evaluation is already made and is the last one
 		
 		array_push($table_row, $info[$j]->sumastop);
 		array_push($table_row, $info[$j]->sumastart);
 		array_push($table_row, $info[$j]->sumacontinue);
 		
-		//comprobacin avance segun notas
+		// check progress according grades
 		if($info[$j]->avg_nota == $info[$j - 1]->avg_nota){
 			array_push($table_row, 'I');
 		}elseif($info[$j]->avg_nota > $info[$j - 1]->avg_nota){
@@ -137,6 +139,7 @@ for($j = 1; $j <= count($info); $j ++){
 		}
 	}
 	
+	// checks the status of evaluations and displays the corresponding icon
 	if($info[$j]->inumb == $evapares->total_iterations + 1){
 		
 		for($h = 1; $h <= count($info); $h ++){
@@ -156,7 +159,6 @@ for($j = 1; $j <= count($info); $j ++){
 	}
 }
 
-//HACERLOS CON LANGS SDV,FEGRLUGFRLKIOHV-SEILROKHG-SEHIRG.SEHRG.RS
 $headings = array(get_string('group','mod_evapares'), get_string('name','mod_evapares'),
 				 get_string('detail','mod_evapares'), 'Stop', 'Start', 'Continue', get_string('progress','mod_evapares'));
 

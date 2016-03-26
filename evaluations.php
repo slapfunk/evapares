@@ -52,7 +52,7 @@ if(! $evapares = $DB->get_record('evapares', array('id' => $cm->instance))){
 $context = context_module::instance($cm->id);
 
 if( !has_capability('mod/evapares:myevaluations', $context) ){
-	print_error("No tiene acceso a la página.");
+	print_error(get_string('permission','mod_evapares'));
 }
 
 $PAGE->set_url('/mod/evapares/evaluations.php', array(
@@ -72,6 +72,8 @@ $PAGE->set_heading(format_string($COURSE->fullname));
 
 $evaluationname = $DB->get_record("evapares_iterations", array("id" => $iterationid));
 
+$backtoevapares = new moodle_url("/mod/evapares/view.php", array('id'=>$cmid));
+
 if($action == "initial"){
 	
 	$initialform = new evapares_initialevaluation(null, array(
@@ -85,7 +87,7 @@ if($action == "initial"){
 	));
 	
 	if ($initialform->is_cancelled()) {
-        $backtoevapares = new moodle_url("/mod/evapares/view.php", array('id'=>$cmid));
+
 		redirect($backtoevapares);
 		
     } else if ($data = $initialform->get_data()) {
@@ -110,7 +112,6 @@ if($action == "initial"){
         
         $DB->update_record("evapares_evaluations",$evaluation);
         
-        $backtoevapares = new moodle_url("/mod/evapares/view.php", array('id'=>$cmid));
 		redirect($backtoevapares);
     }
 }
@@ -126,7 +127,7 @@ if($action == "iteration" || $action == "last"){
 	));
 	
 	if ($iterationform->is_cancelled()) {
-		$backtoevapares = new moodle_url("/mod/evapares/view.php", array('id'=>$cmid));
+
 		redirect($backtoevapares);
 	
 	} else if ($data = $iterationform->get_data()){
@@ -197,7 +198,6 @@ if($action == "iteration" || $action == "last"){
 		
 		$DB->insert_records("evapares_eval_has_answ", $records);
 		
-		$backtoevapares = new moodle_url("/mod/evapares/view.php", array('id'=>$cmid));
 		redirect($backtoevapares);
 	}
 }

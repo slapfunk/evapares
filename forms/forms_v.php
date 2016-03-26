@@ -18,7 +18,7 @@
  *
  * @package mod
  * @subpackage emarking
- * @copyright Hans Jeria (hansjeria@gmail.com)
+ * @copyright 2016 Benjamin Espinosa (beespinosa@gmail.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require_once(dirname(dirname(dirname(dirname(__FILE__))))."/config.php");

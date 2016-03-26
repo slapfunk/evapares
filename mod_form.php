@@ -61,7 +61,8 @@ class mod_evapares_mod_form extends moodleform_mod {
 	   for ($i=1; $i <= $AmountTime ; $i++){ $time[$i] = $i;}
 	   
 //Add all the fields to be completed
-        $mform->addElement('checkbox', 'ssc',get_string('addSSC', 'mod_evapares'));
+        $mform->addElement('checkbox', 'ssc', get_string('addSSC', 'mod_evapares'));
+        $mform->addHelpButton('ssc', 'ssc', 'mod_evapares');
         
         $mform->addElement('select', 'total_iterations',get_string('amountOfEvaluations','mod_evapares'), $evaluations);
         
