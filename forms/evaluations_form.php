@@ -84,8 +84,20 @@ class evapares_initialevaluation extends moodleform {
 		global $DB;
 		
 		$errors = array();
+// 		$answersarray = array();
 		
-		//comprobar que se selecciono algo en los select
+// 		$counter = 1;
+// 		foreach($initialquestions as $question){
+			
+// 			$answersarray["0*0"] = "Seleccione una alternativa";
+// 			$select = $data["a$counter"];
+			
+// 			if($select == $answersarray["0*0"]){
+// 				$errors["a$counter"] = 'error aca';
+// 			}
+			
+// 			$counter++;
+// 		}
 		
 		return $errors;
 	}

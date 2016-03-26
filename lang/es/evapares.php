@@ -76,6 +76,7 @@ $string['option'] = 'Opción' ;
 $string['partial Evaluation'] = "Eval. Parcial" ;
 $string['peers_results'] = 'Resultados Evaluación Pares' ;
 $string['periodSummary'] = 'Resumen Semestral' ;
+$string['permission'] = 'No tiene los permisos para ingresar a esta p�gina.';
 $string['personalEvalInitial'] = 'Evaluacion Personal Inicial' ;
 $string['personalEval'] = 'Evaluación Personal' ;
 $string['pluginadministration'] = 'Administración Evapares';
@@ -85,13 +86,14 @@ $string['question']= 'Pregunta' ;
 $string['realized']= 'Realizado';
 $string['results'] = 'Resultados';
 $string['resultsTable'] = 'Mis Resultados';
-$string['ssc_help'] = 'La metodología Stop, Start, Continue (SSC) consiste en tres cuadros de texto, dentro del cuadro "Stop",
+$string['ssc'] = 'La metodología Stop, Start, Continue (SSC) consiste en tres cuadros de texto, dentro del cuadro "Stop",
 		dónde el estudiante siguiere que cosas realizadas por su compañero cree que no son útiles o que debería dejar de hacer.
 		En el cuadro "Start", el estudiante indica que cree que su compañero debería comenzar a realizar dentro del trabajo
 		en equipo. Finalmente, en el cuadro "Continue", el estudiante tiene la opción de indicar cuales cree que son las "mejores
 		prácticas" que está realizando su compañero y que debiese continuar haciendo. Esta metodología es usada para variados
 		propósitos relacionados al desarrollo y la comunicación, incluyendo el crecimiento personal, trabajo en equipo, solución
 		de problemas, entre otros. ' ;
+$string['ssc_help'] = 'Agregar SSC';
 $string['ssc_results'] = 'Resultados Evaluación SSC' ;
 $string['unrealized']= 'No Realizado';
 $string['view_details'] = 'Ver Detalles' ;
