@@ -310,7 +310,7 @@ function evapares_get_teacherview($cmid, $evapares){
 					
 					
 					if($info[$h]->stdate > $date){
-						$table_row[] = 'N.R.';
+						$table_row[] = $cross;
 						
 					}elseif($info[$h]->rdy == 1){
 						$table_row[] = $check;
