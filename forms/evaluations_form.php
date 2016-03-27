@@ -42,12 +42,12 @@ class evapares_initialevaluation extends moodleform {
 		$iterationid = $instance["ei"];
 		$evaluationid = $instance["ee"];
 		
-		$initialquestions = $DB->get_recordset_select("evapares_questions", " evapares_id = ?", array($cmid));
+		$initialquestions = $DB->get_records("evapares_questions", array("evapares_id" => $cmid));
 		
 		$counter = 1;		
 		foreach($initialquestions as $question){
 			
-			$answers = $DB->get_recordset_select("evapares_answers", " question_id = ?", array($question->id));
+			$answers = $DB->get_records("evapares_answers", array("question_id" => $question->id));
 			
 			$answersarray = array();
 			$answersarray["0*0"] = "Seleccione una alternativa";
@@ -84,20 +84,20 @@ class evapares_initialevaluation extends moodleform {
 		global $DB;
 		
 		$errors = array();
-// 		$answersarray = array();
 		
-// 		$counter = 1;
-// 		foreach($initialquestions as $question){
+		$cmid = $data["cmid"];
+		
+		$initialquestions = $DB->get_records("evapares_questions", array("evapares_id" => $cmid));
+		
+		$counter = 1;
+		foreach($initialquestions as $question){
 			
-// 			$answersarray["0*0"] = "Seleccione una alternativa";
-// 			$select = $data["a$counter"];
-			
-// 			if($select == $answersarray["0*0"]){
-// 				$errors["a$counter"] = 'error aca';
-// 			}
-			
-// 			$counter++;
-// 		}
+			if($data["a$counter"] == "0*0"){
+				$errors["a$counter"] = "Debe seleccionar una alternativa.";
+			}
+
+			$counter++;
+		}	
 		
 		return $errors;
 	}
@@ -158,11 +158,11 @@ class evapares_iterationform extends moodleform {
 				$mform->addElement("select", "n$counter" , "Nota", $grades);
 			}
 				
-			$questions = $DB->get_recordset_select("evapares_questions", " evapares_id = ?", array($cmid));
+			$questions = $DB->get_records("evapares_questions", array("evapares_id" => $cmid));
 			$aux = 1;
 			foreach($questions as $question){
 				
-				$answers = $DB->get_recordset_select("evapares_answers", " question_id = ?", array($question->id));
+				$answers = $DB->get_records("evapares_answers", array("question_id" => $question->id));
 				
 				$answersarray = array();
 				$answersarray["0*0"] = "Seleccione una alternativa";
@@ -204,11 +204,54 @@ class evapares_iterationform extends moodleform {
 	}
 	
 	public function validation($data, $files) {
-		global $DB;
+		global $DB, $USER;
 		
 		$errors = array();
+
+		$cmid = $data["cmid"];
+		$iterationid = $data["ei"];
 		
-		//comprobar que se selecciono algo en los select y se rellenaron los start-stop-continue
+		$sql = "SELECT ee.id, ee.alu_evaluado_id, CONCAT(u.firstname, ' ', u.lastname) AS username
+				FROM {evapares_evaluations} AS ee JOIN {user} AS u ON (ee.alu_evaluado_id = u.id)
+				WHERE ee.iterations_id = ? AND ee.alu_evalua_id = ?
+				GROUP BY u.lastname, u.firstname";
+		$evaluations = $DB->get_records_sql($sql, array($iterationid, $USER->id));
+		
+		$counter = 1;
+		foreach($evaluations as $evaluation){
+				
+			if($evaluation->alu_evaluado_id != $USER->id){
+		
+				if( empty($data["start$counter"]) || !isset($data["start$counter"]) || $data["start$counter"] == NULL ){
+					$errors["start$counter"] = "Debe obligatoriamente escribir en este campo.";
+				}
+				
+				if( empty($data["stop$counter"]) || !isset($data["stop$counter"]) || $data["stop$counter"] == NULL ){
+					$errors["stop$counter"] = "Debe obligatoriamente escribir en este campo.";
+				}
+				
+				if( empty($data["continue$counter"]) || !isset($data["continue$counter"]) || $data["continue$counter"] == NULL ){
+					$errors["continue$counter"] = "Debe obligatoriamente escribir en este campo.";
+				}
+				
+				if( $data["n$counter"] == 0 ){
+					$errors["n$counter"] = "Debe seleccionar una nota.";
+				}
+			}
+		
+			$questions = $DB->get_records("evapares_questions", array("evapares_id" => $cmid));
+			$aux = 1;
+			foreach($questions as $question){
+
+				if($data["a*$counter*$aux"] == "0*0"){
+					$errors["a*$counter*$aux"] = "Debe seleccionar una alternativa.";
+				}
+				
+				$aux++;
+			}
+				
+			$counter++;
+		}
 		
 		return $errors;
 	}

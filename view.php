@@ -30,9 +30,7 @@ require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
 require_once($CFG->dirroot.'/course/moodleform_mod.php');
 require_once('locallib.php');
-require_once('forms/forms_v.php');
-require_once('forms/forms_alu.php');
-require_once('forms/evaluations_form.php');
+require_once('forms/view_form.php');
 
 global $CFG, $DB, $OUTPUT, $PAGE;
 
@@ -76,8 +74,8 @@ if(!$grupos = $DB->get_records("groups", array('courseid'=>$course->id))){
 	
 	echo get_string('no_groups','mod_evapares');
 	
-			$creategroupurl =  new moodle_url("/group/index.php",array('id' => $COURSE->id));
-			echo $OUTPUT->single_button($creategroupurl, get_string('create_groups','mod_evapares'));
+	$creategroupurl =  new moodle_url("/group/index.php",array('id' => $COURSE->id));
+	echo $OUTPUT->single_button($creategroupurl, get_string('create_groups','mod_evapares'));
 
 	echo $OUTPUT->footer();
 	die();
@@ -214,7 +212,8 @@ if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add
 
 }elseif(has_capability('mod/evapares:courseevaluations', $context) && $action == "view"){
 
-	include('teacher.php');
+	//include('teacher.php');
+	evapares_get_teacherview($cm->id, $evapares);
 
 }elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "view"){
 	//Vista alumnos
