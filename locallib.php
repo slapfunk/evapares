@@ -241,10 +241,15 @@ function evapares_get_teacherview($cmid, $evapares){
 			));	
 			
 			$studentactiondetail = $OUTPUT->action_icon($studenturldetail, $studenticondetail);
+			$disabledicon = $OUTPUT->action_icon(
+					new moodle_url("#"),
+					new pix_icon("i/show", "No disponible")
+					);
+			
 			
 			$table_row[] = $info[$j]->group_id;
 			$table_row[] = $info[$j]->firstname.' '.$info[$j]->lastname;
-			$table_row[] = $studentactiondetail;
+			
 	
 		}
 		
@@ -255,7 +260,8 @@ function evapares_get_teacherview($cmid, $evapares){
 			$table_row[] = get_string('not_available','mod_evapares');
 			$table_row[] = get_string('not_available','mod_evapares');
 			$table_row[] = get_string('not_available','mod_evapares');
-	
+			
+			$table_row[] = $disabledicon;
 			
 		}elseif($date > $info[$j]->stdate && $info[$j]->inumb == 0 && $info[$j + 1]->stdate > $date){
 			// checks if the evaluation is already made​, is the number zero and the next does not start yet
@@ -264,6 +270,8 @@ function evapares_get_teacherview($cmid, $evapares){
 			$table_row[] = get_string('not_available','mod_evapares');
 			$table_row[] = get_string('not_available','mod_evapares');
 			$table_row[] = get_string('not_available','mod_evapares');
+			
+			$table_row[] = $disabledicon;
 	
 		}else if($date > $info[$j]->stdate && $info[$j]->inumb >= 0 && $info[$j]->inumb <= $evapares->total_iterations && $info[$j + 1]->stdate > $date){
 			// checks if the evaluation is already made, is not the number zero , is not the last and the next does not start yet
@@ -283,6 +291,9 @@ function evapares_get_teacherview($cmid, $evapares){
 				$table_row[] = $worse;
 			}
 			
+			$table_row[] = $studentactiondetail;
+					
+			
 		}elseif($date > $info[$j]->stdate && $info[$j]->inumb == $evapares->total_iterations + 1){
 			// checks if the evaluation is already made and is the last one
 			
@@ -300,6 +311,9 @@ function evapares_get_teacherview($cmid, $evapares){
 			}elseif($info[$j]->avg_nota < $info[$j - 1]->avg_nota){
 				$table_row[] = $worse;
 			}
+
+			$table_row[] = $studentactiondetail;
+					
 		}
 		
 		// checks the status of evaluations and displays the corresponding icon
@@ -319,20 +333,21 @@ function evapares_get_teacherview($cmid, $evapares){
 						$table_row[] = $cross;
 					}
 				}
+				
 			}
-			
+
 			$table_data[] =  $table_row;
 		}
 	}
 	
 	$headings = array(
 			get_string('group','mod_evapares'), 
-			get_string('name','mod_evapares'),
-			get_string('detail','mod_evapares'), 
+			get_string('name','mod_evapares'), 
 			'Stop', 
 			'Start', 
 			'Continue', 
-			get_string('progress','mod_evapares')
+			get_string('progress','mod_evapares'),
+			get_string('detail','mod_evapares')
 			
 	);
 	
@@ -362,7 +377,7 @@ function evapares_get_teacherview($cmid, $evapares){
 		$size[] ='5%';
 		$align[] = "center";
 	}
-		
+	
 	$url =  new moodle_url("/course/view.php",array('id' => $COURSE->id));
 	$button = "<br>".$OUTPUT->single_button($url, get_string('back_to_course','mod_evapares'));
 	
