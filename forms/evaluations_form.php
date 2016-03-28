@@ -124,9 +124,10 @@ class evapares_iterationform extends moodleform {
 		
 		$sql = "SELECT ee.id, ee.alu_evaluado_id, CONCAT(u.firstname, ' ', u.lastname) AS username
 				FROM {evapares_evaluations} AS ee JOIN {user} AS u ON (ee.alu_evaluado_id = u.id)
-				WHERE ee.iterations_id = ? AND ee.alu_evalua_id = ?
+				JOIN {evapares_iterations} AS ei ON (ei.id = ee.iterations_id and ei.id = ? and ei.evapares_id = ?)
+				WHERE ee.alu_evalua_id = ?
 				GROUP BY u.lastname, u.firstname";
-		$evaluations = $DB->get_records_sql($sql, array($iterationid, $USER->id));
+		$evaluations = $DB->get_records_sql($sql, array($iterationid, $cmid, $USER->id));
 		
 		$counter = 1;
 		foreach($evaluations as $evaluation){
