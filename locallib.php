@@ -210,9 +210,11 @@ function evapares_get_teacherview($cmid, $evapares){
 	//icons
 	$check = $OUTPUT->pix_icon("i/grade_correct", get_string('realized','mod_evapares'));
 	$cross = $OUTPUT->pix_icon("i/grade_incorrect", get_string('unrealized','mod_evapares'));
-	$improve = $OUTPUT->pix_icon("s/yes", get_string('improved','mod_evapares'));
-	$worse = $OUTPUT->pix_icon("s/no", get_string('worse','mod_evapares'));
+	$improve = $OUTPUT->pix_icon("t/up", get_string('improved','mod_evapares'));
+	$worse = $OUTPUT->pix_icon("t/down", get_string('worse','mod_evapares'));
+	$keeps = $OUTPUT->pix_icon("t/less", get_string('keeps','mod_evapares'));
 	$studenticondetail = new pix_icon("i/preview", get_string("view_details", "mod_evapares"));
+	$disabledicon = $OUTPUT->action_icon(new moodle_url("#"), new pix_icon("i/show", get_string("notavailable", "mod_evapares")));
 	
 	$date = time();
 	$info = array();
@@ -283,7 +285,7 @@ function evapares_get_teacherview($cmid, $evapares){
 			
 			// check progress according grades
 			if($info[$j]->avg_nota == $info[$j - 1]->avg_nota){
-				$table_row[] = 'I';
+				$table_row[] = $keeps;
 				
 			}elseif($info[$j]->avg_nota > $info[$j - 1]->avg_nota){
 				$table_row[] = $improve;
@@ -304,7 +306,7 @@ function evapares_get_teacherview($cmid, $evapares){
 			
 			// check progress according grades
 			if($info[$j]->avg_nota == $info[$j - 1]->avg_nota){
-				$table_row[] = 'I';
+				$table_row[] = $keeps;
 				
 			}elseif($info[$j]->avg_nota > $info[$j - 1]->avg_nota){
 				$table_row[] = $improve;
