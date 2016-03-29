@@ -182,8 +182,8 @@ if($action == "iteration" || $action == "last"){
 	 				//var_dump($eva);
 	 				
 	 				$evaluation->ssc_start = $eva->scc_start;
-	 				$evaluation->ssc_stop = $eva->scc_stop = $value;
-	 				$evaluation->ssc_continue = $eva->scc_continue = $value;
+	 				$evaluation->ssc_stop = $eva->scc_stop;
+	 				$evaluation->ssc_continue = $eva->scc_continue;
 	 				$evaluation->nota = $eva->nota;
 	 				$evaluation->enddate = time();
 					$evaluation->answers = 1;
@@ -204,7 +204,7 @@ if($action == "iteration" || $action == "last"){
 		
 		$DB->insert_records("evapares_eval_has_answ", $records);
 		
-		redirect($backtoevapares);
+		//redirect($backtoevapares);
 	}
 }
 

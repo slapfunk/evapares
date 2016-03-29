@@ -133,26 +133,26 @@ class evapares_iterationform extends moodleform {
 				$useridingroup[] = $member->id;
 			}
 		}
-		
+		//print_r($useridingroup);
 		list($sqlin, $param) = $DB->get_in_or_equal($useridingroup);
 		
-		$sql = "SELECT u.id, CONCAT(u.firstname, ' ', u.lastname) AS username
+		$sql = "SELECT ee.id, u.id as userid, CONCAT(u.firstname, ' ', u.lastname) AS username
 				FROM {evapares_evaluations} AS ee JOIN {evapares_iterations} AS ei
 				ON (ei.evapares_id = ? AND ei.id = ee.iterations_id AND ee.iterations_id = ?)
-				LEFT JOIN {user} AS u ON (u.id $sqlin)
-				WHERE ee.alu_evaluado_id $sqlin AND  ee.alu_evalua_id = ?
-				GROUP BY u.id
+				RIGHT JOIN {user} AS u ON (u.id $sqlin AND u.id = ee.alu_evaluado_id)
+				WHERE ee.alu_evalua_id = ?
+				GROUP BY ee.id
 				ORDER BY u.lastname, u.firstname";
-		$params = array_merge(array($cmid, $iterationid), $param, $param, array($USER->id));
+		$params = array_merge(array($cmid, $iterationid), $param, array($USER->id));
 
 		$evaluations = $DB->get_records_sql($sql, $params);
-		
+		//var_dump($evaluations);
 		$counter = 1;
 		foreach($evaluations as $evaluation){
 			
 			$mform->addElement ( 'header', "name$counter", $evaluation->username, null, false);
 			
-			if($evaluation->id == $USER->id){
+			if($evaluation->userid == $USER->id){
 				
 				$mform->addElement("hidden", "start$counter", "START");
 				$mform->setType( "start$counter", PARAM_TEXT);
@@ -219,27 +219,50 @@ class evapares_iterationform extends moodleform {
 		$mform->addElement("hidden", "sesskey", sesskey());
 		$mform->setType( "sesskey", PARAM_ALPHANUM);
 		
+		$mform->addElement("hidden", "lastiteration", $lastiteration);
+		$mform->setType( "lastiteration", PARAM_BOOL);
+		
+		
 		$this->add_action_buttons(true);
 	}
 	
 	public function validation($data, $files) {
-		global $DB, $USER;
+		global $DB, $USER, $COURSE;
 		
 		$errors = array();
 
 		$cmid = $data["cmid"];
 		$iterationid = $data["ei"];
+		$lastiteration = $data["lastiteration"];
 		
-		$sql = "SELECT ee.id, ee.alu_evaluado_id, CONCAT(u.firstname, ' ', u.lastname) AS username
-				FROM {evapares_evaluations} AS ee JOIN {user} AS u ON (ee.alu_evaluado_id = u.id)
-				WHERE ee.iterations_id = ? AND ee.alu_evalua_id = ?
-				GROUP BY u.lastname, u.firstname";
-		$evaluations = $DB->get_records_sql($sql, array($iterationid, $USER->id));
+		// GET users in group
+		$groupid = groups_get_user_groups($COURSE->id, $USER->id);
+		$membersgroup = groups_get_members($groupid[0][0], $fields = "u.id,u.lastname,u.firstname");
+		
+		$useridingroup = array();
+		foreach ($membersgroup as $member){
+			if($member->id != $USER->id || $lastiteration){
+				$useridingroup[] = $member->id;
+			}
+		}
+		
+		list($sqlin, $param) = $DB->get_in_or_equal($useridingroup);
+		
+		$sql = "SELECT ee.id, u.id as userid, CONCAT(u.firstname, ' ', u.lastname) AS username
+				FROM {evapares_evaluations} AS ee JOIN {evapares_iterations} AS ei
+				ON (ei.evapares_id = ? AND ei.id = ee.iterations_id AND ee.iterations_id = ?)
+				LEFT JOIN {user} AS u ON (u.id $sqlin)
+				WHERE ee.alu_evaluado_id $sqlin AND  ee.alu_evalua_id = ?
+				GROUP BY ee.id
+				ORDER BY u.lastname, u.firstname";
+		$params = array_merge(array($cmid, $iterationid), $param, $param, array($USER->id));
+		
+		$evaluations = $DB->get_records_sql($sql, $params);
 		
 		$counter = 1;
 		foreach($evaluations as $evaluation){
 				
-			if($evaluation->alu_evaluado_id != $USER->id){
+			if($evaluation->userid != $USER->id){
 		
 				if( empty($data["start$counter"]) || !isset($data["start$counter"]) || $data["start$counter"] == NULL ){
 					$errors["start$counter"] = "Debe obligatoriamente escribir en este campo.";
