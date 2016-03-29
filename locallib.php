@@ -181,7 +181,7 @@ function evapares_get_evaluations($cmid, $evaparesid){
 function evapares_get_teacherview($cmid, $evapares){
 	global $DB, $OUTPUT, $COURSE;
 	
-	$table_data_query = "SELECT g.id AS group_id, u.lastname, u.firstname, u.id AS userid,
+	$table_data_query = "SELECT g.name AS group_name, u.lastname, u.firstname, u.id AS userid,
 			   SUM(length(ee.ssc_stop)) AS sumastop, SUM(length(ee.ssc_start)) AS sumastart,
 			   SUM(length(ee.ssc_continue)) AS sumacontinue, ee.answers AS rdy, AVG(ee.nota) AS avg_nota,
 			   ee.iterations_id AS it_id, ei.n_iteration AS inumb, ei.start_date AS stdate
@@ -195,7 +195,7 @@ function evapares_get_teacherview($cmid, $evapares){
 		       WHERE cm.id = ?
 			   AND ee.alu_evaluado_id = u.id
 			   GROUP BY userid, it_id
-			   ORDER BY group_id, lastname, it_id";
+			   ORDER BY group_name, lastname, it_id";
 
 	$get_table_data = $DB-> get_recordset_sql($table_data_query ,array($cmid));
 	
@@ -248,7 +248,7 @@ function evapares_get_teacherview($cmid, $evapares){
 					);
 			
 			
-			$table_row[] = $info[$j]->group_id;
+			$table_row[] = $info[$j]->group_name;
 			$table_row[] = $info[$j]->firstname.' '.$info[$j]->lastname;
 			
 	
