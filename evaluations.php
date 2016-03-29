@@ -117,13 +117,19 @@ if($action == "initial"){
 }
 
 if($action == "iteration" || $action == "last"){
+	
+	$lastiterarion = FALSE;
+	if($action == "last"){
+		$lastiterarion = TRUE;
+	}
 	$iterationform = new evapares_iterationform(null, array(
 			"cmid" => $cmid,
 			"action" => $action,
 			"cmid" => $cmid,
 			"instance" => $evaparesid,
 			"sesskey" => $sesskey,
-			"ei" => $iterationid
+			"ei" => $iterationid,
+			"lastiteration" => $lastiterarion
 	));
 	
 	if ($iterationform->is_cancelled()) {

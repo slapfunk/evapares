@@ -106,7 +106,7 @@ class evapares_initialevaluation extends moodleform {
 class evapares_iterationform extends moodleform {
 
 	public function definition() {
-		global $DB, $USER;
+		global $DB, $USER, $COURSE;
 		
 		$mform = $this->_form;
 		$instance = $this->_customdata;
@@ -115,6 +115,7 @@ class evapares_iterationform extends moodleform {
 		$action = $instance["action"];
 		$evaparesid = $instance["instance"];
 		$iterationid = $instance["ei"];
+		$lastiteration = $instance["lastiteration"];
 		
 		$grades = array();
 		$grades["0"] = "Seleccione una alternativa";
@@ -122,12 +123,28 @@ class evapares_iterationform extends moodleform {
 			$grades["$grade"] = $grade;
 		}
 		
-		$sql = "SELECT ee.id, ee.alu_evaluado_id, CONCAT(u.firstname, ' ', u.lastname) AS username
-				FROM {evapares_evaluations} AS ee JOIN {user} AS u ON (ee.alu_evaluado_id = u.id)
-				JOIN {evapares_iterations} AS ei ON (ei.id = ee.iterations_id and ei.id = ? and ei.evapares_id = ?)
-				WHERE ee.alu_evalua_id = ?
+		// GET users in group
+		$groupid = groups_get_user_groups($COURSE->id, $USER->id);
+		$membersgroup = groups_get_members($groupid[0][0], $fields = "u.id,u.lastname,u.firstname");
+		
+		$useridingroup = array();
+		foreach ($membersgroup as $member){
+			if($member->id != $USER->id || $lastiteration){
+				$useridingroup[] = $member->id;
+			}
+		}
+		
+		list($sqlin, $param) = $DB->get_in_or_equal($useridingroup);
+		
+		$sql = "SELECT u.id, ee.alu_evaluado_id, CONCAT(u.firstname, ' ', u.lastname) AS username
+				FROM {evapares_evaluations} AS ee JOIN {evapares_iterations} AS ei
+				ON (ei.evapares_id = ? AND ei.id = ee.iterations_id AND ee.iterations_id = ?)
+				LEFT JOIN {user} AS u ON (u.id $sqlin)
+				WHERE ee.alu_evaluado_id $sqlin AND  ee.alu_evalua_id = ?
 				GROUP BY u.lastname, u.firstname";
-		$evaluations = $DB->get_records_sql($sql, array($iterationid, $cmid, $USER->id));
+		$params = array_merge(array($cmid, $iterationid), $param, $param, array($USER->id));
+
+		$evaluations = $DB->get_records_sql($sql, $params);
 		
 		$counter = 1;
 		foreach($evaluations as $evaluation){
