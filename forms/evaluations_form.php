@@ -136,12 +136,13 @@ class evapares_iterationform extends moodleform {
 		
 		list($sqlin, $param) = $DB->get_in_or_equal($useridingroup);
 		
-		$sql = "SELECT u.id, ee.alu_evaluado_id, CONCAT(u.firstname, ' ', u.lastname) AS username
+		$sql = "SELECT u.id, CONCAT(u.firstname, ' ', u.lastname) AS username
 				FROM {evapares_evaluations} AS ee JOIN {evapares_iterations} AS ei
 				ON (ei.evapares_id = ? AND ei.id = ee.iterations_id AND ee.iterations_id = ?)
 				LEFT JOIN {user} AS u ON (u.id $sqlin)
 				WHERE ee.alu_evaluado_id $sqlin AND  ee.alu_evalua_id = ?
-				GROUP BY u.lastname, u.firstname";
+				GROUP BY u.id
+				ORDER BY u.lastname, u.firstname";
 		$params = array_merge(array($cmid, $iterationid), $param, $param, array($USER->id));
 
 		$evaluations = $DB->get_records_sql($sql, $params);
@@ -151,7 +152,7 @@ class evapares_iterationform extends moodleform {
 			
 			$mform->addElement ( 'header', "name$counter", $evaluation->username, null, false);
 			
-			if($evaluation->alu_evaluado_id == $USER->id){
+			if($evaluation->id == $USER->id){
 				
 				$mform->addElement("hidden", "start$counter", "START");
 				$mform->setType( "start$counter", PARAM_TEXT);
