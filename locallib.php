@@ -170,6 +170,7 @@ function evapares_get_evaluations($cmid, $evaparesid){
 	
 	$url =  new moodle_url("/course/view.php",array('id' => $COURSE->id));
 	
+	echo "La hora de servidor es ".date("H:i - d-m-Y",time());
 	echo html_writer::table($evaluationstable);
 	echo "<hr>";
 	echo $OUTPUT->single_button($url, get_string('back_to_course','mod_evapares'));
