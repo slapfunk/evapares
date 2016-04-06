@@ -212,7 +212,7 @@ if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add
 
 }elseif(has_capability('mod/evapares:courseevaluations', $context) && $action == "view"){
 
-	//include('teacher.php');
+	echo $OUTPUT->tabtree(evapares_edit_tabs($cmid), "Resumen");
 	evapares_get_teacherview($cm->id, $evapares);
 
 }elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "view"){
@@ -246,8 +246,7 @@ if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add
 		print_tabs($tabs, $currenttab, $activated);
 		
 		include('results_tab.php');
-	}
-	
+	}	
 }
 
 echo $OUTPUT->footer();		

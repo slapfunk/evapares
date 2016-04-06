@@ -204,7 +204,7 @@ if($action == "iteration" || $action == "last"){
 		
 		$DB->insert_records("evapares_eval_has_answ", $records);
 		
-		//redirect($backtoevapares);
+		redirect($backtoevapares);
 	}
 }
 
