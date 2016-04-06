@@ -181,7 +181,7 @@ function evapares_get_evaluations($cmid, $evaparesid){
 function evapares_get_teacherview($cmid, $evapares){
 	global $DB, $OUTPUT, $COURSE;
 	
-	$table_data_query = "SELECT g.id AS group_id, u.lastname, u.firstname, u.id AS userid,
+	$table_data_query = "SELECT g.name AS group_name, u.lastname, u.firstname, u.id AS userid,
 			   SUM(length(ee.ssc_stop)) AS sumastop, SUM(length(ee.ssc_start)) AS sumastart,
 			   SUM(length(ee.ssc_continue)) AS sumacontinue, ee.answers AS rdy, AVG(ee.nota) AS avg_nota,
 			   ee.iterations_id AS it_id, ei.n_iteration AS inumb, ei.start_date AS stdate
@@ -195,7 +195,7 @@ function evapares_get_teacherview($cmid, $evapares){
 		       WHERE cm.id = ?
 			   AND ee.alu_evaluado_id = u.id
 			   GROUP BY userid, it_id
-			   ORDER BY group_id, lastname, it_id";
+			   ORDER BY group_name, lastname, it_id";
 
 	$get_table_data = $DB-> get_recordset_sql($table_data_query ,array($cmid));
 	
@@ -210,9 +210,11 @@ function evapares_get_teacherview($cmid, $evapares){
 	//icons
 	$check = $OUTPUT->pix_icon("i/grade_correct", get_string('realized','mod_evapares'));
 	$cross = $OUTPUT->pix_icon("i/grade_incorrect", get_string('unrealized','mod_evapares'));
-	$improve = $OUTPUT->pix_icon("s/yes", get_string('improved','mod_evapares'));
-	$worse = $OUTPUT->pix_icon("s/no", get_string('worse','mod_evapares'));
+	$improve = $OUTPUT->pix_icon("t/up", get_string('improved','mod_evapares'));
+	$worse = $OUTPUT->pix_icon("t/down", get_string('worse','mod_evapares'));
+	$keeps = $OUTPUT->pix_icon("t/less", get_string('keeps','mod_evapares'));
 	$studenticondetail = new pix_icon("i/preview", get_string("view_details", "mod_evapares"));
+	$disabledicon = $OUTPUT->action_icon(new moodle_url("#"), new pix_icon("i/show", get_string("notavailable", "mod_evapares")));
 	
 	$date = time();
 	$info = array();
@@ -248,7 +250,7 @@ function evapares_get_teacherview($cmid, $evapares){
 					);
 			
 			
-			$table_row[] = $info[$j]->group_id;
+			$table_row[] = $info[$j]->group_name;
 			$table_row[] = $info[$j]->firstname.' '.$info[$j]->lastname;
 			
 	
@@ -283,7 +285,7 @@ function evapares_get_teacherview($cmid, $evapares){
 			
 			// check progress according grades
 			if($info[$j]->avg_nota == $info[$j - 1]->avg_nota){
-				$table_row[] = 'I';
+				$table_row[] = $keeps;
 				
 			}elseif($info[$j]->avg_nota > $info[$j - 1]->avg_nota){
 				$table_row[] = $improve;
@@ -304,7 +306,7 @@ function evapares_get_teacherview($cmid, $evapares){
 			
 			// check progress according grades
 			if($info[$j]->avg_nota == $info[$j - 1]->avg_nota){
-				$table_row[] = 'I';
+				$table_row[] = $keeps;
 				
 			}elseif($info[$j]->avg_nota > $info[$j - 1]->avg_nota){
 				$table_row[] = $improve;

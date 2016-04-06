@@ -126,9 +126,13 @@ if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add
 		
 		$DB->insert_records("evapares_iterations", $alliterations);
 		
-		$sql = 'SELECT GM1.userid AS a_evalua, GM2.userid AS a_evaluado, EI.id As id_iteration, EI.n_iteration AS n_iteration
-			    FROM mdl_groups_members AS GM1, mdl_groups_members AS GM2, mdl_evapares_iterations AS EI
-				WHERE GM1.groupid = GM2.groupid AND EI.evapares_id = ?';
+		$sql = 'SELECT gm1.userid AS a_evalua, gm2.userid AS a_evaluado, ei.id As id_iteration, ei.n_iteration AS n_iteration
+				FROM {groups_members} AS gm1
+				INNER JOIN {groups_members} AS gm2 ON gm1.groupid = gm2.groupid
+				INNER JOIN {groups} AS g ON g.id = gm1.groupid
+				INNER JOIN {course_modules} AS cm ON cm.course = g.courseid
+				INNER JOIN {evapares_iterations} AS ei ON ei.evapares_id = cm.id
+				WHERE ei.evapares_id = ?';
 		
 		$consulta = $DB-> get_recordset_sql($sql ,array($cm->id));
 		
