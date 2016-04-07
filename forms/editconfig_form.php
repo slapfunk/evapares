@@ -52,7 +52,7 @@ class evapares_editconfig extends moodleform {
 			$fieldname = "i$counteriterations";
 			$fielddate = "d$counteriterations";
 			
-			$mform->addElement ( 'header', "header$fieldname", "Iteración ".$counteriterations, null, false);
+			$mform->addElement ( 'header', "header$fieldname", "Evaluación ".($counteriterations+1), null, false);
 			
 			$mform->addElement("hidden", "id$counteriterations", $iteration->id);
 			$mform->setType( "id$counteriterations", PARAM_INT);
@@ -100,8 +100,6 @@ class evapares_editconfig extends moodleform {
 				}
 			}
 		}
-		
-		$errors["duration"] = "no te dejare enviar nada";
 		
 		return $errors;
 	}

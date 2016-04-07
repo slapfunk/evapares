@@ -95,34 +95,26 @@ if($action == "edit"){
 	
 	} else if ($data = $editconfig->get_data()) {
 		
-		$counteriterations = 0;
+		$evapares->name = $data->name;
+		$evapares->n_days = $data->duration;
+		$DB->update_record("evapares", $evapares);
 		
-		foreach ($data as $field => $value){
-			// Name for input
-			$fieldiditeration = "id$counteriterations";
-			$fieldname = "i$counteriterations";
-			$fielddate = "d$counteriterations";
+		for ($counteriterations = 0; $counteriterations < ($evapares->total_iterations + 2)  ; $counteriterations++){
+			// inputs names
+			$iditeration = "id$counteriterations";
+			$name = "i$counteriterations";
+			$date = "d$counteriterations";
 			
-			if($field == $fieldiditeration){
-				$iteration = $DB->get_records("evapares_iterations", array("id" => $value));
-			}
+			$iteration = $DB->get_record("evapares_iterations", array("id" => $data->$iditeration));
+
+			$iteration->evaluation_name = $data->$name;
+			$iteration->start_date = $data->$date;
 			
-			if($field == $fieldname){
-				$iteration->evaluation_name = $value;
-			}
-			
-			if($field == $fielddate){
-				$iteration->start_date = $value;
-				$DB->update_record("evapares_iterations", $iteration);
-			}
-			
+			$DB->update_record("evapares_iterations", $iteration);
+
 		}
 		
-		$evapares->name = $data["name"];
-		$evapares->n_days = $data["duration"];
-		
-		$DB->update_record("evapares", $evapares);
-
+		redirect($formredirect);
 	}
 }
 
@@ -145,12 +137,12 @@ if($action == "view"){
 	);
 	
 	$viewtable->data [] = array(
-			"Número de iteraciones",
+			"Número de evaluaciones",
 			($evapares->total_iterations + 2)
 	);
 	
 	$viewtable->data [] = array(
-			"Duración de las iteraciones",
+			"Tiempo para evaluar",
 			$evapares->n_days." días"
 	);
 	
