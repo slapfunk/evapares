@@ -125,23 +125,14 @@ class evapares_iterationform extends moodleform {
 		
 		// GET users in group
 		$groupid = groups_get_user_groups($COURSE->id, $USER->id);
-		var_dump($groupid);
-		$count = 0;
-		while( isset($groupid[$count][0])){
-			
-			$count++;
-		}
-		
-		$membersgroup = groups_get_members($groupid[0][0], $fields = "u.id,u.lastname,u.firstname");
-		var_dump($membersgroup);
-		
+		$membersgroup = groups_get_members($groupid[0][0], $fields = "u.id, u.lastname, u.firstname");
 		$useridingroup = array();
 		foreach ($membersgroup as $member){
 			if($member->id != $USER->id || $lastiteration){
 				$useridingroup[] = $member->id;
 			}
 		}
-		//print_r($useridingroup);
+		
 		list($sqlin, $param) = $DB->get_in_or_equal($useridingroup);
 		
 		$sql = "SELECT ee.id, u.id as userid, CONCAT(u.firstname, ' ', u.lastname) AS username

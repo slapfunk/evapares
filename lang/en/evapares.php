@@ -95,3 +95,7 @@ $string['unrealized']= 'Unrealized';
 $string['view_details'] = 'View Details' ;
 $string['worse']= 'Got Worse';
 $string['confirmpopup'] = 'The evaluation can only be performed once, once sent can not be changed.';
+
+$string["downloadexcel"] = "Download Excel";
+$string["summaryexcel"] = "Summary (It only include the stundents grades)";
+$string["alldataexcel"] = "All process information";

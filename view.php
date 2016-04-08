@@ -29,6 +29,7 @@
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
 require_once($CFG->dirroot.'/course/moodleform_mod.php');
+require_once($CFG->dirroot."/lib/excellib.class.php");
 require_once('locallib.php');
 require_once('forms/view_form.php');
 
@@ -39,6 +40,7 @@ require_login();
 $action = optional_param("action", "view", PARAM_TEXT);
 $cmid = required_param('id', PARAM_INT);
 $mode = optional_param("mode", "evaluation", PARAM_TEXT);
+$export = optional_param("export", "none", PARAM_TEXT);
 
 if(! $cm = get_coursemodule_from_id('evapares', $cmid)){
 	print_error('cm'." id: $cmid");
@@ -59,6 +61,15 @@ if(!has_capability('mod/evapares:courseevaluations', $context) && !has_capabilit
 {	
 	print_error("No tiene la capacidad de estar en  esta pagina");
 }
+
+if(has_capability('mod/evapares:myevaluations', $context) && $export == "summary"){
+	// excel with the students and their grades
+	evapares_get_summary_data($cmid, str_replace(" ", "",$evapares->name));
+}/*
+else if(has_capability('mod/evapares:myevaluations', $context) && $export == "alldata"){
+	// excel with the all information about the evapares process
+	evapares_get_all_data($cmid, str_replace(" ", "",$evapares->name));
+}*/
 
 $PAGE->set_url('/mod/evapares/view.php', array('id' => $cm->id));
 $PAGE->set_context($context);
@@ -217,6 +228,26 @@ if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add
 }elseif(has_capability('mod/evapares:courseevaluations', $context) && $action == "view"){
 
 	echo $OUTPUT->tabtree(evapares_edit_tabs($cmid), "Resumen");
+	
+	$excelsummary = new moodle_url('view.php', array(
+			'id' => $cm->id,
+			'export' => 'summary'));
+	
+	$excelalldata = new moodle_url('view.php', array(
+			'id' => $cm->id,
+			'export' => 'alldata'));
+	
+	echo $OUTPUT->heading(get_string("downloadexcel", "mod_evapares"), 4);
+	echo html_writer::start_div('exportbuttons');
+	
+	echo $OUTPUT->action_icon($excelsummary, new pix_icon('i/grades', "download"));
+	echo get_string("summaryexcel", "mod_evapares");
+	/*
+	echo $OUTPUT->action_icon($excelalldata, new pix_icon('i/grades', "download"));
+	echo get_string("alldataexcel", "mod_evapares");
+	*/
+	echo html_writer::end_div();
+	
 	evapares_get_teacherview($cm->id, $evapares);
 
 }elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "view"){

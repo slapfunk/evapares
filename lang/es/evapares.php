@@ -101,3 +101,6 @@ $string['unrealized']= 'No Realizado';
 $string['view_details'] = 'Ver Detalles' ;
 $string['worse']= 'Empeorá';
 $string['confirmpopup']= 'La evaluación solo se puede realizar una sola vez, una vez enviada no se puede modificar.';
+$string["downloadexcel"] = "Descargar Excel";
+$string["summaryexcel"] = "Resumen (Contiene solo las notas)";
+$string["alldataexcel"] = "Toda la información del proceso";
