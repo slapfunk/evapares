@@ -7,7 +7,7 @@
  * visit: http://docs.moodle.org/en/Development:lib/formslib.php
  *
  * @package    mod_evapares
- * @copyright  2015 Your Name
+ * @copyright  2016 Benjamin Espinosa (beespinosa94@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -17,10 +17,12 @@ require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
 require_once($CFG->dirroot.'/course/moodleform_mod.php');
 
-global $CFG, $DB, $OUTPUT, $USER, $PAGE;
+global $DB, $OUTPUT, $USER, $PAGE;
+
+require_login();
 
 $cmid = required_param('cmid', PARAM_INT);
-$studentid = required_param('studentid', PARAM_INT);
+$studentid = optional_param('studentid','-1', PARAM_INT);
 
 if(! $cm = get_coursemodule_from_id('evapares', $cmid))
 {print_error('cm'." id: $cmid");}
@@ -30,10 +32,18 @@ if(! $evapares = $DB->get_record('evapares', array('id' => $cm->instance)))
 
 if(! $course = $DB->get_record('course', array('id' => $cm->course)))
 {print_error('course'." id: $cmid");}
-$context = context_module::instance($cm->id);
-$iduser=$USER->id;
 
-require_login();
+$context = context_module::instance($cm->id);
+
+if(has_capability('mod/evapares:courseevaluations', $context)){
+	
+	
+
+}elseif(has_capability('mod/evapares:myevaluations', $context)){
+
+	$studentid = $USER->id;
+}
+
 echo '<script src="../evapares/js/jquery.js"></script>
 <script src="../evapares/js/controladorbotonbuscar.js"></script>';
 // Print the page header.
@@ -85,15 +95,24 @@ $percentages = "SELECT Answer.`answers_id`, Evaluation.`iterations_id`
 
 $get_pers = $DB-> get_recordset_sql($percentages ,array($cmid, $studentid));
 
-$n_group_members = "SELECT COUNT(groups.groupid) AS n_members
-					FROM mdl_groups_members AS groups
-					WHERE groups.groupid = 
-				   (SELECT groups.groupid
-					FROM mdl_groups_members AS groups
-					WHERE groups.userid = ?)";
+$n_group_members = "SELECT COUNT(gmn.groupid) AS n_members
+					FROM mdl_groups_members AS gmn
+					WHERE gmn.groupid =
+					(SELECT gm.groupid AS gid
+					 FROM mdl_groups_members AS gm
+					 INNER JOIN mdl_groups AS g ON gm.groupid = g.id
+					 INNER JOIN mdl_course_modules AS cm ON cm.course = g.courseid
+					 WHERE gm.userid = ?
+					 AND cm.id = ?)";
 
-$n_memb = $DB->get_recordset_sql($n_group_members, array($studentid));
-
+$n_memb = $DB->get_recordset_sql($n_group_members, array($studentid, $cmid));
+// var_dump($get_pers);
+// if($get_pers == null){
+// 	echo $OUTPUT->header();
+// 	echo 'wegfñoeuh - no hay datos';
+// 	echo $OUTPUT->footer();
+// 	die();
+// }
 foreach($n_memb as $quant){
 	$efective_members = $quant->n_members;
 }
@@ -102,6 +121,13 @@ foreach($n_memb as $quant){
 foreach($get_pers as $data){
 	$percent[] = $data;
 }
+if(!isset($percent)){
+	echo $OUTPUT->header();
+	echo 'wegfñoeuh - no hay datos';
+	echo $OUTPUT->footer();
+die();
+}
+
 if(isset($get_pers)){
 	$count_plc = count($percent) - 1;
 }else{
