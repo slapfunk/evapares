@@ -7,7 +7,7 @@
  * visit: http://docs.moodle.org/en/Development:lib/formslib.php
  *
  * @package    mod_evapares
- * @copyright  2016 Benjamin Espinosa (beespinosa94@gmail.com)
+ * @copyright  2016 Benjamin Espinosa (beespinosa@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -56,8 +56,6 @@ class mod_evapares_mod_form extends moodleform_mod {
 //Add all the fields to be completed
         $mform->addElement('checkbox', 'ssc', get_string('addSSC', 'mod_evapares'));
         $mform->addHelpButton('ssc', 'ssc', 'mod_evapares');
-        
-        $mform->addElement('checkbox', 'default', 'Default evaluation');
         
         $mform->addElement('select', 'total_iterations',get_string('amountOfEvaluations','mod_evapares'), $evaluations);
         

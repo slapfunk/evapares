@@ -20,7 +20,7 @@
  * if you like, and it can span multiple lines.
  *
  * @package    mod_evapares
- * @copyright  2016 Benjamin Espinosa (beespinosa94@gmail.com)
+ * @copyright  2016 Benjamin Espinosa (beespinosa@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

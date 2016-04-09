@@ -7,48 +7,17 @@
  * visit: http://docs.moodle.org/en/Development:lib/formslib.php
  *
  * @package    mod_evapares
- * @copyright  2015 Your Name
+ * @copyright  2016 Benjamin Espinosa (beespinosa@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
 
-//opttional param
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
 require_once($CFG->dirroot.'/course/moodleform_mod.php');
 
-global $CFG, $DB, $OUTPUT, $USER, $PAGE;
-
-$cmid = required_param('cmid', PARAM_INT);
-$studentid = required_param('studentid', PARAM_INT);
-
-if(! $cm = get_coursemodule_from_id('evapares', $cmid))
-{print_error('cm'." id: $cmid");}
-
-if(! $evapares = $DB->get_record('evapares', array('id' => $cm->instance)))
-{print_error('evapares'." id: $cmid");}
-
-if(! $course = $DB->get_record('course', array('id' => $cm->course)))
-{print_error('course'." id: $cmid");}
-$context = context_module::instance($cm->id);
-$iduser=$USER->id;
-
-require_login();
-echo '<script src="../evapares/js/jquery.js"></script>
-<script src="../evapares/js/controladorbotonbuscar.js"></script>';
-// Print the page header.
-if(!has_capability('mod/evapares:courseevaluations', $context) && !has_capability('mod/evapares:myevaluations', $context))
-{	
-	print_error("no tiene la capacidad de estar en  esta pagina");
-}
-else{
-	$PAGE->set_url('/mod/evapares/view.php', array('id' => $cm->id));
-	$PAGE->set_context($context);
-	$PAGE->set_course($course);
-	$PAGE->set_pagelayout("incourse");
-	$PAGE->set_cm($cm);
-	$PAGE->set_title(format_string($evapares->name));
-	$PAGE->set_heading(format_string($course->fullname));
+global $CFG, $DB, $USER, $PAGE;
 
 $PAGE->requires->js (new moodle_url('/mod/evapares/js/accordion.js') );
 
@@ -59,62 +28,57 @@ $PAGE->requires->js (new moodle_url('/mod/evapares/js/accordion.js') );
 <link rel="stylesheet" href="/resources/demos/style.css">
 <?php 
 
-
 $iterations = $DB->get_records("evapares_iterations", array('evapares_id'=>$cmid));
 
-$resultquery =  'SELECT * FROM mdl_evapares_evaluations AS eval
- 				 INNER JOIN mdl_evapares_iterations AS iter 
+$resultquery =  'SELECT * FROM {evapares_evaluations} AS eval
+ 				 INNER JOIN {evapares_iterations} AS iter 
  				 ON eval.iterations_id = iter.id 
  				 WHERE iter.evapares_id = ? 
  				 AND eval.alu_evaluado_id = ?
  				 ORDER BY iterations_id ASC';
 
-$resultados = $DB-> get_recordset_sql($resultquery ,array($cmid, $studentid));
+$resultados = $DB-> get_recordset_sql($resultquery ,array($cm->id, $USER->id));
 
 $query = "SELECT Q.text AS preg, Q.id AS pregid, A.text AS resp, A.id AS ansid
-		  FROM mdl_evapares_questions AS Q, mdl_evapares_answers AS A
+		  FROM {evapares_questions} AS Q, {evapares_answers} AS A
 		  WHERE Q.evapares_id = ? AND Q.id = A.question_id";
 
 $percentages = "SELECT Answer.`answers_id`, Evaluation.`iterations_id`
-				FROM mdl_evapares_eval_has_answ Answer
-				JOIN mdl_evapares_evaluations Evaluation ON (Evaluation.id = Answer.evaluations_id )
-				JOIN mdl_evapares_iterations Iteration ON (Evaluation.`iterations_id` = Iteration.`id`)
+				FROM {evapares_eval_has_answ} Answer
+				JOIN {evapares_evaluations} Evaluation ON (Evaluation.id = Answer.evaluations_id )
+				JOIN {evapares_iterations} Iteration ON (Evaluation.`iterations_id` = Iteration.`id`)
 				WHERE Iteration.evapares_id = ?
 				AND Evaluation.alu_evaluado_id = ?
 				ORDER BY iterations_id";
 
-$get_pers = $DB-> get_recordset_sql($percentages ,array($cmid, $studentid));
+$get_pers = $DB-> get_recordset_sql($percentages ,array($cm->id, $USER->id));
 
 $n_group_members = "SELECT COUNT(groups.groupid) AS n_members
-					FROM mdl_groups_members AS groups
+					FROM {groups_members} AS groups
 					WHERE groups.groupid = 
 				   (SELECT groups.groupid
-					FROM mdl_groups_members AS groups
+					FROM {groups_members} AS groups
 					WHERE groups.userid = ?)";
 
-$n_memb = $DB->get_recordset_sql($n_group_members, array($studentid));
+$n_memb = $DB->get_recordset_sql($n_group_members, array($USER->id));
 
-foreach($n_memb as $quant){
-	$efective_members = $quant->n_members;
+foreach($n_memb as $quantity){
+	$members = $quantity->n_members;
 }
-
+$n_memb->close();
 
 foreach($get_pers as $data){
 	$percent[] = $data;
 }
-if(isset($get_pers)){
-	$count_plc = count($percent) - 1;
-}else{
-	$count_plc = 0;
-}
+$get_pers->close();
+
+$count_plc = count($percent) - 1;
 	
 
 $headings = array('Stop','Start','Continue');
 
 // number that verifies the table associated with each iteration
 $n_table = 0;
-
-echo $OUTPUT->header();
 
 echo'<div class="accordion">';
 
@@ -129,7 +93,7 @@ foreach($resultados as $param){
 // verified that this isn't the first iteration 			
  			if($n_table != 0){
 
- 				$table->data = $supa_data_sama;
+ 				$table->data = $tabledata;
  				
  				echo '<h3>'.$iterations[$param->iterations_id - 1]->evaluation_name.'</h3>';
  				echo'<div>';
@@ -137,7 +101,7 @@ foreach($resultados as $param){
 // displays the table created in a previous loop
  				echo html_writer::table($table);
 
- 				$cons = $DB-> get_recordset_sql($query ,array($cmid));
+ 				$cons = $DB-> get_recordset_sql($query ,array($cm->id));
  				
 // number used to verify the ID of the answers 					
  				$tempid = 0;
@@ -161,7 +125,7 @@ foreach($resultados as $param){
  							} 													
  						}
 // calculates in percentages how many times an alternative was chosen
- 						$perc_display = $temp * 100 / ($efective_members -1);
+ 						$perc_display = $temp * 100 / ($members -1);
  						echo '<strong>'.$perc_display.'%</strong>';
  						echo'</td></tr>';
  				}
@@ -172,42 +136,42 @@ foreach($resultados as $param){
 // creates the SSC table that will be displayed in the next loop
  			$table = new html_table();
  			$table->head = $headings ;
- 			$supa_data_sama=array();
- 			$data_chan=array();
+ 			$tabledata=array();
+ 			$tablerow=array();
  			
- 			array_push($data_chan,$param->ssc_stop);
- 			array_push($data_chan,$param->ssc_start);
- 			array_push($data_chan,$param->ssc_continue);
- 			array_push($supa_data_sama,$data_chan);
+ 			array_push($tablerow,$param->ssc_stop);
+ 			array_push($tablerow,$param->ssc_start);
+ 			array_push($tablerow,$param->ssc_continue);
+ 			array_push($tabledata,$tablerow);
  			
- 			$data_chan=array();
+ 			$tablerow=array();
  			
  			$n_table = $param->iterations_id;
  			
  		}else{
  			
 // refills the SSC table that will be displayed in the next loop
- 			array_push($data_chan,$param->ssc_stop);
- 			array_push($data_chan,$param->ssc_start);
- 			array_push($data_chan,$param->ssc_continue);
- 			array_push($supa_data_sama,$data_chan);
+ 			array_push($tablerow,$param->ssc_stop);
+ 			array_push($tablerow,$param->ssc_start);
+ 			array_push($tablerow,$param->ssc_continue);
+ 			array_push($tabledata,$tablerow);
  			
- 			$data_chan=array();
+ 			$tablerow=array();
  			
  		}
  	
 	}
 	
 }
+$resultados->close();
 
-
-$table->data = $supa_data_sama;
+$table->data = $tabledata;
 echo '<h3>'.$iterations[$param->iterations_id]->evaluation_name.'</h3>';
 echo '<div>';
 
 // displays the table created in the last loop
 echo html_writer::table($table);
-$cons = $DB-> get_recordset_sql($query ,array($cmid));
+$cons = $DB-> get_recordset_sql($query ,array($cm->id));
 
 // number used to verify the ID of the answers
 $tempid = 0;
@@ -232,12 +196,10 @@ foreach($cons as $p_a){
  		}
  		
 // calculates in percentages how many times an alternative was chosen
- 		$perc_display = $temp * 100 / ($efective_members -1);
+ 		$perc_display = $temp * 100 / ($members -1);
  		echo '<strong>'.$perc_display.'%</strong>';
  		echo'</td></tr>';
  }
  		echo '</table>
 			  </div>
   		      </div>';
- 		echo $OUTPUT->footer();
-}

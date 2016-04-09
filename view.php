@@ -21,7 +21,7 @@
  * if you like, and it can span multiple lines.
  *
  * @package    mod_evapares
- * @copyright  2016 Benjamin Espinosa (beespinosa94@gmail.com)
+ * @copyright  2016 Benjamin Espinosa (beespinosa@gmail.com)
  * @copyright  2016 Hans Jeria (hansjeria@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -100,7 +100,6 @@ $vars = array('num'=>$evapares->total_iterations,
 		"cmid"=>$cmid, 
 		'preg'=>$evapares->n_preguntas, 
 		'resp'=>$evapares->n_respuestas
-		
 );
 	
 if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add"){
@@ -273,11 +272,6 @@ if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add
 		$activated = array('tb1');
 		print_tabs($tabs, $currenttab, $activated);
 		
-// 		$url =  new moodle_url("/mod/evapares/student_details.php",array('cmid' => $cmid));
-// 		$button = "<br>".$OUTPUT->single_button($url, 'mis resultados');
-		
-// 		echo $button;
-		
 		evapares_get_evaluations($cm->id, $cm->instance);
 		
 	}else if($mode == "results"){
@@ -286,7 +280,7 @@ if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add
 		$activated = array('tb2');
 		print_tabs($tabs, $currenttab, $activated);
 		
-		include('student_details.php');
+		include('results_tab.php');
 	}	
 }
 

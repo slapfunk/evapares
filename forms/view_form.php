@@ -18,7 +18,7 @@
  *
  * @package mod
  * @subpackage emarking
- * @copyright 2016 Benjamin Espinosa (beespinosa94@gmail.com)
+ * @copyright 2016 Benjamin Espinosa (beespinosa@gmail.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require_once(dirname(dirname(dirname(dirname(__FILE__))))."/config.php");
@@ -32,9 +32,7 @@ class evapares_num_eval_form extends moodleform {
 		global $DB;
 		
 	$mform = $this->_form;
-	$instance = $this->_customdata;
-	
-	var_dump($instance);
+	$instance = $this->_customdata;		
 	
 // amount of iterations
 		$num = $instance['num'];
