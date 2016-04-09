@@ -506,3 +506,17 @@ function evapares_get_all_data($cmid, $evaparesname){
 	$headers = array();
 	evapares_save_data_to_excel($headers, $tabledata, $excelfilename);
 }
+
+function evapares_result_tabs($cmid) {
+	$resultstab = array();
+
+	$resultstab[] = new tabobject("Evaluaciones",
+			new moodle_url("/mod/evapares/view.php", array(
+					"id" => $cmid)), "Evaluaciones");
+
+	$resultstab[] = new tabobject("Resultados",
+			new moodle_url("/mod/evapares/student_details.php", array(
+					"cmid" => $cmid)), "Resultados");
+
+	return $resultstab;
+}

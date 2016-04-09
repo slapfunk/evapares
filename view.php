@@ -267,21 +267,11 @@ if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add
 	);
 	
 	if($mode == 'evaluation'){
-		// TABS
-		$currenttab='tb1';
-		$activated = array('tb1');
-		print_tabs($tabs, $currenttab, $activated);
 		
-		evapares_get_evaluations($cm->id, $cm->instance);
+		echo $OUTPUT->tabtree(evapares_result_tabs($cmid), "Evaluaciones");
 		
-	}else if($mode == "results"){
-		// TABS
-		$currenttab='tb2';
-		$activated = array('tb2');
-		print_tabs($tabs, $currenttab, $activated);
-		
-		include('results_tab.php');
-	}	
+		evapares_get_evaluations($cm->id, $cm->instance);	
+	}
 }
 
 echo $OUTPUT->footer();		
