@@ -175,6 +175,10 @@ if($action == "iteration" || $action == "last"){
 				$record->iterationid = $iterationid;
 				$records[] = $record;
 				
+				if($evapares->n_preguntas == -1){
+					$evapares->n_preguntas = 12;
+				}
+				
 				if($aux == $evapares->n_preguntas){
  				
 	 				$evaluation = $DB->get_record_sql("SELECT * FROM {evapares_evaluations} WHERE id = ?", array($value));

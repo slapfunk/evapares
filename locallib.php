@@ -22,6 +22,7 @@
  *
  * @package    mod_evapares
  * @copyright  2016 Hans Jeria (hansjeria@gmail.com)
+ * @copyright  2016 Benjamin Espinosa (beespinosa94@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -249,7 +250,7 @@ function evapares_get_teacherview($cmid, $evapares){
 			$table_row = array();
 			$current_student_data = $info[$j]->userid;
 
-			$studenturldetail = new moodle_url("/mod/evapares/student_details.php",
+			$studenturldetail = new moodle_url("/mod/evapares/results.php",
 								array("action" => "view",
 									  "studentid" => $info[$j]->userid,
 									  "cmid" => $cmid						
@@ -515,7 +516,7 @@ function evapares_result_tabs($cmid) {
 					"id" => $cmid)), "Evaluaciones");
 
 	$resultstab[] = new tabobject("Resultados",
-			new moodle_url("/mod/evapares/student_details.php", array(
+			new moodle_url("/mod/evapares/results.php", array(
 					"cmid" => $cmid)), "Resultados");
 
 	return $resultstab;
