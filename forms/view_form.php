@@ -18,7 +18,7 @@
  *
  * @package mod
  * @subpackage emarking
- * @copyright 2016 Benjamin Espinosa (beespinosa@gmail.com)
+ * @copyright 2016 Benjamin Espinosa (beespinosa94@gmail.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require_once(dirname(dirname(dirname(dirname(__FILE__))))."/config.php");
@@ -78,10 +78,12 @@ class evapares_num_eval_form extends moodleform {
 		
 			}
 		}
-		
+
+if($preg != -1 && $resp != -1){
 		$mform->addElement('header', 'Detalle_Preguntas', get_string('AddMultipleOptionQuestion','mod_evapares'));
 
 // creates the questions with the respective answers
+
 		for($j = 1; $j <= $preg; $j++){
 
 // questions
@@ -96,6 +98,42 @@ class evapares_num_eval_form extends moodleform {
 				$mform->setType($idm, PARAM_TEXT);
 			}
 		}
+}else{
+	$defaultquestions = array('1' => 'Logra comunicar sus ideas de forma clara y precisa.',
+							  '2' => 'Logra entregar retroalimentación a los integrantes del equipo dando su opinión y emitiendo juicios de manera respetuosa.',
+							  '3' => 'Es receptivo con los comentarios de sus compañeros y con la retroalimentación que le entregan.',
+							  '4' => 'Utiliza adecuadamente las herramientas definidas para la colaboración (Dropbox, Drive, entre otros).',
+							  '5' => 'Participa de forma activa en todas las reuniones y actividades organizadas por el equipo (dando su opinión, haciendo propuestas, etc.) tanto presenciales como no presenciales.',
+							  '6' => 'Contribuye a la planificación de tareas y al cumplimiento de plazos.',
+							  '7' => 'Contribuye a alinear al equipo en busca de lograr el objetivo del trabajo.',
+							  '8' => 'Contribuye a motivar a los miembros del equipo a involucrarse en el trabajo de forma activa.',
+							  '9' => 'Contribuye a la gestión de los conflictos a través de su oportuna identificación y generando la necesidad al equipo.',
+							  '10' => 'Contribuye activamente a la búsqueda de solución de los conflictos generando instancias de negociación.',
+							  '11' => 'Ha cumplido con todos los plazos de entrega de tareas o actividades que se le han propuesto.',
+							  '12' => 'En el contexto de trabajo en equipo, confío en esta persona'
+	);
+	$defaultanswers = array('1' => 'Totalmente en desacuerdo',
+							'2' => 'En desacuerdo',
+							'3' => 'Ni de acuerdo ni en desacuerdo',
+							'4' => 'De acuerdo',
+							'5' => 'Totalmente de acuerdo',		
+	);
+	
+	for($j = 1; $j <= 12; $j++){
+	
+		// questions
+		$mform->addElement('hidden', "P$j", $defaultquestions[$j]);
+		$mform->setType("P$j", PARAM_TEXT);
+	
+		// answers
+		for($h = 1; $h <= 5; $h++){
+			$idm = "R$j$h";
+	
+			$mform->addElement('hidden',$idm, $defaultanswers[$h]);
+			$mform->setType($idm, PARAM_TEXT);
+		}
+	}
+}
 		
 		$mform->addElement('hidden', 'id',$cmid);
 		$mform->setType('id', PARAM_INT);

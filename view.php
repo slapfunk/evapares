@@ -21,7 +21,7 @@
  * if you like, and it can span multiple lines.
  *
  * @package    mod_evapares
- * @copyright  2016 Benjamin Espinosa (beespinosa@gmail.com)
+ * @copyright  2016 Benjamin Espinosa (beespinosa94@gmail.com)
  * @copyright  2016 Hans Jeria (hansjeria@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -41,6 +41,7 @@ $action = optional_param("action", "view", PARAM_TEXT);
 $cmid = required_param('id', PARAM_INT);
 $mode = optional_param("mode", "evaluation", PARAM_TEXT);
 $export = optional_param("export", "none", PARAM_TEXT);
+
 
 if(! $cm = get_coursemodule_from_id('evapares', $cmid)){
 	print_error('cm'." id: $cmid");
@@ -95,13 +96,12 @@ if(!$grupos = $DB->get_records("groups", array('courseid'=>$course->id))){
 if(!$evapares_iterations = $DB->get_records("evapares_iterations", array('evapares_id'=>$cmid))){
 	$action = "add";
 }
-	
-$vars = array('num'=>$evapares->total_iterations,
-		"cmid"=>$cmid, 
-		'preg'=>$evapares->n_preguntas, 
-		'resp'=>$evapares->n_respuestas
-);
-	
+	$vars = array('num' => $evapares->total_iterations,
+				  'cmid' => $cmid, 
+				  'preg' => $evapares->n_preguntas, 
+				  'resp' => $evapares->n_respuestas
+	);
+
 if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add"){
 	
 	$addform = new evapares_num_eval_form(null, $vars);
@@ -181,6 +181,9 @@ if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add
 		
 		$DB->insert_records("evapares_evaluations", $allcombs);
 		
+		if($evapares->n_preguntas == -1){
+			$evapares->n_preguntas = 12;
+		}
 		
 		for($i = 1; $i <= $evapares->n_preguntas; $i++ ){
 			
@@ -201,6 +204,10 @@ if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add
  			$llaves[$i] = $key;
  			}
 			
+ 			if($evapares->n_respuestas == -1){
+ 				$evapares->n_respuestas = 5;
+ 			}
+ 			
 			for($j = 1; $j <= $evapares->n_respuestas; $j++ ){
 				$idr = "R$i$j";
 
@@ -253,18 +260,18 @@ if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add
 }elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "view"){
 	//Vista alumnos
 
-	$tabs[] = array(
-			new tabobject(
-				'tb1',
-				new moodle_url($CFG->wwwroot.'/mod/evapares/view.php',array('mode'=>'evaluation','id' => $cm->id)), 
-				get_string('eval','mod_evapares')
-			),
-			new tabobject(
-				'tb2',
-				new moodle_url($CFG->wwwroot.'/mod/evapares/view.php',array('mode'=>'results','id' => $cm->id)),
-				get_string('results','mod_evapares')
-			)
-	);
+// 	$tabs[] = array(
+// 			new tabobject(
+// 				'tb1',
+// 				new moodle_url($CFG->wwwroot.'/mod/evapares/view.php',array('mode'=>'evaluation','id' => $cm->id)), 
+// 				get_string('eval','mod_evapares')
+// 			),
+// 			new tabobject(
+// 				'tb2',
+// 				new moodle_url($CFG->wwwroot.'/mod/evapares/view.php',array('mode'=>'results','id' => $cm->id)),
+// 				get_string('results','mod_evapares')
+// 			)
+// 	);
 	
 	if($mode == 'evaluation'){
 		

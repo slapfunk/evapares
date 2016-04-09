@@ -25,7 +25,7 @@
  * Moodle is performing actions across all modules.
  *
  * @package    mod_evapares
- * @copyright  2015 Your Name
+ * @copyright  2016 Benjamin Espinosa (beespinosa94@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
