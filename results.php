@@ -31,6 +31,14 @@ if(! $course = $DB->get_record('course', array('id' => $cm->course)))
 
 $context = context_module::instance($cm->id);
 
+$PAGE->set_url('/mod/evapares/view.php', array('id' => $cm->id));
+$PAGE->set_context($context);
+$PAGE->set_course($course);
+$PAGE->set_pagelayout("incourse");
+$PAGE->set_cm($cm);
+$PAGE->set_title(format_string($evapares->name));
+$PAGE->set_heading(format_string($course->fullname));
+
 echo '<script src="../evapares/js/jquery.js"></script>
 <script src="../evapares/js/controladorbotonbuscar.js"></script>';
 // Print the page header.
@@ -45,14 +53,6 @@ if(has_capability('mod/evapares:myevaluations', $context)){
 	
 	$studentid = $sid;
 }
-
-	$PAGE->set_url('/mod/evapares/view.php', array('id' => $cm->id));
-	$PAGE->set_context($context);
-	$PAGE->set_course($course);
-	$PAGE->set_pagelayout("incourse");
-	$PAGE->set_cm($cm);
-	$PAGE->set_title(format_string($evapares->name));
-	$PAGE->set_heading(format_string($course->fullname));
 
 $PAGE->requires->js (new moodle_url('/mod/evapares/js/accordion.js') );
 
