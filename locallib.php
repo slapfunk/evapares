@@ -278,6 +278,7 @@ function evapares_get_teacherview($cmid, $evapares){
 			$table_row[] = get_string('not_available','mod_evapares');
 			
 			$table_row[] = $disabledicon;
+
 			
 		}elseif($date > $info[$j]->stdate && $info[$j]->inumb == 0 && $info[$j + 1]->stdate > $date){
 			// checks if the evaluation is already made​, is the number zero and the next does not start yet
@@ -288,6 +289,7 @@ function evapares_get_teacherview($cmid, $evapares){
 			$table_row[] = get_string('not_available','mod_evapares');
 			
 			$table_row[] = $disabledicon;
+
 	
 		}else if($date > $info[$j]->stdate && $info[$j]->inumb >= 0 && $info[$j]->inumb <= $evapares->total_iterations && $info[$j + 1]->stdate > $date){
 			// checks if the evaluation is already made, is not the number zero , is not the last and the next does not start yet

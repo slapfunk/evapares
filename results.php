@@ -17,7 +17,7 @@ require_once(dirname(__FILE__).'/lib.php');
 global $CFG, $DB, $USER, $PAGE;
 
 $cmid = required_param('cmid', PARAM_INT);
-$sid = optional_param('studentid', '-1', PARAM_INT);
+$studentid = optional_param('studentid', '-1', PARAM_INT);
 
 if(! $cm = get_coursemodule_from_id('evapares', $cmid))
 {print_error('cm'." id: $cmid");}
@@ -43,12 +43,12 @@ if(!has_capability('mod/evapares:courseevaluations', $context) && !has_capabilit
 {
 	print_error("no tiene la capacidad de estar en  esta pagina");
 }
-if(has_capability('mod/evapares:myevaluations', $context)){
+if(has_capability('mod/evapares:courseevaluations', $context)){
+	
+
+}elseif(has_capability('mod/evapares:myevaluations', $context)){
 	
 	$studentid = $USER->id;
-}elseif(has_capability('mod/evapares:courseevaluations', $context)){
-	
-	$studentid = $sid;
 }
 
 $PAGE->requires->js (new moodle_url('/mod/evapares/js/accordion.js') );
@@ -69,7 +69,7 @@ $resultquery =  'SELECT * FROM {evapares_evaluations} AS eval
  				 AND eval.alu_evaluado_id = ?
  				 ORDER BY iterations_id ASC';
 
-$resultados = $DB-> get_recordset_sql($resultquery, array($cm->id, $studentid));
+$resultados = $DB-> get_recordset_sql($resultquery, array($cmid, $studentid));
 
 $query = "SELECT Q.text AS preg, Q.id AS pregid, A.text AS resp, A.id AS ansid
 		  FROM {evapares_questions} AS Q, {evapares_answers} AS A
@@ -83,7 +83,7 @@ $percentages = "SELECT Answer.`answers_id`, Evaluation.`iterations_id`
 				AND Evaluation.alu_evaluado_id = ?
 				ORDER BY iterations_id";
 
-$get_pers = $DB-> get_recordset_sql($percentages, array($cm->id, $studentid));
+$get_pers = $DB-> get_recordset_sql($percentages, array($cmid, $studentid));
 
 $n_group_members = "SELECT COUNT(gmn.groupid) AS n_members
 					FROM mdl_groups_members AS gmn
@@ -97,6 +97,7 @@ $n_group_members = "SELECT COUNT(gmn.groupid) AS n_members
 
 $n_memb = $DB->get_recordset_sql($n_group_members, array($studentid, $cmid));
 
+
 foreach($n_memb as $quantity){
 	$members = $quantity->n_members;
 }
@@ -105,18 +106,29 @@ $n_memb->close();
 foreach($get_pers as $data){
 	$percent[] = $data;
 }
+
 $get_pers->close();
 
+$url =  new moodle_url("/course/view.php",array('id' => $COURSE->id));
+$button = "<br>".$OUTPUT->single_button($url, get_string('back_to_course','mod_evapares'));
+if(!isset($percent)){
+	
+	echo $OUTPUT->header();
+	echo 'Aun no hay datos que desplegar';
+	echo '<br>'.$button;
+	echo $OUTPUT->footer();
+	
+}else{
+	
 $count_plc = count($percent) - 1;
 	
-
 $headings = array('Stop','Start','Continue');
 
 // number that verifies the table associated with each iteration
 $n_table = 0;
 
 echo $OUTPUT->header();
-
+echo $button;
 echo'<div class="accordion">';
 
 foreach($resultados as $param){
@@ -200,7 +212,6 @@ foreach($resultados as $param){
 	}
 	
 }
-$resultados->close();
 
 $table->data = $tabledata;
 echo '<h3>'.$iterations[$param->iterations_id]->evaluation_name.'</h3>';
@@ -242,3 +253,5 @@ foreach($cons as $p_a){
   		      </div>';
  		
  		echo $OUTPUT->footer();
+ 		$resultados->close();
+ }
