@@ -92,7 +92,7 @@ function evapares_get_evaluations($cmid, $evaparesid){
 							new pix_icon("i/show", "No disponible")
 					);
 			
-			if( (TRUE ||$iteration->start_date <= time()) && ($daysinseconds + (int)$iteration->start_date >= time()) ){
+			if( ($iteration->start_date <= time()) && ($daysinseconds + (int)$iteration->start_date >= time()) ){
 				
 				$statusicon = new pix_icon("i/grade_correct", "si");
 				
