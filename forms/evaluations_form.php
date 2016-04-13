@@ -275,8 +275,10 @@ class evapares_iterationform extends moodleform {
 					$errors["continue$counter"] = "Debe obligatoriamente escribir en este campo.";
 				}
 				
-				if( $data["n$counter"] == 0 ){
-					$errors["n$counter"] = "Debe seleccionar una nota.";
+				if( isset($data["n$counter"])  ){
+					if( $data["n$counter"] == 0){
+						$errors["n$counter"] = "Debe seleccionar una nota.";
+					}
 				}
 			}
 		
