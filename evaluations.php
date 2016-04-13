@@ -140,7 +140,7 @@ if($action == "iteration" || $action == "last"){
 		$counter = 1;
 		//var_dump($data);
 		$records = array();
-		
+		echo "hay datos";
 		foreach($data as $field => $value){
 
 			//echo "field ".$field." value ".$value."<br>";

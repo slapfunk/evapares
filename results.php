@@ -1,257 +1,217 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The main evapares configuration form
- *
- * It uses the standard core Moodle formslib. For more info about them, please
- * visit: http://docs.moodle.org/en/Development:lib/formslib.php
- *
+
  * @package    mod_evapares
  * @copyright  2016 Benjamin Espinosa (beespinosa94@gmail.com)
+ * @copyright  2016 Hans Jeria (hansjeria@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
+require_once('locallib.php');
 
-global $CFG, $DB, $USER, $PAGE;
+global $DB, $USER, $PAGE, $COURSE;
 
 $cmid = required_param('cmid', PARAM_INT);
 $studentid = optional_param('studentid', '-1', PARAM_INT);
+$iterationid = optional_param("iterationid", "-1", PARAM_INT);
 
-if(! $cm = get_coursemodule_from_id('evapares', $cmid))
-{print_error('cm'." id: $cmid");}
-if(! $evapares = $DB->get_record('evapares', array('id' => $cm->instance)))
-{print_error('evapares'." id: $cmid");}
-if(! $course = $DB->get_record('course', array('id' => $cm->course)))
-{print_error('course'." id: $cmid");}
+if(! $cm = get_coursemodule_from_id('evapares', $cmid)){
+	print_error('cm'." id: $cmid");
+}
+
+if(! $evapares = $DB->get_record('evapares', array('id' => $cm->instance))){
+	print_error('evapares'." id: $cmid");
+}
+
+if(! $course = $DB->get_record('course', array('id' => $cm->course))){
+	print_error('course'." id: $cmid");
+}
 
 $context = context_module::instance($cm->id);
 
-$PAGE->set_url('/mod/evapares/view.php', array('id' => $cm->id));
+$PAGE->set_url('/mod/evapares/results.php', array('cmid' => $cmid, "studentid" => $studentid));
 $PAGE->set_context($context);
 $PAGE->set_course($course);
 $PAGE->set_pagelayout("incourse");
 $PAGE->set_cm($cm);
-$PAGE->set_title(format_string($evapares->name));
-$PAGE->set_heading(format_string($course->fullname));
 
-echo '<script src="../evapares/js/jquery.js"></script>
-<script src="../evapares/js/controladorbotonbuscar.js"></script>';
-// Print the page header.
-if(!has_capability('mod/evapares:courseevaluations', $context) && !has_capability('mod/evapares:myevaluations', $context))
-{
+if(!has_capability('mod/evapares:courseevaluations', $context) && !has_capability('mod/evapares:myevaluations', $context)){
 	print_error("no tiene la capacidad de estar en  esta pagina");
 }
-if(has_capability('mod/evapares:courseevaluations', $context)){
-	
 
-}elseif(has_capability('mod/evapares:myevaluations', $context)){
+if($iterationid == "-1"){
+	$sqlgetiteration = "SELECT *
+			FROM {evapares_iterations}
+			WHERE start_date <= ? AND start_date > ? AND evapares_id = ?";
+	
+	$duration = 24 * 60 * 60 * (int)$evapares->n_days;
+	
+	$params = array(time(), time() - $duration, $cmid);
+}else{
+	$sqlgetiteration = "SELECT  * 
+			FROM {evapares_iterations}
+			WHERE id = ?";
+	
+	$params = array($iterationid);
+}
+
+if( !$iteration = $DB->get_record_sql($sqlgetiteration, $params) ){
+	$sqlgetiteration = "SELECT *
+			FROM {evapares_iterations}
+			WHERE n_iteration = ? AND evapares_id = ?";
+		
+	$params = array(1, $cmid);
+	$iteration = $DB->get_record_sql($sqlgetiteration, $params);
+}
+
+if(has_capability('mod/evapares:myevaluations', $context)){	
+	
+	$PAGE->set_title(format_string($iteration->evaluation_name));
+	$PAGE->set_heading(format_string($iteration->evaluation_name));
+	echo $OUTPUT->header();
+	
+	echo $OUTPUT->tabtree(evapares_result_tabs($cmid), "Resultados");
+	echo $OUTPUT->tabtree(evapares_evaluations_tabs($cmid, $studentid), $iteration->evaluation_name);
 	
 	$studentid = $USER->id;
+}else{
+	$PAGE->set_title(format_string($evapares->name));
+	$PAGE->set_heading(format_string($course->fullname));
+	echo $OUTPUT->header();
 }
 
-$PAGE->requires->js (new moodle_url('/mod/evapares/js/accordion.js') );
+//cantidad de personas en el grupo
+$groupid = groups_get_user_groups($COURSE->id, $USER->id);
 
-?>
-<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-<script src="//code.jquery.com/jquery-1.10.2.js"></script>
-<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-<link rel="stylesheet" href="/resources/demos/style.css">
-<?php 
+$membersgroup = groups_get_members($groupid[0][0], $fields = "u.id");
 
-$iterations = $DB->get_records("evapares_iterations", array('evapares_id'=>$cmid));
+$quantitymembers = count($membersgroup) -1;
 
-$resultquery =  'SELECT * FROM {evapares_evaluations} AS eval
- 				 INNER JOIN {evapares_iterations} AS iter 
- 				 ON eval.iterations_id = iter.id 
- 				 WHERE iter.evapares_id = ? 
- 				 AND eval.alu_evaluado_id = ?
- 				 ORDER BY iterations_id ASC';
+$sqlevaluations = "SELECT e.id, e.ssc_stop, e.ssc_start, e.ssc_continue, e.nota
+		FROM {evapares_evaluations} AS e
+		WHERE e.iterations_id = ?
+		AND e.alu_evaluado_id = ?
+		AND e.alu_evalua_id != ?
+		AND e.answers = 1";
 
-$resultados = $DB-> get_recordset_sql($resultquery, array($cmid, $studentid));
+if( !$evaluations = $DB->get_records_sql($sqlevaluations, array($iteration->id, $studentid, $studentid)) ){
+	
+	$url =  new moodle_url("/mod/evapares/view.php",array('id' =>$cmid));
+	
+	echo 'Aún no hay datos que desplegar';
+	echo $OUTPUT->single_button($url, "Volver a las evaluaciones");
+	echo $OUTPUT->footer();
+	die();
+}
 
-$query = "SELECT Q.text AS preg, Q.id AS pregid, A.text AS resp, A.id AS ansid
-		  FROM {evapares_questions} AS Q, {evapares_answers} AS A
-		  WHERE Q.evapares_id = ? AND Q.id = A.question_id";
+$ssctable = new html_table();
 
-$percentages = "SELECT Answer.`answers_id`, Evaluation.`iterations_id`
-				FROM {evapares_eval_has_answ} Answer
-				JOIN {evapares_evaluations} Evaluation ON (Evaluation.id = Answer.evaluations_id )
-				JOIN {evapares_iterations} Iteration ON (Evaluation.`iterations_id` = Iteration.`id`)
-				WHERE Iteration.evapares_id = ?
-				AND Evaluation.alu_evaluado_id = ?
+$ssctable->head = array(
+		"Integrantes",
+		"Stop",
+		"Start",
+		"Continue"
+);
+
+$ssctable->size = array(
+		"7%",
+		"31%",
+		"31%",
+		"31%"
+);
+
+$ssctable->align = array(
+		"left",
+		"center",
+		"center",
+		"center"
+);
+
+$grade = 0;
+
+$countevaluations = 1;
+foreach ($evaluations as $evaluation){
+	
+	if($evaluation->ssc_stop == NULL || empty($evaluation->ssc_stop)){
+		$stop = "-";
+	}else{
+		$stop = $evaluation->ssc_stop;
+	}
+	
+	if($evaluation->ssc_start == NULL || empty($evaluation->ssc_start)){
+		$start = "-";
+	}else{
+		$start = $evaluation->ssc_start;
+	}
+	
+	if($evaluation->ssc_continue == NULL || empty($evaluation->ssc_continue)){
+		$continue = "-";
+	}else{
+		$continue = $evaluation->ssc_continue;
+	}
+	
+	
+	$ssctable->data [] = array(
+			$countevaluations,
+			$stop,
+			$start,
+			$continue
+	);
+	
+	$grade += $evaluation->nota;
+	
+	$countevaluations++;
+}
+
+if($countevaluations <= $quantitymembers ){
+	for($count = 0; $count + $countevaluations <= $quantitymembers; $count++){
+		$ssctable->data [] = array(
+				($count + $countevaluations),
+				"-",
+				"-",
+				"-"
+		);
+	}
+}
+
+// stop-start-continue table
+echo html_writer::table($ssctable);
+
+
+$sqlquestionandanswers = "SELECT q.id AS questionid, q.text AS question, a.text AS answers, a.id AS answersid
+		FROM {evapares_questions} AS q
+		INNER JOIN {evapares_answers} AS a ON (q.evapares_id = ? AND a.question_id = q.id)
+		GROUP BY q.id";
+
+$questions = $DB->get_records_sql($sqlquestionandanswers , array($cmid));
+
+$sqlanswers = "SELECT a.answers_id, e.iterations_id
+				FROM {evapares_eval_has_answ} AS a
+				JOIN {evapares_evaluations} AS e ON (e.id = a.evaluations_id AND e.iterations_id = ?)
+				WHERE e.alu_evaluado_id = ?
 				ORDER BY iterations_id";
 
-$get_pers = $DB-> get_recordset_sql($percentages, array($cmid, $studentid));
-
-$n_group_members = "SELECT COUNT(gmn.groupid) AS n_members
-					FROM mdl_groups_members AS gmn
-					WHERE gmn.groupid =
-					(SELECT gm.groupid AS gid
-					 FROM mdl_groups_members AS gm
-					 INNER JOIN mdl_groups AS g ON gm.groupid = g.id
-					 INNER JOIN mdl_course_modules AS cm ON cm.course = g.courseid
-					 WHERE gm.userid = ?
-					 AND cm.id = ?)";
-
-$n_memb = $DB->get_recordset_sql($n_group_members, array($studentid, $cmid));
+$answers = $DB->get_records_sql($sqlanswers, array($iteration->id, $studentid));
 
 
-foreach($n_memb as $quantity){
-	$members = $quantity->n_members;
-}
-$n_memb->close();
 
-foreach($get_pers as $data){
-	$percent[] = $data;
-}
 
-$get_pers->close();
-
-$url =  new moodle_url("/course/view.php",array('id' => $COURSE->id));
-$button = "<br>".$OUTPUT->single_button($url, get_string('back_to_course','mod_evapares'));
-if(!isset($percent)){
-	
-	echo $OUTPUT->header();
-	echo 'Aun no hay datos que desplegar';
-	echo '<br>'.$button;
-	echo $OUTPUT->footer();
-	
-}else{
-	
-$count_plc = count($percent) - 1;
-	
-$headings = array('Stop','Start','Continue');
-
-// number that verifies the table associated with each iteration
-$n_table = 0;
-
-echo $OUTPUT->header();
-echo $button;
-echo'<div class="accordion">';
-
-foreach($resultados as $param){
-
-// verifies that the state is not self-assessment	
- 	if($param->alu_evalua_id != $param->alu_evaluado_id){
- 		
-// check table associated with the iteration		
- 		if($param->iterations_id != $n_table){
- 			
-// verified that this isn't the first iteration 			
- 			if($n_table != 0){
-
- 				$table->data = $tabledata;
- 				
- 				echo '<h3>'.$iterations[$param->iterations_id - 1]->evaluation_name.'</h3>';
- 				echo'<div>';
- 				//COMPROBAR CON FECHA
-// displays the table created in a previous loop
- 				echo html_writer::table($table);
-
- 				$cons = $DB-> get_recordset_sql($query ,array($cm->id));
- 				
-// number used to verify the ID of the answers 					
- 				$tempid = 0;
- 				echo'<table>';
- 				foreach($cons as $p_a){
-
-// verify the ID of the question with the actual state
- 					if($p_a->pregid != $tempid){
- 						echo '<tr><td><strong>'.$p_a->preg.'</strong></td></tr>';
- 						$tempid = $p_a->pregid;
- 					}
- 						echo '<tr><td></td><td>'.$p_a->resp.'</td>
- 								  <td>';
- 						
-// count how many times an alternative was chosen
- 						$temp = 0;
- 						for($cont = 0; $cont <= $count_plc; $cont++){							
- 							if($param->iterations_id -1 == $percent[$cont]->iterations_id &&
- 							   $percent[$cont]->answers_id == $p_a->ansid){
- 							   	$temp = $temp + 1;
- 							} 													
- 						}
-// calculates in percentages how many times an alternative was chosen
- 						$perc_display = $temp * 100 / ($members -1);
- 						echo '<strong>'.$perc_display.'%</strong>';
- 						echo'</td></tr>';
- 				}
- 						echo '</table>';
- 						echo '</div>';
-			}
-	
-// creates the SSC table that will be displayed in the next loop
- 			$table = new html_table();
- 			$table->head = $headings ;
- 			$tabledata=array();
- 			$tablerow=array();
- 			
- 			array_push($tablerow,$param->ssc_stop);
- 			array_push($tablerow,$param->ssc_start);
- 			array_push($tablerow,$param->ssc_continue);
- 			array_push($tabledata,$tablerow);
- 			
- 			$tablerow=array();
- 			
- 			$n_table = $param->iterations_id;
- 			
- 		}else{
- 			
-// refills the SSC table that will be displayed in the next loop
- 			array_push($tablerow,$param->ssc_stop);
- 			array_push($tablerow,$param->ssc_start);
- 			array_push($tablerow,$param->ssc_continue);
- 			array_push($tabledata,$tablerow);
- 			
- 			$tablerow=array();
- 			
- 		}
- 	
-	}
-	
-}
-
-$table->data = $tabledata;
-echo '<h3>'.$iterations[$param->iterations_id]->evaluation_name.'</h3>';
-echo '<div>';
-
-// displays the table created in the last loop
-echo html_writer::table($table);
-$cons = $DB-> get_recordset_sql($query ,array($cm->id));
-
-// number used to verify the ID of the answers
-$tempid = 0;
-foreach($cons as $p_a){
-
-// verify the ID of the question with the actual state
-	if($p_a->pregid != $tempid){
- 		echo '<table>
- 			  <tr><td><strong>'.$p_a->preg.'</strong></td></tr>';
- 		$tempid = $p_a->pregid;
-	}
- 		echo '<tr><td></td><td>'.$p_a->resp.'</td><td>';
- 		
-// count how many times an alternative was chosen
- 		$temp = 0;
- 		for($cont = 0; $cont <= $count_plc; $cont++){
- 			if($param->iterations_id == $percent[$cont]->iterations_id &&
- 					$percent[$cont]->answers_id == $p_a->ansid){
-
- 						$temp = $temp + 1;
- 			}
- 		}
- 		
-// calculates in percentages how many times an alternative was chosen
- 		$perc_display = $temp * 100 / ($members -1);
- 		echo '<strong>'.$perc_display.'%</strong>';
- 		echo'</td></tr>';
- }
- 		echo '</table>
-			  </div>
-  		      </div>';
- 		
- 		echo $OUTPUT->footer();
- 		$resultados->close();
- }
+ 
+echo $OUTPUT->footer();

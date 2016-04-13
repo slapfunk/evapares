@@ -523,3 +523,27 @@ function evapares_result_tabs($cmid) {
 
 	return $resultstab;
 }
+
+function evapares_evaluations_tabs($cmid, $studentid){
+	global $DB;
+	$evaluationstab = array();
+	
+	if( $iterations = $DB->get_records("evapares_iterations", array("evapares_id" => $cmid)) ){
+		
+		foreach ($iterations as $iteration){
+			if($iteration->n_iteration != '0'){
+				$evaluationstab[] = new tabobject(
+						$iteration->evaluation_name,					
+						new moodle_url("/mod/evapares/results.php", array(
+								"cmid" => $cmid,
+								"iterationid" => $iteration->id
+						)),
+						$iteration->evaluation_name
+				);
+			}
+		}
+	}
+	
+	return $evaluationstab;	
+}
+
