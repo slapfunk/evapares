@@ -260,18 +260,6 @@ if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add
 }elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "view"){
 	//Vista alumnos
 
-// 	$tabs[] = array(
-// 			new tabobject(
-// 				'tb1',
-// 				new moodle_url($CFG->wwwroot.'/mod/evapares/view.php',array('mode'=>'evaluation','id' => $cm->id)), 
-// 				get_string('eval','mod_evapares')
-// 			),
-// 			new tabobject(
-// 				'tb2',
-// 				new moodle_url($CFG->wwwroot.'/mod/evapares/view.php',array('mode'=>'results','id' => $cm->id)),
-// 				get_string('results','mod_evapares')
-// 			)
-// 	);
 	
 	if($mode == 'evaluation'){
 		

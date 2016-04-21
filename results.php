@@ -76,8 +76,8 @@ if( !$iteration = $DB->get_record_sql($sqlgetiteration, $params) ){
 	$sqlgetiteration = "SELECT *
 			FROM {evapares_iterations}
 			WHERE n_iteration = ? AND evapares_id = ?";
-		
-	$params = array(1, $cmid);
+	
+	$params = array($evapares->total_iterations + 2, $cmid);
 	$iteration = $DB->get_record_sql($sqlgetiteration, $params);
 }
 
@@ -138,10 +138,10 @@ $ssctable->size = array(
 );
 
 $ssctable->align = array(
+		"right",
 		"left",
-		"center",
-		"center",
-		"center"
+		"left",
+		"left"
 );
 
 $grade = 0;
@@ -194,24 +194,109 @@ if($countevaluations <= $quantitymembers ){
 // stop-start-continue table
 echo html_writer::table($ssctable);
 
+// default question-answers
+if ($evapares->n_preguntas == "-1" && $evapares->n_respuestas = "-1") {
+	
+	$sqlgetanswers = "SELECT a.id , a.text
+			FROM {evapares_questions} AS q
+			INNER JOIN {evapares_answers} AS a ON (q.evapares_id = ? AND a.question_id = q.id)
+			WHERE q.n_of_question = ? ";
+	
+	$getheaders = $DB->get_records_sql($sqlgetanswers, array($cmid, "1"));
+	
+	$headers = array();
+	$headers [] = "Preguntas";
+	foreach ($getheaders as $head) {
+		$headers [] = $head->text;
+	}
+		
+	$tablequestionanswers = new html_table();
+	
+	$tablequestionanswers->head = $headers;
+	
+	$tablequestionanswers->size = array(
+			"35%",
+			"13%",
+			"13%",
+			"13%",
+			"13%",
+			"13%",
+			"13%"
+	);
+	
+	$tablequestionanswers->align = array(
+			"left",
+			"right",
+			"right",
+			"right",
+			"right",
+			"right"
+	);
+	
+	$rawquestions = $DB->get_records("evapares_questions", array("evapares_id" => $cmid), "id ASC");
+	
+	$questions = array();
+	foreach ($rawquestions as $row) {
+		$questions[$row->id] = array(
+				"name" => $row->text,
+				"1" => 0,
+				"2" => 0,
+				"3" => 0,
+				"4" => 0,
+				"5" => 0,
+		);
+	}
+	
+	$sqlgetevaluations = "SELECT eq.id, eq.n_of_question AS questionnumber, other.number AS answernumber, other.counter
+			FROM {evapares_questions} AS eq 
+			RIGHT JOIN ( 
+				SELECT ea.question_id, ea.number, COUNT(eha.id) as counter
+				FROM {evapares_answers} AS ea 
+				INNER JOIN {evapares_eval_has_answ} AS eha ON (ea.id = eha.answers_id)
+				INNER JOIN {evapares_evaluations} AS ee 
+					ON (eha.evaluations_id = ee.id AND ee.iterations_id = ? AND ee.alu_evaluado_id = ?)
+				GROUP BY ea.id
+			) AS other ON (eq.id = other.question_id)";
+	
+	$results = $DB->get_recordset_sql($sqlgetevaluations, array($iteration->id, $studentid));
+	
+	foreach ($results as $evaluations) {
+		$questions[$evaluations->id][$evaluations->answernumber] += 1;
+		//echo "pregunta ".$evaluations->id." respuesta ".$evaluations->answernumber." puntaje +1<br>";
+	}
+	
+	$results->close();
+	
+	foreach ($questions as $row){
+		$tablequestionanswers->data [] = array(
+				$row["name"],
+				$row["1"],
+				$row["2"],
+				$row["3"],
+				$row["4"],
+				$row["5"],
+		);
+	}
+	
+	echo html_writer::table($tablequestionanswers);
+	
+}else{
+	$sqlquestionandanswers = "SELECT q.id AS questionid, q.text AS question, a.text AS answers, a.id AS answersid
+			FROM {evapares_questions} AS q
+			INNER JOIN {evapares_answers} AS a ON (q.evapares_id = ? AND a.question_id = q.id)
+			GROUP BY q.id";
+	
+	$questions = $DB->get_records_sql($sqlquestionandanswers , array($cmid));
+	
+	$sqlanswers = "SELECT a.answers_id, e.iterations_id
+					FROM {evapares_eval_has_answ} AS a
+					JOIN {evapares_evaluations} AS e ON (e.id = a.evaluations_id AND e.iterations_id = ?)
+					WHERE e.alu_evaluado_id = ?
+					ORDER BY iterations_id";
+	
+	$answers = $DB->get_records_sql($sqlanswers, array($iteration->id, $studentid));
 
-$sqlquestionandanswers = "SELECT q.id AS questionid, q.text AS question, a.text AS answers, a.id AS answersid
-		FROM {evapares_questions} AS q
-		INNER JOIN {evapares_answers} AS a ON (q.evapares_id = ? AND a.question_id = q.id)
-		GROUP BY q.id";
-
-$questions = $DB->get_records_sql($sqlquestionandanswers , array($cmid));
-
-$sqlanswers = "SELECT a.answers_id, e.iterations_id
-				FROM {evapares_eval_has_answ} AS a
-				JOIN {evapares_evaluations} AS e ON (e.id = a.evaluations_id AND e.iterations_id = ?)
-				WHERE e.alu_evaluado_id = ?
-				ORDER BY iterations_id";
-
-$answers = $DB->get_records_sql($sqlanswers, array($iteration->id, $studentid));
-
-
-
-
+	echo "En desarrollo resultado para preguntas que son por default.";
+}
  
 echo $OUTPUT->footer();
