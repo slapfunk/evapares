@@ -8,6 +8,7 @@
  *
  * @package    mod_evapares
  * @copyright  2016 Benjamin Espinosa (beespinosa94@gmail.com)
+ * @copyright  2016 Hans Jeria (hansjeria@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -21,107 +22,65 @@ class mod_evapares_mod_form extends moodleform_mod {
      * Defines forms elements
      */
     public function definition() {
-        global $CFG, $COURSE;
-        $mform = $this->_form;
+       global $COURSE;
+       $mform = $this->_form;
 
-// Adding the "general" fieldset, where all the common settings are showed.
-        $mform->addElement('header', 'general', get_string('general', 'form'));
+       $mform->addElement('header', 'general', get_string('general', 'form'));
 
-// Adding the standard "name" field.
-        $mform->addElement('text', 'name',get_string('formName','mod_evapares'), array('size' => '64'));
-        
-            $mform->setType('name', PARAM_TEXT);
-        
-        $mform->addRule('name', null, 'required', null, 'client');
-        $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
-        $mform->addHelpButton('name', 'evaparesname', 'evapares');//lang
+       $mform->addElement('text', 'name',get_string('formName','mod_evapares'), array('size' => '64'));
+       $mform->setType('name', PARAM_TEXT);       
+       $mform->addRule('name', null, 'required', null, 'client');
+       $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
+       $mform->addHelpButton('name', 'evaparesname', 'evapares');//lang
 
  
-// Defines the amount of Evaluations, Questions, Answers and time availability options respectively
-        $AmountEval= 10; 
-        $AmountQuest = 20;
-        $AmountAns = 7;
-        $AmountTime = 14;
-        
-// Fills different arrays with all the different options
+	   // Defines the amount of Evaluations and time availability options respectively
+       $AmountEval= 10; 
+       $AmountTime = 14;
+
+	   // Fills different arrays with all the different options
 	   $evaluations = array('-1' => 'Seleccione');
-	   for ($i=0; $i <= $AmountEval ; $i++){ $evaluations[$i] = $i;}
-	   $questions = array('-1' => 'Seleccione');
-	   for ($i=1; $i <= $AmountQuest ; $i++){ $questions[$i] = $i;}
-	   $answers = array('-1' => 'Seleccione');
-	   for ($i=2; $i <= $AmountAns ; $i++){ $answers[$i] = $i;}
+	   for ($i=0; $i <= $AmountEval ; $i++){
+			$evaluations[$i] = $i;
+	   }
+
 	   $time = array();
-	   for ($i=1; $i <= $AmountTime ; $i++){ $time[$i] = $i;}
+	   for ($i=1; $i <= $AmountTime ; $i++){
+	   		$time[$i] = $i;
+	   }
+	  
+		//Add all the fields to be completed		
+	   $mform->addElement('select', 'total_iterations',get_string('amountOfEvaluations','mod_evapares'), $evaluations);
+	   $mform->addElement('select', 'n_days',get_string('disponibilityTime','mod_evapares'), $time);
 	   
-//Add all the fields to be completed
-        $mform->addElement('advcheckbox', 'ssc', get_string('addSSC', 'mod_evapares'));
-        $mform->addHelpButton('ssc', 'ssc', 'mod_evapares');
-        
-        $mform->addElement('advcheckbox', 'default', 'Default evaluation');
-        $mform->setType('default', PARAM_INT);
-        
-        $mform->addElement('select', 'total_iterations',get_string('amountOfEvaluations','mod_evapares'), $evaluations);
-        
-        $mform->addElement('select', 'n_preguntas',get_string('amountOfQuestions','mod_evapares'), $questions);
-        
-        $mform->addElement('select', 'n_respuestas',get_string('amountOfAnswers','mod_evapares'), $answers);
-        
-        $mform->addElement('select', 'n_days',get_string('disponibilityTime','mod_evapares'), $time);
-       
-        $mform->addElement('hidden', 'course_id',$COURSE->id);
-        $mform->setType('course_id', PARAM_INT);
-        
+       $mform->addElement('hidden', 'ssc', '1');
+       $mform->setType('ssc', PARAM_INT);
 
-                
+       $mform->addElement('hidden', 'n_preguntas', '-1');
+       $mform->setType('n_preguntas', PARAM_INT);
+        
+       $mform->addElement('hidden', 'n_respuestas', '-1');
+       $mform->setType('n_respuestas', PARAM_INT);
+        
+       $mform->addElement('hidden', 'course_id', $COURSE->id);
+       $mform->setType('course_id', PARAM_INT);
 
-// Add standard elements, common to all modules.
-        $this->standard_coursemodule_elements();
-
-
-// Add standard buttons, common to all modules.
-        $this->add_action_buttons();
+       $this->standard_coursemodule_elements();
+       $this->add_action_buttons();
     }
 
-    function validation($data, $files){
-    	
+    function validation($data, $files){   	
     	
     	$errors = array();
     	
-    	$default = $data['default'];
     	$iterations = $data['total_iterations'];
-    	$questions = $data['n_preguntas'];
-    	$answers = $data['n_respuestas'];
-    	$ssc = $data['ssc'];
-    	
-    	//$errors['ssc'] = 'YOU SHALL NOT PASS! \(-_-)/';
-    	
-    	if($default == 0 && $questions == -1 && $answers == -1){
-    		$errors['default'] = 'Debe escojer entre evaluaciones predeterminadas o los parametros para crearlas';
-    	}
-    	if($default == 1 && $questions != -1 && $answers != -1){
-    		$errors['default'] = 'Debe escojer entre evaluaciones predeterminadas o los parametros para crearlas';
-    	}
-    	if($default == 1 && $questions != -1){
-    		$errors['n_preguntas'] = 'No puede escoger la cantidad de preguntas de las evaluaciones predetermnadas';
-    	}
-    	if($default == 1 && $answers != -1){
-    		$errors['n_respuestas'] = 'No puede escoger la cantidad de respuestas de las evaluaciones predetermnadas';
-    	}
-    	if($default == 0 && $questions == -1){
-    		$errors['n_preguntas'] = 'Si no escoje predeterminado debe indicar una cantidad de preguntas';
-    	}
-    	if($default == 0 && $answers == -1){
-    		$errors['n_respuestas'] = 'Si no escoje predeterminado debe indicar una cantidad de respuestas';
-    	}
+
     	if($iterations == -1){
-    		$errors['total_iterations'] = 'Debe escoger la cantidad de veces que se realizaran las evaluaciones';
+    		$errors['total_iterations'] = 'Debe escoger la cantidad de evaluaciones que se realizaran';
     	}
-    	
-    	
+    	    	
     	return $errors;
-    	
-    	
-    }
-    
+    	   	
+    }    
 }
 
