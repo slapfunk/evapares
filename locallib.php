@@ -196,7 +196,7 @@ function evapares_get_teacherview($cmid, $evapares){
 	
 	$table_data_query = "SELECT g.name AS group_name, u.lastname, u.firstname, u.id AS userid,
 			   SUM(length(ee.ssc_stop)) AS sumastop, SUM(length(ee.ssc_start)) AS sumastart,
-			   SUM(length(ee.ssc_continue)) AS sumacontinue, ee.answers AS rdy, AVG(ee.nota) AS avg_nota,
+			   SUM(length(ee.ssc_continue)) AS sumacontinue, ex.answers AS rdy, AVG(ee.nota) AS avg_nota,
 			   ee.iterations_id AS it_id, ei.n_iteration AS inumb, ei.start_date AS stdate
 			   FROM {user} AS u
 			   INNER JOIN {groups_members} AS gm ON u.id = gm.userid
@@ -205,9 +205,11 @@ function evapares_get_teacherview($cmid, $evapares){
 		       INNER JOIN {course_modules} AS cm ON c.id = cm.course
 		       INNER JOIN {evapares_iterations} AS ei ON ei.evapares_id = cm.id
 		       INNER JOIN {evapares_evaluations} AS ee ON ee.iterations_id = ei.id
+			   INNER JOIN {evapares_evaluations} AS ex ON ex.alu_evalua_id = ee.alu_evaluado_id
 		       WHERE cm.id = ?
 			   AND ee.alu_evaluado_id = u.id
-			   GROUP BY userid, it_id
+			   AND ex.iterations_id = ei.id
+			   GROUP BY userid, it_id, rdy
 			   ORDER BY group_name, lastname, it_id";
 
 	$get_table_data = $DB-> get_recordset_sql($table_data_query ,array($cmid));
