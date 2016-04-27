@@ -72,33 +72,37 @@ if($iterationid == "-1"){
 	$params = array($iterationid);
 }
 
-if( !$iteration = $DB->get_record_sql($sqlgetiteration, $params) ){
+if ( !$iteration = $DB->get_record_sql($sqlgetiteration, $params) ){
+	
 	$sqlgetiteration = "SELECT *
 			FROM {evapares_iterations}
 			WHERE n_iteration = ? AND evapares_id = ?";
 	
-	$params = array($evapares->total_iterations + 2, $cmid);
+	$params = array($evapares->total_iterations+1, $cmid);
+	
 	$iteration = $DB->get_record_sql($sqlgetiteration, $params);
 }
 
-if(has_capability('mod/evapares:myevaluations', $context)){	
+if(has_capability('mod/evapares:myevaluations', $context) && !is_siteadmin($USER)){	
 	
 	$PAGE->set_title(format_string($iteration->evaluation_name));
 	$PAGE->set_heading(format_string($iteration->evaluation_name));
 	echo $OUTPUT->header();
 	
 	echo $OUTPUT->tabtree(evapares_result_tabs($cmid), "Resultados");
-	echo $OUTPUT->tabtree(evapares_evaluations_tabs($cmid, $studentid), $iteration->evaluation_name);
+	echo $OUTPUT->tabtree(evapares_evaluations_tabs($cmid, $USER->id), $iteration->evaluation_name);
 	
 	$studentid = $USER->id;
 }else{
 	$PAGE->set_title(format_string($evapares->name));
 	$PAGE->set_heading(format_string($course->fullname));
 	echo $OUTPUT->header();
+	
+	echo $OUTPUT->tabtree(evapares_evaluations_tabs($cmid, $studentid), $iteration->evaluation_name);
 }
 
 //cantidad de personas en el grupo
-$groupid = groups_get_user_groups($COURSE->id, $USER->id);
+$groupid = groups_get_user_groups($COURSE->id, $studentid);
 
 $membersgroup = groups_get_members($groupid[0][0], $fields = "u.id");
 
@@ -180,7 +184,7 @@ foreach ($evaluations as $evaluation){
 	$countevaluations++;
 }
 
-if($countevaluations <= $quantitymembers ){
+if(($countevaluations-1) <= $quantitymembers ){
 	for($count = 0; $count + $countevaluations <= $quantitymembers; $count++){
 		$ssctable->data [] = array(
 				($count + $countevaluations),
@@ -267,16 +271,58 @@ if ($evapares->n_preguntas == "-1" && $evapares->n_respuestas = "-1") {
 	
 	$results->close();
 	
-	foreach ($questions as $row){
+	// personal evaluation
+	
+	$personalevaluationsql = "SELECT eq.id,  ea.number AS answernumber
+			FROM {evapares_questions} AS eq 
+			LEFT JOIN {evapares_answers} AS ea ON (eq.id = ea.question_id AND eq.evapares_id = ?)
+			LEFT JOIN {evapares_eval_has_answ} AS eha ON (ea.id = eha.answers_id)
+			LEFT JOIN {evapares_evaluations} AS ee 
+				ON (eha.evaluations_id = ee.id  AND ee.alu_evaluado_id = ? AND ee.alu_evalua_id = ?)
+			INNER JOIN {evapares_iterations} AS ei ON (ei.id = ee.iterations_id AND ei.n_iteration = 0 AND ei.evapares_id = ?)
+			GROUP BY eq.id
+            ORDER BY eq.id Asc";
+	
+	$personalevaluation = $DB->get_records_sql($personalevaluationsql, array($cmid, $studentid, $studentid, $cmid));
+	
+	$arraymineevaluation = array();
+	foreach ($personalevaluation as $row){
+		$arraymineevaluation[$row->id] = $row->answernumber;
+	}
+	
+	foreach ($questions as $key => $row){
+		
+		$tablerow = array();
+		$tablerow [] = $row["name"];
+		
+		for($count = 1; $count <= 5; $count++){
+			
+			if($arraymineevaluation[$key] == $count){
+				$td = new html_table_cell($OUTPUT->pix_icon("t/user", "Evaluación personal")." - ".$row[$count]);
+				$td->attributes = array('class' => 'myevaluation');
+				
+				$tablerow [] = $td;
+			}else{
+				$tablerow [] = $row[$count];
+			}
+		}
+		
+		/*
 		$tablequestionanswers->data [] = array(
 				$row["name"],
-				$row["1"],
+				"<div style = 'background: #E1EBF3;'>".$row["1"]."</div>",
 				$row["2"],
 				$row["3"],
 				$row["4"],
 				$row["5"],
-		);
+		);*/
+		$tablequestionanswers->data [] = $tablerow;
 	}
+	
+	
+	echo html_writer::start_tag('h5');
+	echo get_string("grade")." ".($grade/($countevaluations-1) );
+	echo html_writer::end_tag('h5');
 	
 	echo html_writer::table($tablequestionanswers);
 	
