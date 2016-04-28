@@ -83,7 +83,7 @@ if ( !$iteration = $DB->get_record_sql($sqlgetiteration, $params) ){
 	$iteration = $DB->get_record_sql($sqlgetiteration, $params);
 }
 
-if(has_capability('mod/evapares:myevaluations', $context) && !is_siteadmin($USER)){	
+if(has_capability('mod/evapares:myevaluations', $context)){	
 	
 	$PAGE->set_title(format_string($iteration->evaluation_name));
 	$PAGE->set_heading(format_string($iteration->evaluation_name));
