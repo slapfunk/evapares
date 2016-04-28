@@ -539,7 +539,8 @@ function evapares_evaluations_tabs($cmid, $studentid){
 						$iteration->evaluation_name,					
 						new moodle_url("/mod/evapares/results.php", array(
 								"cmid" => $cmid,
-								"iterationid" => $iteration->id
+								"iterationid" => $iteration->id,
+								"studentid" =>$studentid
 						)),
 						$iteration->evaluation_name
 				);
