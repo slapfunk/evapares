@@ -228,11 +228,11 @@ if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add
 	}
 }
 
-if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add"){
+if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add" && !is_siteadmin($USER)){
 
 	$addform->display();
 
-}elseif(has_capability('mod/evapares:courseevaluations', $context) && $action == "view"){
+}elseif(has_capability('mod/evapares:courseevaluations', $context) && $action == "view" && !is_siteadmin($USER)){
 
 	echo $OUTPUT->tabtree(evapares_edit_tabs($cmid), "Resumen");
 	
