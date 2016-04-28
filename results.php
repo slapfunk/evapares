@@ -119,7 +119,7 @@ if( !$evaluations = $DB->get_records_sql($sqlevaluations, array($iteration->id, 
 	
 	$url =  new moodle_url("/mod/evapares/view.php",array('id' =>$cmid));
 	
-	echo 'Aún no hay datos que desplegar';
+	echo 'AÃºn no hay datos que desplegar';
 	echo $OUTPUT->single_button($url, "Volver a las evaluaciones");
 	echo $OUTPUT->footer();
 	die();

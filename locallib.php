@@ -506,6 +506,7 @@ function evapares_get_summary_data($cmid, $evaparesname){
 }
 
 function evapares_get_all_data($cmid, $evaparesname){
+	global $DB, $COURSE;
 	$excelfilename = "evapares_alldata_".$evaparesname."_".data("d-m-Y",time());
 	
 	$headers = array();
