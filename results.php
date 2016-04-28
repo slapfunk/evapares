@@ -98,7 +98,7 @@ if(has_capability('mod/evapares:myevaluations', $context)){
 }
 
 //cantidad de personas en el grupo
-$groupid = groups_get_user_groups($COURSE->id, $USER->id);
+$groupid = groups_get_user_groups($COURSE->id, $studentid);
 
 $membersgroup = groups_get_members($groupid[0][0], $fields = "u.id");
 
@@ -115,7 +115,7 @@ if( !$evaluations = $DB->get_records_sql($sqlevaluations, array($iteration->id, 
 	
 	$url =  new moodle_url("/mod/evapares/view.php",array('id' =>$cmid));
 	
-	echo 'Aún no hay datos que desplegar';
+	echo 'AÃºn no hay datos que desplegar';
 	echo $OUTPUT->single_button($url, "Volver a las evaluaciones");
 	echo $OUTPUT->footer();
 	die();
