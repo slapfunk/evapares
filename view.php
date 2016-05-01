@@ -249,13 +249,18 @@ if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add
 	
 	echo $OUTPUT->action_icon($excelsummary, new pix_icon('i/grades', "download"));
 	echo get_string("summaryexcel", "mod_evapares");
-	/*
+	
 	echo $OUTPUT->action_icon($excelalldata, new pix_icon('i/grades', "download"));
 	echo get_string("alldataexcel", "mod_evapares");
-	*/
+	
 	echo html_writer::end_div();
 	
 	evapares_get_teacherview($cm->id, $evapares);
+	
+	//prueba query----------------------------------------------------------------------------------------------------------------
+
+
+	//-----------------------------------------------------------------------------------------------------------------------------
 
 }elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "view"){
 	//Vista alumnos

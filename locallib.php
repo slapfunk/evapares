@@ -506,10 +506,101 @@ function evapares_get_summary_data($cmid, $evaparesname){
 }
 
 function evapares_get_all_data($cmid, $evaparesname){
+	
 	global $DB, $COURSE;
+	
 	$excelfilename = "evapares_alldata_".$evaparesname."_".data("d-m-Y",time());
 	
-	$headers = array();
+	$headers = array(
+			"01group" => "Group",
+			"02Lastname" => "Lastname",
+			"03Fistname" => "Fistname",
+			"04Evaluation" => "Evaluation",
+			"05Stop" => "Stop",
+			"06Start" => "Start",
+		    "07Continue" => "Continue",
+	);
+	
+	$tabledata = array();
+	$row = array();
+	
+	$fullexceldata = "SELECT g.name AS group_name, u.lastname, u.firstname, u.id AS userid,
+					ee.iterations_id AS itid, ei.n_iteration AS inum, ee.ssc_stop, ee.ssc_start,
+					ee.ssc_continue, eq.id AS question, ea.text AS answer, ee.nota, ee.alu_evalua_id AS evaluator
+					FROM mdl_user AS u
+					INNER JOIN mdl_groups_members AS gm ON u.id = gm.userid
+					INNER JOIN mdl_groups AS g ON gm.groupid = g.id
+					INNER JOIN mdl_course AS c ON g.courseid = c.id
+					INNER JOIN mdl_course_modules AS cm ON c.id = cm.course
+					INNER JOIN mdl_evapares_iterations AS ei ON cm.id = ei.evapares_id
+					INNER JOIN mdl_evapares_evaluations AS ee ON ei.id = ee.iterations_id AND ee.alu_evaluado_id = u.id
+					INNER JOIN mdl_evapares_eval_has_answ AS eha ON ei.id = eha.iterationid AND eha.evaluations_id = ee.id
+					INNER JOIN mdl_evapares_answers AS ea ON eha.answers_id = ea.id
+					INNER JOIN mdl_evapares_questions AS eq ON ea.question_id = eq.id
+					WHERE cm.id = ? AND ee.alu_evalua_id != ee.alu_evaluado_id
+					ORDER BY group_name, lastname, itid, evaluator, question";
+	
+	$exceldata = $DB-> get_recordset_sql($fullexceldata ,array($cm->id));
+	
+	foreach($exceldata as $studentdata){
+		$studentsorteddata[] = $studentdata;
+	}
+	$exceldata -> close();
+	
+	$auxevaluator = -1;
+	$auxiteration = -1;
+	
+	for($aux = 0; $aux <= count($studentsorteddata); $aux ++){
+	
+		if($auxiteration != $studentsorteddata[$aux]->itid && $auxevaluator != $studentsorteddata[$aux]->evaluator){
+				
+			$auxiteration = $studentsorteddata[$aux]->itid;
+			$auxevaluator = $studentsorteddata[$aux]->evaluator;
+				
+			$row[] = $studentsorteddata[$aux]->group_name;
+			$row[] = $studentsorteddata[$aux]->lastname;
+			$row[] = $studentsorteddata[$aux]->firstname;
+			$row[] = $studentsorteddata[$aux]->inum;
+			$row[] = $studentsorteddata[$aux]->ssc_stop;
+			$row[] = $studentsorteddata[$aux]->ssc_start;
+			$row[] = $studentsorteddata[$aux]->ssc_continue;
+			$row[] = $studentsorteddata[$aux]->answer;
+				
+		}elseif($auxiteration != $studentsorteddata[$aux]->itid && $auxevaluator == $studentsorteddata[$aux]->evaluator){
+				
+			$auxiteration = $studentsorteddata[$aux]->itid;
+				
+			$row[] = $studentsorteddata[$aux]->group_name;
+			$row[] = $studentsorteddata[$aux]->lastname;
+			$row[] = $studentsorteddata[$aux]->firstname;
+			$row[] = $studentsorteddata[$aux]->inum;
+			$row[] = $studentsorteddata[$aux]->ssc_stop;
+			$row[] = $studentsorteddata[$aux]->ssc_start;
+			$row[] = $studentsorteddata[$aux]->ssc_continue;
+			$row[] = $studentsorteddata[$aux]->answer;
+				
+		}elseif($auxiteration == $studentsorteddata[$aux]->itid && $auxevaluator == $studentsorteddata[$aux]->evaluator){
+	
+			$row[] = $studentsorteddata[$aux]->answer;
+				
+			if($studentsorteddata[$aux]->question == 12){
+					
+				$row[] = $studentsorteddata[$aux]->nota;
+					
+				$tabledata[] = $row;
+				$row = array();
+	
+				$auxevaluator = -1;
+				$auxiteration = -1;
+
+	
+			}
+	
+		}
+	
+	}
+	
+	
 	evapares_save_data_to_excel($headers, $tabledata, $excelfilename);
 }
 
