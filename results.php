@@ -298,7 +298,7 @@ if ($evapares->n_preguntas == "-1" && $evapares->n_respuestas = "-1") {
 		for($count = 1; $count <= 5; $count++){
 			
 			if($arraymineevaluation[$key] == $count){
-				$td = new html_table_cell($OUTPUT->pix_icon("t/user", "Evaluación personal")." - ".$row[$count]);
+				$td = new html_table_cell($OUTPUT->pix_icon("t/user", "Evaluación personal")." | ".$row[$count]);
 				$td->attributes = array('class' => 'myevaluation');
 				
 				$tablerow [] = $td;

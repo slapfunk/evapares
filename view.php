@@ -118,16 +118,16 @@ if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add
 	}
 	else if($datas = $addform->get_data()){
 		
-		for($i = 0; $i <= $evapares->total_iterations + 1; $i++ ){
+		for($iteration = 0; $iteration <= $evapares->total_iterations + 1; $iteration++ ){
 			
 			//delivery date id
-			$idfe = "FE$i";
+			$idfe = "FE$iteration";
 			//delivery name id
-			$idne = "NE$i";
+			$idne = "NE$iteration";
 			
 			$record = new stdClass();
 			
-			$record->n_iteration = $i;
+			$record->n_iteration = $iteration;
 			$record->start_date = $datas->$idfe;
 			$record->evapares_id = (int)$cm->id;
 			$record->evaluation_name = $datas->$idne;
@@ -137,18 +137,18 @@ if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add
 		
 		$DB->insert_records("evapares_iterations", $alliterations);
 		
-		$sql = 'SELECT gm1.userid AS a_evalua, gm2.userid AS a_evaluado, ei.id As id_iteration, ei.n_iteration AS n_iteration
+		$sql = 'SELECT gm1.userid AS a_evalua, gm2.userid AS a_evaluado, ei.id AS id_iteration, ei.n_iteration AS n_iteration
 				FROM {groups_members} AS gm1
 				INNER JOIN {groups_members} AS gm2 ON gm1.groupid = gm2.groupid
 				INNER JOIN {groups} AS g ON g.id = gm1.groupid
 				INNER JOIN {course_modules} AS cm ON cm.course = g.courseid
-				INNER JOIN {evapares_iterations} AS ei ON ei.evapares_id = cm.id
-				WHERE ei.evapares_id = ?';
+				INNER JOIN {evapares_iterations} AS ei ON ei.evapares_id = cm.id WHERE ei.evapares_id = ?';
 		
 		$consulta = $DB-> get_recordset_sql($sql ,array($cm->id));
 		
 		foreach($consulta as $insert){
-			if($insert->a_evalua == $insert->a_evaluado && $insert->n_iteration == 0 || $insert->n_iteration == $evapares->total_iterations +1){
+			if($insert->a_evalua == $insert->a_evaluado && $insert->n_iteration == 0 || $insert->n_iteration == $evapares->total_iterations +1
+					|| $insert->a_evalua != $insert->a_evaluado && $insert->n_iteration > 0){
 		
 				$rec = new stdClass();
 		
@@ -161,22 +161,22 @@ if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add
 				$rec->iterations_id = $insert->id_iteration;
 		
 				$allcombs[] = $rec;
-		
-			}elseif($insert->a_evalua != $insert->a_evaluado && $insert->n_iteration > 0){
-		
-				$rec = new stdClass();
-		
-				$rec->ssc_stop = null;
-				$rec->ssc_start = null;
-				$rec->ssc_continue = null;
-				$rec->answers = '0';
-				$rec->alu_evalua_id = $insert->a_evalua;
-				$rec->alu_evaluado_id = $insert->a_evaluado;
-				$rec->iterations_id = $insert->id_iteration;
-		
-				$allcombs[] = $rec;
-		
 			}
+// 			}elseif($insert->a_evalua != $insert->a_evaluado && $insert->n_iteration > 0){
+		
+// 				$rec = new stdClass();
+		
+// 				$rec->ssc_stop = null;
+// 				$rec->ssc_start = null;
+// 				$rec->ssc_continue = null;
+// 				$rec->answers = '0';
+// 				$rec->alu_evalua_id = $insert->a_evalua;
+// 				$rec->alu_evaluado_id = $insert->a_evaluado;
+// 				$rec->iterations_id = $insert->id_iteration;
+		
+// 				$allcombs[] = $rec;
+		
+// 			}
 		}
 		
 		$DB->insert_records("evapares_evaluations", $allcombs);
@@ -218,13 +218,11 @@ if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add
 				$recr->text = $datas->$idr;
 			
 				$allanswers[]=$recr;		
-			}
-
-			$DB->insert_records("evapares_answers", $allanswers);
-			unset($allanswers);
-			
-		}	
-			$action = "view";
+			}		
+		}
+		
+		$DB->insert_records("evapares_answers", $allanswers);
+		$action = "view";
 	}
 }
 
@@ -256,11 +254,6 @@ if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add
 	echo html_writer::end_div();
 	
 	evapares_get_teacherview($cm->id, $evapares);
-	
-	//prueba query----------------------------------------------------------------------------------------------------------------
-
-
-	//-----------------------------------------------------------------------------------------------------------------------------
 
 }elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "view"){
 	//Vista alumnos
