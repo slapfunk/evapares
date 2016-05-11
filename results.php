@@ -121,7 +121,7 @@ if( !$evaluations = $DB->get_records_sql($sqlevaluations, array($iteration->id, 
 	
 	$url =  new moodle_url("/mod/evapares/view.php",array('id' =>$cmid));
 	
-	echo 'Aún no hay datos que desplegar';
+	echo 'AÃºn no hay datos que desplegar';
 	echo $OUTPUT->single_button($url, "Volver a las evaluaciones");
 	echo $OUTPUT->footer();
 	die();
@@ -299,6 +299,13 @@ if ($evapares->n_preguntas == "-1" && $evapares->n_respuestas = "-1") {
 		
 		for($count = 1; $count <= 5; $count++){
 			
+
+			if($arraymineevaluation[$key] == $count){
+				$td = new html_table_cell($OUTPUT->pix_icon("t/user", "Evaluación personal")." | ".$row[$count]);
+				$td->attributes = array('class' => 'myevaluation');
+				
+				$tablerow [] = $td;
+
 			if(isset($arraymineevaluation[$key])){
 				if($arraymineevaluation[$key] == $count){
 					$td = new html_table_cell($OUTPUT->pix_icon("t/user", "Evaluación personal")." - ".$row[$count]);
@@ -306,6 +313,7 @@ if ($evapares->n_preguntas == "-1" && $evapares->n_respuestas = "-1") {
 					
 					$tablerow [] = $td;
 				}
+
 			}else{
 				$tablerow [] = $row[$count];
 			}

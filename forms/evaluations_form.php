@@ -274,6 +274,15 @@ class evapares_iterationform extends moodleform {
 				if( empty($data["continue$counter"]) || !isset($data["continue$counter"]) || $data["continue$counter"] == NULL ){
 					$errors["continue$counter"] = "Debe obligatoriamente escribir en este campo.";
 				}
+				if(strlen($data["start$counter"]) > 200){
+					$errors["start$counter"] = "La cantidad de caracteres no debe superar los 200";
+				}
+				if(strlen($data["stop$counter"]) > 200){
+					$errors["stop$counter"] = "La cantidad de caracteres no debe superar los 200";
+				}
+				if(strlen($data["continue$counter"]) > 200){
+					$errors["continue$counter"] = "La cantidad de caracteres no debe superar los 200";
+				}
 				
 				if( isset($data["n$counter"])  ){
 					if( $data["n$counter"] == 0){
