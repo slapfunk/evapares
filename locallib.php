@@ -135,7 +135,7 @@ function evapares_get_evaluations($cmid, $evaparesid){
 					
 					$actionicon = $OUTPUT->action_icon(
 							$actionurl,
-							new pix_icon("i/manual_item", get_strin('confirm','mod_evapares')),
+							new pix_icon("i/manual_item", get_string('confirm','mod_evapares')),
 							new confirm_action(get_string('confirmpopup','mod_evapares'))
 					);
 					
