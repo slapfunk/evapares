@@ -83,7 +83,7 @@ if ( !$iteration = $DB->get_record_sql($sqlgetiteration, $params) ){
 	$iteration = $DB->get_record_sql($sqlgetiteration, $params);
 }
 
-if(has_capability('mod/evapares:myevaluations', $context)){	
+if(has_capability('mod/evapares:myevaluations', $context) && !is_siteadmin($USER)){	
 	
 	$PAGE->set_title(format_string($iteration->evaluation_name));
 	$PAGE->set_heading(format_string($iteration->evaluation_name));
@@ -99,11 +99,13 @@ if(has_capability('mod/evapares:myevaluations', $context)){
 	echo $OUTPUT->header();
 	
 	echo $OUTPUT->tabtree(evapares_evaluations_tabs($cmid, $studentid), $iteration->evaluation_name);
+	
+	//echo $studentid."<br>";
 }
 
 //cantidad de personas en el grupo
 $groupid = groups_get_user_groups($COURSE->id, $studentid);
-
+//var_dump($groupid);
 $membersgroup = groups_get_members($groupid[0][0], $fields = "u.id");
 
 $quantitymembers = count($membersgroup) -1;
@@ -265,7 +267,7 @@ if ($evapares->n_preguntas == "-1" && $evapares->n_respuestas = "-1") {
 	$results = $DB->get_recordset_sql($sqlgetevaluations, array($iteration->id, $studentid));
 	
 	foreach ($results as $evaluations) {
-		$questions[$evaluations->id][$evaluations->answernumber] += 1;
+		$questions[$evaluations->id][$evaluations->answernumber] += $evaluations->counter;
 		//echo "pregunta ".$evaluations->id." respuesta ".$evaluations->answernumber." puntaje +1<br>";
 	}
 	
@@ -297,11 +299,13 @@ if ($evapares->n_preguntas == "-1" && $evapares->n_respuestas = "-1") {
 		
 		for($count = 1; $count <= 5; $count++){
 			
-			if($arraymineevaluation[$key] == $count){
-				$td = new html_table_cell($OUTPUT->pix_icon("t/user", "Evaluación personal")." - ".$row[$count]);
-				$td->attributes = array('class' => 'myevaluation');
-				
-				$tablerow [] = $td;
+			if(isset($arraymineevaluation[$key])){
+				if($arraymineevaluation[$key] == $count){
+					$td = new html_table_cell($OUTPUT->pix_icon("t/user", "Evaluación personal")." - ".$row[$count]);
+					$td->attributes = array('class' => 'myevaluation');
+					
+					$tablerow [] = $td;
+				}
 			}else{
 				$tablerow [] = $row[$count];
 			}
