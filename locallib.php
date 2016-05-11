@@ -57,9 +57,9 @@ function evapares_get_evaluations($cmid, $evaparesid){
 		$evaluationstable->head = array(
 				get_string('evals','mod_evapares'), 
 				get_string('CompleteTable','mod_evapares'), 
-				"Disponible", 
-				"Fecha de inicio",
-				"Fecha termino",
+				get_string('available','mod_evapares'), 
+				get_string('datestart','mod_evapares'),
+				get_string('dateend','mod_evapares'),
 				get_string('evaluateTable','mod_evapares')
 		);	
 	
@@ -74,9 +74,9 @@ function evapares_get_evaluations($cmid, $evaparesid){
 		
 		list($sqlin, $param) = $DB->get_in_or_equal($iterations);
 		
-		$evaparesiterationssql = "SELECT ee.id, ee.alu_evalua_id, ee.alu_evaluado_id, ei.n_iteration, SUM(ee.answers) as answers, 
+		$evaparesiterationssql = "SELECT ee.id, ee.alu_evalua_id, ee.alu_evaluado_id, ei.n_iteration, SUM(ee.answers) AS answers, 
 				ei.evapares_id, ei.start_date, ei.evaluation_name, ei.id as eiid
-				FROM {evapares_evaluations} AS ee JOIN {evapares_iterations} AS ei 
+				FROM {evapares_evaluations} AS ee INNER JOIN {evapares_iterations} AS ei 
 				ON (ee.iterations_id = ei.id AND ei.n_iteration $sqlin AND ei.evapares_id = ? AND ee.alu_evalua_id = ?)
 				GROUP BY ei.n_iteration";
 	
@@ -98,7 +98,7 @@ function evapares_get_evaluations($cmid, $evaparesid){
 				
 				if( $iteration->answers == 0){
 					// No completada la evaluacion
-					$drafticon = new pix_icon("i/grade_incorrect", "No entregado");
+					$drafticon = new pix_icon("i/grade_incorrect", get_string('undelivered','mod_evapares'));
 					
 					
 					if($iteration->n_iteration == 0){
@@ -135,19 +135,19 @@ function evapares_get_evaluations($cmid, $evaparesid){
 					
 					$actionicon = $OUTPUT->action_icon(
 							$actionurl,
-							new pix_icon("i/manual_item", "confirmar"),
+							new pix_icon("i/manual_item", get_strin('confirm','mod_evapares')),
 							new confirm_action(get_string('confirmpopup','mod_evapares'))
 					);
 					
 				}else{
 					$drafticon = new pix_icon("i/grade_correct", "Entregado");
-				}		
+				}			
 			}else{
 				
 				$statusicon = new pix_icon("i/grade_incorrect", "");
 				
 				if( $iteration->answers == 0){
-					// No completada la evaluacion
+					// Not completed the evaluation
 					$drafticon = new pix_icon("i/grade_incorrect", "No entregado");
 				}else{
 					$drafticon = new pix_icon("i/grade_correct", "Entregado");
@@ -184,7 +184,7 @@ function evapares_get_evaluations($cmid, $evaparesid){
 		
 		$url =  new moodle_url("/course/view.php",array('id' => $COURSE->id));
 		
-		echo "No perteneces a ningun grupo, por lo cual no puedes realizar las evaluaciones.";
+		echo get_string('nogroup','mod_evapares');
 		echo $OUTPUT->single_button($url, get_string('back_to_course','mod_evapares'));
 	}
 
@@ -202,13 +202,10 @@ function evapares_get_teacherview($cmid, $evapares){
 			   INNER JOIN {groups_members} AS gm ON u.id = gm.userid
 			   INNER JOIN {groups} AS g ON gm.groupid = g.id
 		       INNER JOIN {course} AS c ON g.courseid = c.id
-		       INNER JOIN {course_modules} AS cm ON c.id = cm.course
+		       INNER JOIN {course_modules} AS cm ON (c.id = cm.course WHERE cm.id = ?)
 		       INNER JOIN {evapares_iterations} AS ei ON ei.evapares_id = cm.id
-		       INNER JOIN {evapares_evaluations} AS ee ON ee.iterations_id = ei.id
-			   INNER JOIN {evapares_evaluations} AS ex ON ex.alu_evalua_id = ee.alu_evaluado_id
-		       WHERE cm.id = ?
-			   AND ee.alu_evaluado_id = u.id
-			   AND ex.iterations_id = ei.id
+		       INNER JOIN {evapares_evaluations} AS ee ON (ee.iterations_id = ei.id WHERE ee.alu_evaluado_id = u.id)
+			   INNER JOIN {evapares_evaluations} AS ex ON (ex.alu_evalua_id = ee.alu_evaluado_id WHERE ex.iterations_id = ei.id)
 			   GROUP BY userid, it_id, rdy
 			   ORDER BY group_name, lastname, it_id";
 
@@ -246,6 +243,7 @@ function evapares_get_teacherview($cmid, $evapares){
 	$current_student_data = null;
 	
 	for($j = 1; $j <= count($info); $j ++){
+		// $j is used to scroll through the array with ths date information 
 		
 		if(!$current_student_data || $current_student_data != $info[$j]->userid){
 			
@@ -414,13 +412,13 @@ function evapares_get_teacherview($cmid, $evapares){
 function evapares_edit_tabs($cmid) {
 	$edittab = array();
 	
-	$edittab[] = new tabobject("Resumen",
+	$edittab[] = new tabobject(get_string('summary','mod_evapares'),
 			new moodle_url("/mod/evapares/view.php", array(
-					"id" => $cmid)), "Resumen");
+					"id" => $cmid)), get_string('summary','mod_evapares'));
 	
-	$edittab[] = new tabobject("Configuración",
+	$edittab[] = new tabobject(get_string('config','mod_evapares'),
 			new moodle_url("/mod/evapares/configuration.php", array(
-					"cmid" => $cmid)), "Configuración");
+					"cmid" => $cmid)), get_string('config','mod_evapares'));
 	
 	return $edittab;
 }
@@ -476,12 +474,12 @@ function evapares_get_summary_data($cmid, $evaparesname){
 	
 	$sqlgetdata = "SELECT u.id AS userid, u.firstname, u.lastname, g.name AS groupname, AVG(ee.nota) AS grade, u.email
 			   FROM {user} AS u
-			   JOIN {groups_members} AS gm ON (u.id = gm.userid)
-			   JOIN {groups} AS g ON (gm.groupid = g.id)
-		       JOIN {course} AS c ON (g.courseid = c.id)
-		       JOIN {course_modules} AS cm ON (c.id = cm.course AND cm.id = ?)
-		       JOIN {evapares_iterations} AS ei ON (ei.evapares_id = cm.id)
-		       JOIN {evapares_evaluations} AS ee ON (ee.iterations_id = ei.id AND ee.alu_evaluado_id = u.id)
+			   INNER JOIN {groups_members} AS gm ON (u.id = gm.userid)
+			   INNER JOIN {groups} AS g ON (gm.groupid = g.id)
+		       INNER JOIN {course} AS c ON (g.courseid = c.id)
+		       INNER JOIN {course_modules} AS cm ON (c.id = cm.course AND cm.id = ?)
+		       INNER JOIN {evapares_iterations} AS ei ON (ei.evapares_id = cm.id)
+		       INNER JOIN {evapares_evaluations} AS ee ON (ee.iterations_id = ei.id AND ee.alu_evaluado_id = u.id)
 			   GROUP BY userid
 			   ORDER BY userid, lastname, firstname";
 	

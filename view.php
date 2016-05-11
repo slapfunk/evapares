@@ -142,7 +142,7 @@ if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add
 				INNER JOIN {groups_members} AS gm2 ON gm1.groupid = gm2.groupid
 				INNER JOIN {groups} AS g ON g.id = gm1.groupid
 				INNER JOIN {course_modules} AS cm ON cm.course = g.courseid
-				INNER JOIN {evapares_iterations} AS ei ON ei.evapares_id = cm.id WHERE ei.evapares_id = ?';
+				INNER JOIN {evapares_iterations} AS ei ON (ei.evapares_id = cm.id WHERE ei.evapares_id = ?)';
 		
 		$consulta = $DB-> get_recordset_sql($sql ,array($cm->id));
 		
@@ -186,7 +186,8 @@ if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add
 		}
 		
 		for($i = 1; $i <= $evapares->n_preguntas; $i++ ){
-			
+		// $i is used to scroll the array with que quiestions information
+		
 			//questions id
 			$idp = "P$i";
 							
@@ -209,6 +210,7 @@ if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add
  			}
  			
 			for($j = 1; $j <= $evapares->n_respuestas; $j++ ){
+				// $j is used to scroll the array with the answers information
 				$idr = "R$i$j";
 
 				$recr = new stdClass();
@@ -232,7 +234,7 @@ if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add
 
 }elseif(has_capability('mod/evapares:courseevaluations', $context) && $action == "view"){
 
-	echo $OUTPUT->tabtree(evapares_edit_tabs($cmid), "Resumen");
+	echo $OUTPUT->tabtree(evapares_edit_tabs($cmid), get_string('summary','mod_evapares'));
 	
 	$excelsummary = new moodle_url('view.php', array(
 			'id' => $cm->id,
@@ -256,12 +258,12 @@ if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add
 	evapares_get_teacherview($cm->id, $evapares);
 
 }elseif(has_capability('mod/evapares:myevaluations', $context) && $action == "view"){
-	//Vista alumnos
+	//students view
 
 	
 	if($mode == 'evaluation'){
 		
-		echo $OUTPUT->tabtree(evapares_result_tabs($cmid), "Evaluaciones");
+		echo $OUTPUT->tabtree(evapares_result_tabs($cmid), get_string('evals','mod_evapares'));
 		
 		evapares_get_evaluations($cm->id, $cm->instance);	
 	}
