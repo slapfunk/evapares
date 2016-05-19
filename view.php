@@ -30,6 +30,7 @@ require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
 require_once($CFG->dirroot.'/course/moodleform_mod.php');
 require_once($CFG->dirroot."/lib/excellib.class.php");
+require_once($CFG->dirroot."/lib/csvlib.class.php");
 require_once('locallib.php');
 require_once('forms/view_form.php');
 
@@ -66,11 +67,11 @@ if(!has_capability('mod/evapares:courseevaluations', $context) && !has_capabilit
 if(has_capability('mod/evapares:myevaluations', $context) && $export == "summary"){
 	// excel with the students and their grades
 	evapares_get_summary_data($cmid, str_replace(" ", "",$evapares->name));
-}/*
+}
 else if(has_capability('mod/evapares:myevaluations', $context) && $export == "alldata"){
 	// excel with the all information about the evapares process
 	evapares_get_all_data($cmid, str_replace(" ", "",$evapares->name));
-}*/
+}
 
 $PAGE->set_url('/mod/evapares/view.php', array('id' => $cm->id));
 $PAGE->set_context($context);
