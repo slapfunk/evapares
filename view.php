@@ -143,7 +143,7 @@ if(has_capability('mod/evapares:courseevaluations', $context) && $action == "add
 				INNER JOIN {groups_members} AS gm2 ON gm1.groupid = gm2.groupid
 				INNER JOIN {groups} AS g ON g.id = gm1.groupid
 				INNER JOIN {course_modules} AS cm ON cm.course = g.courseid
-				INNER JOIN {evapares_iterations} AS ei ON (ei.evapares_id = cm.id WHERE ei.evapares_id = ?)';
+				INNER JOIN {evapares_iterations} AS ei ON (ei.evapares_id = cm.id AND ei.evapares_id = ?)';
 		
 		$consulta = $DB-> get_recordset_sql($sql ,array($cm->id));
 		
